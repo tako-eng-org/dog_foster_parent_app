@@ -1,0 +1,13 @@
+*.log
+*__pycache__*
+.idea/
+*__debug_bin
+
+# docker
+config/postgres/pgdata
+config/pgadmin/*
+
+# golang
+*go.sum*
+/fosterParentDog/foster-parent-dog-app
+/fosterParentDog/.env
