@@ -1,0 +1,34 @@
+settings:
+  legacy:
+    force: false
+    interval: 0s
+schema:
+  - name: fosterParentDog
+    path: .
+    commands:
+      # realize startで実行するコマンド
+      install:
+        status: true
+        method: go build -o foster-parent-dog-app server.go
+      # installで作成したバイナリファイルを監視/ホットリロードする
+      run:
+        status: true
+        method: ./foster-parent-dog-app
+      #build:
+      #  status: true
+      #  method: go build -o foster-parent-dog-app server.go
+    watcher:
+      # 監視ファイルを指定する
+      extensions:
+        - go
+        - env
+        - vue
+        - js
+        - mod
+      paths:
+        - /
+      ignored_paths:
+        - .git
+        - .realize
+        - vendor
+        - .history
