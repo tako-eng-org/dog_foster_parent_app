@@ -30,7 +30,7 @@ services:
       # データ保持用
       - ./config/postgres/pgdata:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
   pgadmin:
