@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fpdapp/controllers/controller"
 	// ロギングを行うパッケージ
 	"log"
 
@@ -12,9 +13,6 @@ import (
 
 	//// postgresql用ドライバ
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-
-	// コントローラー
-	controller "fpdapp/controllers/controller"
 )
 
 func main() {
@@ -32,7 +30,7 @@ func serve() {
 
 	// ルーターの設定
 	// URLへのアクセスに対して静的ページを返す
-	//router.StaticFS("/bbsapp", http.Dir("./frontend/dist"))
+	router.StaticFS("/main", http.Dir("./frontend/dist"))
 
 	// 全てのJSONを返す
 	router.GET("/fetchAllRecords", controller.FetchAllRecords)
@@ -40,10 +38,10 @@ func serve() {
 	// 投稿レコード情報をDBへ登録する
 	//router.POST("/addRecord", controller.AddRecord)
 
-	router.GET("/hoge:name", func(c *gin.Context) {
-		adana := c.Param("name")
-		c.String(http.StatusOK, "Hello %s", adana)
-	})
+	//router.GET("/hoge:name", func(c *gin.Context) {
+	//	adana := c.Param("name")
+	//	c.String(http.StatusOK, "Hello %s", adana)
+	//})
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "ルートがない場合に表示するメッセージです"})
