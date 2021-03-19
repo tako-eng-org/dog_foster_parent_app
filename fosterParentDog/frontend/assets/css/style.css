@@ -1,0 +1,18 @@
+body{
+  background-color: antiquewhite;
+}
+
+#top-image {
+  width:200px;
+  height:300px
+}
+
+.one-contents{
+  background-color: burlywood;
+}
+
+/*改行コードを改行として扱う*/
+p {
+  white-space: pre-wrap;
+}
+
