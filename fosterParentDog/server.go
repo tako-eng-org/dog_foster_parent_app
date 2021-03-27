@@ -32,16 +32,23 @@ func serve() {
 	// URLへのアクセスに対して静的ページを返す
 	router.StaticFS("/main", http.Dir("./frontend/dist"))
 
-	// 全てのJSONを返す
+	// ************************************************
+	// 共通（デバッグ用）
+	// ************************************************
 	router.GET("/fetchAllRecords", controller.FetchAllRecords)
 
-	// 投稿レコード情報をDBへ登録する
-	//router.POST("/addRecord", controller.AddRecord)
+	// ************************************************
+	// トップ画面から使用するAPI
+	// ************************************************
+	// 投稿を1ページ表示分取得する
+	// ex: localhost:8000/fosterparent/index?page=1
+	router.GET("/index", controller.FetchIndexRecords)
 
-	//router.GET("/hoge:name", func(c *gin.Context) {
-	//	adana := c.Param("name")
-	//	c.String(http.StatusOK, "Hello %s", adana)
-	//})
+	// ************************************************
+	// 投稿詳細画面から使用するAPI
+	// ************************************************
+	// 投稿レコード情報をDBへ登録する
+	router.POST("/addRecord", controller.AddRecord)
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "ルートがない場合に表示するメッセージです"})
@@ -50,5 +57,4 @@ func serve() {
 	if err := router.Run(":8090"); err != nil {
 		log.Fatal("Server Run Failed.: ", err)
 	}
-
 }
