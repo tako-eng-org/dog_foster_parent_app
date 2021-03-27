@@ -20,7 +20,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+//*******************************************************************
 // DB接続する
+//*******************************************************************
 func open() *gorm.DB {
 	// .envファイルから環境変数を読み出す
 	fileEnv := godotenv.Load(fmt.Sprintf("./%s.env", os.Getenv("GO_ENV")))
@@ -53,22 +55,14 @@ func open() *gorm.DB {
 	db.SingularTable(true)
 
 	// マイグレーション（テーブルが無い時は自動生成）
-	db.AutoMigrate(&entity.FosterParentDog{})
+	db.AutoMigrate(
+		&entity.User{},
+		&entity.Post{},
+		&entity.PostImage{},
+		&entity.PostPrefecture{},
+		&entity.Prefecture{},
+	)
 
 	fmt.Println("db connected: ", &db)
 	return db
-}
-
-// Todoリストテーブルのレコードを全件取得する
-func FindAllRecords() []entity.FosterParentDog {
-	allRecords := []entity.FosterParentDog{}
-
-	db := open()
-	// select
-	db.Order("post_id asc").Find(&allRecords)
-
-	// defer 関数がreturnする時に実行される
-	defer db.Close()
-
-	return allRecords
 }
