@@ -6,10 +6,12 @@ import (
 
 	// Gin
 	"github.com/gin-gonic/gin"
+	//"strconv"
+
 	//"fpdapp/models/entity"
 
 	// エンティティ(データベースのテーブルの行に対応)
-	//entity "../../models/entity"
+	//entity "fpdapp/models/entity"
 
 	// DBアクセス用モジュール
 	db "fpdapp/models/db"
