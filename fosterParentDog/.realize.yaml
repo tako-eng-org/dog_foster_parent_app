@@ -32,3 +32,16 @@ schema:
         - .realize
         - vendor
         - .history
+#          使用しない
+        # Goland_リモートデバッグ用設定（接続はできるが止まらない）
+#      scripts:
+#        - type: before
+#          command: pkill foster-parent-dog-app
+#          output: true
+          # 初回起動、またホットリロードの度に実行する。
+        #          [ 15:43:40 ][ FOSTERPARENTDOG ]: Install started
+        #          [ 15:43:43 ][ FOSTERPARENTDOG ]: Install completed in 3.226 s
+        #          [ 15:43:43 ][ FOSTERPARENTDOG ]: Command "pwd" ←ここがcommand
+#        - type: after
+#          command: dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec ./foster-parent-dog-app
+#          output: true
