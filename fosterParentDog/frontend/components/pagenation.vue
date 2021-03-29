@@ -55,7 +55,7 @@ export default {
   watch: {
     //ページネーションを複数設置したときの対応
     currentPage(val) {
-      var vm = this;
+      let vm = this;
       vm.$set(vm, "currentPageEdited", vm.currentPage);
     },
   },
@@ -67,20 +67,20 @@ export default {
   computed: {
     //ページ番号を計算する
     numFix() {
-      var vm = this;
+      let vm = this;
       return function (num) {
-        var ajust = 1 + (vm.showPages - 1) / 2;
-        var result = num;
+        let ajust = 1 + (vm.showPages - 1) / 2;
+        let result = num;
         //前ページがマイナスになる場合は1からはじめる
         if (vm.currentPageEdited > vm.showPages / 2) {
-          var result = num + vm.currentPageEdited - ajust;
+          let result = num + vm.currentPageEdited - ajust;
         }
         //後ページが最大ページを超える場合は最大ページを超えないようにする
         if (vm.currentPageEdited + vm.showPages / 2 > vm.totalPages) {
-          var result = vm.totalPages - vm.showPages + num;
+          let result = vm.totalPages - vm.showPages + num;
         } //総ページ数が表示ページ数に満たない場合、連番そのまま
         if (vm.totalPages <= vm.showPages) {
-          var result = num;
+          let result = num;
         }
         return result;
       };
@@ -88,7 +88,7 @@ export default {
 
     //総記事数が表示ページ数以下の場合に調整する
     showPagesFix() {
-      var vm = this;
+      let vm = this;
       if (vm.totalPages < vm.showPages) {
         return vm.totalPages;
       } else {
@@ -97,13 +97,13 @@ export default {
     },
   },
   mounted() {
-    var vm = this;
+    let vm = this;
     vm.$set(vm, "currentPageEdited", vm.currentPage);
   },
   methods: {
     //何ページ目を表示するか
     setPage(page) {
-      var vm = this;
+      let vm = this;
       //マイナスにならないようにする
       if (page <= 0) {
         vm.$set(vm, "currentPageEdited", 1);
