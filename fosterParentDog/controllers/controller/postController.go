@@ -18,6 +18,14 @@ import (
 )
 
 //*******************************************************************
+// 全投稿の数を取得する
+//*******************************************************************
+func FetchPublishedPostNum(c *gin.Context) {
+	result := db.CountPublishedPostNum()
+	c.JSON(200, result) // URLへのアクセスに対してJSONを返す
+}
+
+//*******************************************************************
 // 投稿を1ページ表示(20件)分取得する
 //*******************************************************************
 func FetchIndexRecords(c *gin.Context) {
@@ -25,13 +33,6 @@ func FetchIndexRecords(c *gin.Context) {
 	result := db.FindIndexRecords(page)
 	c.JSON(200, result) // URLへのアクセスに対してJSONを返す
 }
-
-//func FetchIndexRecords(c *gin.Context) {
-//  //page := c.DefaultQuery("page", "0")
-//  result := db.FindIndexRecords()
-//  // URLへのアクセスに対してJSONを返す
-//  c.JSON(200, result)
-//}
 
 //*******************************************************************
 // 投稿テーブルへ登録する
