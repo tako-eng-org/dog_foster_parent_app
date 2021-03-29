@@ -26,7 +26,7 @@ func serve() {
 	router := gin.Default()
 
 	// 静的ファイルのパスを指定
-	//router.Static("/dist", "./frontend/dist")
+	router.Static("/dist", "./frontend/dist")
 
 	// ルーターの設定
 	// URLへのアクセスに対して静的ページを返す
@@ -40,6 +40,9 @@ func serve() {
 	// ************************************************
 	// トップ画面から使用するAPI
 	// ************************************************
+	// 公開済み投稿数を取得する
+	router.GET("/pageCount", controller.FetchPublishedPostNum)
+
 	// 投稿を1ページ表示分取得する
 	// ex: localhost:8000/fosterparent/index?page=1
 	router.GET("/index", controller.FetchIndexRecords)
