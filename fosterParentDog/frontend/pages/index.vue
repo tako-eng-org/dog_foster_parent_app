@@ -13,7 +13,9 @@
              height="130">
       </div>
       <div class="row">
-        #{{ record.ID }} {{ record.DogName }}
+        <NuxtLink to="/detail">
+          #{{ record.ID }} {{ record.DogName }}
+        </NuxtLink>
       </div>
       <div class="row"><p>犬種 : {{ record.Breed }}</p></div>
       <div class="row"><p>性別 : {{ record.Gender }}</p></div>
@@ -54,8 +56,8 @@ export default {
       currentPage: 1, //現在のページ（初期は1）
       showPages: 5, //ページネーションを何ページ表示するか（奇数でないとずれる）
       perPage: 20, //1ページの表示件数
-      totalCount: Number, //取得したアイテムの総件数
-      totalPages: Number, //総ページ数
+      totalCount: Number, //取得したレコードの総件数
+      totalPages: Number, //算出後の総ページ数
     }
   },
   components: {
@@ -118,15 +120,6 @@ export default {
         })
       })
     },
-
-    //currentPageがページネーションコンポーネントから送られる現在のページ
-    // getCurrentPage(currentPage) {
-    //   // let vm = this;
-    //   // vm.$set(vm, "currentPage", currentPage);
-    //   this.doFetchIndexRecords(currentPage);
-    //   // vm.$set(vm, "totalCount", this.totalCount);
-    //   // vm.$set(vm, "totalPages", this.totalPages);
-    // },
   },
 }
 </script>
@@ -134,7 +127,6 @@ export default {
 <!-- cssはassetsから自動で読み込む-->
 <style>
 .container {
-  /*background: #eee;*/
   overflow: hidden;
   width: 100%;
 }
