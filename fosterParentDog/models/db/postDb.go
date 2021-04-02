@@ -1,12 +1,9 @@
 package db
 
 import (
-	// エンティティ(データベースのテーブルの行に対応)
 	entity "fpdapp/models/entity"
 	"strconv"
 
-	// postgres用ライブラリ。importしないと下記エラーを出力する。
-	// sql: unknown driver "postgres" (forgotten import?)
 	_ "github.com/lib/pq"
 )
 
