@@ -1,20 +1,11 @@
 package controller
 
 import (
-	// 文字列と基本データ型の変換パッケージ
-	//strconv "strconv"
-
-	// Gin
-	"github.com/gin-gonic/gin"
+	db "fpdapp/models/db"
+	entity "fpdapp/models/entity"
 	"strconv"
 
-	//"fpdapp/models/entity"
-
-	// エンティティ(データベースのテーブルの行に対応)
-	entity "fpdapp/models/entity"
-
-	// DBアクセス用モジュール
-	db "fpdapp/models/db"
+	"github.com/gin-gonic/gin"
 )
 
 //*******************************************************************
