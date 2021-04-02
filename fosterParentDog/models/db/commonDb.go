@@ -1,23 +1,13 @@
 package db
 
 import (
-	// フォーマットI/O
 	"fmt"
-	// osI/O
+	entity "fpdapp/models/entity"
 	"os"
 
-	// Go言語のORM
 	"github.com/jinzhu/gorm"
-
-	// エンティティ(データベースのテーブルの行に対応)
-	entity "fpdapp/models/entity"
-
-	// postgres用ライブラリ。importしないと下記エラーを出力する。
-	// sql: unknown driver "postgres" (forgotten import?)
-	_ "github.com/lib/pq"
-
-	// envファイルを取り扱う
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq" //postgres用ドライバ
 )
 
 //*******************************************************************
