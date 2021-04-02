@@ -1,42 +1,70 @@
 <template>
   <div class="row py-3 justify-content-center" v-if="totalPages">
-    <!--  <div class="row py-3 justify-content-center">-->
     <div class="col-auto">
       <nav aria-label="Page navigation">
         <ul class="pagination">
-          <li class="page-item" :class="{'disabled': currentPageEdited == 1}">
-            <a class="page-link" href="#" v-on:click.prevent="setPage(1);"><<</a>
+          <!--     現在、最新ページにいる場合、最新ページへ移動するリンク << を無効にする     -->
+          <li class="page-item"
+              :class="{'disabled': currentPageNum == newestPageNum}">
+            <a class="page-link"
+               href="#"
+               v-on:click.prevent="setPage(newestPageNum);">
+              <<
+            </a>
           </li>
-          <li class="page-item" :class="{'disabled': currentPageEdited == 1}">
-            <a
-              class="page-link"
-              href="#"
-              v-on:click.prevent="setPage(currentPageEdited -1);"
-              :class="{'disable':currentPageEdited == 1}"
-            ><</a>
+
+          <!--    現在、最新ページにいる場合、前ページへ移動するリンク < を無効にする      -->
+          <li class="page-item"
+              :class="{'disabled': currentPageNum == newestPageNum}">
+            <a class="page-link" href="#"
+               v-on:click.prevent="setPage(currentPageNum - 1);"
+               :class="{'disable':currentPageNum == newestPageNum}">
+              <
+            </a>
           </li>
+
+          <!--     ページセット     -->
           <li
             class="page-item"
             v-for="num in showPagesFix"
             :key="num"
-            :class="{'active' : numFix(num) == currentPageEdited}"
+            :class="{'active' : generatePageNum(num) == currentPageNum}"
           >
-            <template v-if="numFix(num) == currentPageEdited">
-              <span class="page-link">{{ numFix(num) }}</span>
+            <template v-if="generatePageNum(num) == currentPageNum">
+              <span class="page-link">
+                {{ generatePageNum(num) }}
+              </span>
             </template>
             <a
               class="page-link"
               href="#"
-              v-on:click.prevent="setPage(numFix(num))"
+              v-on:click.prevent="setPage(generatePageNum(num))"
               v-else
-            >{{ numFix(num) }}</a>
+            >
+              {{ generatePageNum(num) }}
+            </a>
           </li>
-          <li class="page-item" :class="{'disabled': currentPageEdited == totalPages}">
-            <a class="page-link" href="#" v-on:click.prevent="setPage(currentPageEdited + 1);">></a>
+
+          <!--     現在、最古ページにいる場合、次ページへ移動するリンク > を無効にする     -->
+          <li class="page-item"
+              :class="{'disabled': currentPageNum == totalPages}">
+            <a class="page-link"
+               href="#"
+               v-on:click.prevent="setPage(currentPageNum + 1);">
+              >
+            </a>
           </li>
-          <li class="page-item" :class="{'disabled': currentPageEdited == totalPages}">
-            <a class="page-link" href="#" v-on:click.prevent="setPage(totalPages);">>></a>
+
+          <!--     現在、最古ページにいる場合、最古ページへ移動するリンク >> を無効にする     -->
+          <li class="page-item"
+              :class="{'disabled': currentPageNum == totalPages}">
+            <a class="page-link"
+               href="#"
+               v-on:click.prevent="setPage(totalPages);">
+              >>
+            </a>
           </li>
+
         </ul>
       </nav>
     </div>
@@ -45,78 +73,81 @@
 
 <script>
 export default {
+
+  data() {
+    return {
+      currentPageNum: Number, //現在のページ
+    };
+  },
+
   props: {
     showPages: Number, //ページネーションを何件表示するか
     currentPage: Number, //現在のページ
-    totalCount: Number, //総件数
+    newestPageNum: 1, //最新ページ
     totalPages: Number, //総ページ数
-    perPage: Number, //1ページあたりの表示件数
   },
-  watch: {
-    //ページネーションを複数設置したときの対応
-    currentPage(val) {
-      let vm = this;
-      vm.$set(vm, "currentPageEdited", vm.currentPage);
-    },
+
+  mounted() {
+    this.$set(this, "currentPageNum", this.currentPage);
   },
-  data() {
-    return {
-      currentPageEdited: Number, //現在のページ
-    };
-  },
+
   computed: {
     //ページ番号を計算する
-    numFix() {
-      let vm = this;
+    generatePageNum() {
       return function (num) {
-        let ajust = 1 + (vm.showPages - 1) / 2;
+        let ajust = 1 + (this.showPages - 1) / 2;
         let result = num;
+
         //前ページがマイナスになる場合は1からはじめる
-        if (vm.currentPageEdited > vm.showPages / 2) {
-          let result = num + vm.currentPageEdited - ajust;
+        if (this.currentPageNum > this.showPages / 2) {
+          result = num + this.currentPageNum - ajust;
         }
+
         //後ページが最大ページを超える場合は最大ページを超えないようにする
-        if (vm.currentPageEdited + vm.showPages / 2 > vm.totalPages) {
-          let result = vm.totalPages - vm.showPages + num;
-        } //総ページ数が表示ページ数に満たない場合、連番そのまま
-        if (vm.totalPages <= vm.showPages) {
-          let result = num;
+        if (this.currentPageNum + this.showPages / 2 > this.totalPages) {
+          result = this.totalPages - this.showPages + num;
         }
+
+        //総ページ数が表示ページ数に満たない場合、連番そのまま
+        if (this.totalPages <= this.showPages) {
+          result = num;
+        }
+
         return result;
       };
     },
 
     //総記事数が表示ページ数以下の場合に調整する
     showPagesFix() {
-      let vm = this;
-      if (vm.totalPages < vm.showPages) {
-        return vm.totalPages;
-      } else {
-        return vm.showPages;
-      }
+      return this.totalPages < this.showPages ? this.totalPages : this.showPages;
     },
+
   },
-  mounted() {
-    let vm = this;
-    vm.$set(vm, "currentPageEdited", vm.currentPage);
-  },
+
   methods: {
     //何ページ目を表示するか
     setPage(page) {
-      let vm = this;
       //マイナスにならないようにする
       if (page <= 0) {
-        vm.$set(vm, "currentPageEdited", 1);
+        this.$set(this, "currentPageNum", this.newestPageNum);
       }
       //最大ページを超えないようにする
-      else if (page > vm.totalPages) {
-        vm.$set(vm, "currentPageEdited", vm.totalPages);
+      else if (page > this.totalPages) {
+        this.$set(this, "currentPageNum", this.totalPages);
       } else {
-        vm.$set(vm, "currentPageEdited", page);
+        this.$set(this, "currentPageNum", page);
       }
       //親コンポーネントに現在のページを送る
-      vm.$emit("currentPage", vm.currentPageEdited);
+      this.$emit("currentPage", this.currentPageNum);
     },
   },
+
+  watch: {
+    //ページネーションを複数設置したときの対応
+    currentPage(val) {
+      this.$set(this, "currentPageNum", this.currentPage);
+    },
+  },
+
 };
 </script>
