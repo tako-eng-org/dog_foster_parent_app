@@ -2,16 +2,10 @@ package main
 
 import (
 	"fpdapp/controllers/controller"
-	// ロギングを行うパッケージ
 	"log"
-
-	// HTTPを扱うパッケージ
 	"net/http"
 
-	// Gin
 	"github.com/gin-gonic/gin"
-
-	//// postgresql用ドライバ
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
@@ -33,11 +27,6 @@ func serve() {
 	router.StaticFS("/main", http.Dir("./frontend/dist"))
 
 	// ************************************************
-	// 共通（デバッグ用）
-	// ************************************************
-	router.GET("/fetchAllRecords", controller.FetchAllRecords)
-
-	// ************************************************
 	// トップ画面から使用するAPI
 	// ************************************************
 	// 公開済み投稿数を取得する
@@ -45,13 +34,13 @@ func serve() {
 
 	// 投稿を1ページ表示分取得する
 	// ex: localhost:8000/fosterparent/index?page=1
-	router.GET("/index", controller.FetchIndexRecords)
+	router.GET("/index", controller.Index)
 
 	// ************************************************
 	// 投稿詳細画面から使用するAPI
 	// ************************************************
 	// 投稿レコード情報をDBへ登録する
-	router.POST("/addRecord", controller.AddRecord)
+	router.POST("/addRecord", controller.Create)
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "ルートがない場合に表示するメッセージです"})
