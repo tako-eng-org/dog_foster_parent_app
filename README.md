@@ -1,6 +1,6 @@
-# dog_foster_parent_app
-犬の里親募集アプリ
+# 犬の里親募集アプリ
 
+## start
 ```sh
 # ローカル開発する場合に必要なモジュール
 go get realize
@@ -18,25 +18,26 @@ docker-compose up -d pgadmin
 # access to http://localhost:8001
 ```
 
-
-編集中
+# GoLand(IDE)でDockerコンテナへリモートデバッグする方法
+```docker-compose logs -f dog_app```
+でログを確認する。<br>
+下記ログ出力していればdlvは起動している。
 ```
-# golandでDockerコンテナをアタッチしてデバッグしたいとき
-# port2345で待ち受けるのみ/サーバー(8090)を動かしたい場合は、golandの実行構成にあるのでデバッグボタンを押下すること。
-
-# .realize.ymlのrunをfalseにする
-
-# このスクリプトが実行されていることをログから確認したら、
-# -----remoteDebug or hotReload start-----
-# API server listening at: [::]:2345
-
-# golandのデバッグボタン押下してサーバを起動する
-# [GIN-debug] Listening and serving HTTP on :8090
-
-# curlを叩いてブレークポイントを貼ったところで止まればOK
-# curl -v localhost:8000/fosterparent/fetchAllRecords
-
-# 1度実行すると不安定になるので、下記コマンドでコンテナ再起動した方が早いこともある(再現しない)
-# docker-compose restart dog_app
+-----remoteDebug or hotReload start-----
+API server listening at: [::]:2345
+```
+golandのデバッグ実行ボタン押下し、アプリケーションサーバを起動する。
+下記ログ出力していればアプリケーションサーバは起動している。
 
 ```
+[GIN-debug] Listening and serving HTTP on :8090
+```
+curlなどでAPIを叩いてみて、ブレークポイントを貼ったところで止まればリモートデバッグ機能は期待動作している。<br>
+`curl -v localhost:8000/fosterparent/fetchAllRecords`等<br>
+<br>
+注意点
+1度実行すると不安定になるので、下記コマンドでコンテナ再起動した方が早いこともある(再現しない)<br>
+`docker-compose restart dog_app`<br>
+
+# ホットリロードを使用したい場合
+`fosterParentDog/.realize.yaml`にて設定すること。<br>
