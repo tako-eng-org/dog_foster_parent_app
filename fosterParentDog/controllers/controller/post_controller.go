@@ -11,7 +11,7 @@ import (
 //*******************************************************************
 // 公開済み投稿数を取得する
 //*******************************************************************
-func FetchPublishedPostNum(c *gin.Context) {
+func CountPublishedPostNum(c *gin.Context) {
 	c.JSON(200, db.CountPublishedPostNum()) // URLへのアクセスに対してJSONを返す
 }
 
