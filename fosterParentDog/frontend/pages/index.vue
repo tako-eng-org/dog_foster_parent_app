@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="top">
     <div class="container">
       <h1>里親募集 掲示板</h1>
     </div>
@@ -47,7 +47,15 @@ const axios = require('axios');
 process.env.DEBUG = 'nuxt:*' // nuxt.jsについてログ出力する
 
 export default {
-  data: function () {
+  components: {
+    pagenation,
+  },
+
+  mounted() {
+    this.doFetchIndexRecords(this.currentPage).then(this.doSetPagenation());
+  },
+
+  data() {
     return {
       records: [], // 投稿記事
       // show: true,
@@ -60,9 +68,7 @@ export default {
       totalPages: Number, //算出後の総ページ数
     }
   },
-  components: {
-    pagenation,
-  },
+
   computed: {
     // 表示対象の情報を返却する
     computedRecords() {
@@ -70,20 +76,19 @@ export default {
     },
   },
 
-  mounted: function () {
-    this.doFetchIndexRecords(this.currentPage).then(this.doSetPagenation());
-  },
-
   methods: {
     // 1ページに表示する分、レコードを取得する
-    doFetchIndexRecords(currentPage) {
+    doFetchIndexRecords(page) {
       return new Promise((resolve, reject) => {
         axios.get('/fosterparent/index', {
           params: {
-            page: currentPage,
+            page: page,
           }
         }).then((response) => {
-          if ((response.status = 200)) {
+          if ((response.status != 200)) {
+            throw new Error('レスポンスエラー')
+
+          } else {
             let responseData = response.data
             console.log(responseData)
 
@@ -92,9 +97,8 @@ export default {
             for (let i = 0; i < responseData.length; i++) {
               responseData[i].CreatedAt = responseData[i].CreatedAt.replace(/^(.{10})T(.{5}).+$/, "$1 $2");
             }
+
             this.records = responseData;
-          } else {
-            throw new Error('レスポンスエラー')
           }
         })
       })
@@ -106,16 +110,11 @@ export default {
     doSetPagenation() {
       return new Promise((resolve, reject) => {
         axios.get('/fosterparent/pageCount').then((response) => {
-          if ((response.status = 200)) {
-
-            // 公開済記事数 ex: 41
-            this.totalCount = response.data;
-
-            // 総ページ数 ex: 3
-            this.totalPages = Math.ceil(this.totalCount / this.perPage);
-
-          } else {
+          if ((response.status != 200)) {
             throw new Error('レスポンスエラー')
+          } else {
+            this.totalCount = response.data; // 公開済記事数 ex: 41
+            this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
           }
         })
       })
@@ -126,7 +125,7 @@ export default {
 
 <!-- cssはassetsから自動で読み込む-->
 <style>
-.container {
+.top {
   overflow: hidden;
   width: 100%;
 }
