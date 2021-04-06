@@ -1,8 +1,11 @@
 package controller
 
 import (
+	"fmt"
 	db "fpdapp/models/db"
 	entity "fpdapp/models/entity"
+	"fpdapp/serializers"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
