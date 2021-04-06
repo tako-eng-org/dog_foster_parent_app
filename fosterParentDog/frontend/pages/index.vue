@@ -80,7 +80,7 @@ export default {
     // 1ページに表示する分、レコードを取得する
     doFetchIndexRecords(page) {
       return new Promise((resolve, reject) => {
-        axios.get('/fosterparent/index', {
+        axios.get('/fosterparent/api/index', {
           params: {
             page: page,
           }
@@ -94,9 +94,9 @@ export default {
 
             // CreatedAt(投稿日時)をYYYY/MM/DD hh:mmに整形する
             // 整形前サンプル： "2021-03-08T22:17:32.132636Z"
-            for (let i = 0; i < responseData.length; i++) {
-              responseData[i].CreatedAt = responseData[i].CreatedAt.replace(/^(.{10})T(.{5}).+$/, "$1 $2");
-            }
+            // for (let i = 0; i < responseData.length; i++) {
+            //   responseData[i].created_at = responseData[i].created_at.replace(/^(.{10})T(.{5}).+$/, "$1 $2");
+            // }
 
             this.records = responseData;
           }
@@ -109,7 +109,7 @@ export default {
     // ・総ページ数を算出し、設定する。
     doSetPagenation() {
       return new Promise((resolve, reject) => {
-        axios.get('/fosterparent/pageCount').then((response) => {
+        axios.get('/fosterparent/api/pageCount').then((response) => {
           if ((response.status != 200)) {
             throw new Error('レスポンスエラー')
           } else {

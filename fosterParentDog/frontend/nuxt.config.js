@@ -62,7 +62,7 @@ export default {
     // モードによってルートパスを切り替える。
     // server.go の router.StaticFSに繋がる
     base: process.env.NODE_ENV === 'production'
-      ? '/fosterparent/main'
+      ? '/fosterparent/'
       : '/',
   },
 
