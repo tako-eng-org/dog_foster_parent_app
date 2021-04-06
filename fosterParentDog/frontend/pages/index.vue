@@ -4,23 +4,23 @@
       <h1>里親募集 掲示板</h1>
     </div>
     <!-- レコード表示 -->
-    <div class="container" v-for="record in records" v-bind:key="record.ID">
+    <div class="container" v-for="record in records" v-bind:key="record.id">
       <div class='col-xs-12'>
         <img class='float-left'
              style='padding:0;margin:0 15px 0 0;'
-             v-bind:src="record.TopImagePath"
+             v-bind:src="record.top_image_path"
              width="130"
              height="130">
       </div>
       <div class="row">
         <NuxtLink to="/detail">
-          #{{ record.ID }} {{ record.DogName }}
+          #{{ record.id }} {{ record.dog_name }}
         </NuxtLink>
       </div>
-      <div class="row"><p>犬種 : {{ record.Breed }}</p></div>
-      <div class="row"><p>性別 : {{ record.Gender }}</p></div>
-      <div class="row"><p>自己紹介 : {{ record.Introduction }}</p></div>
-      <div class="row"><p>投稿日時 : {{ record.CreatedAt }}</p></div>
+      <div class="row"><p>犬種 : {{ record.breed }}</p></div>
+      <div class="row"><p>性別 : {{ record.gender }}</p></div>
+      <div class="row"><p>自己紹介 : {{ record.introduction }}</p></div>
+      <div class="row"><p>投稿日時 : {{ record.created_at }}</p></div>
       <br>
     </div>
 
