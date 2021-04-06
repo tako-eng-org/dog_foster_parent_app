@@ -20,11 +20,7 @@ func serve() {
 	router := gin.Default()
 
 	// 静的ファイルのパスを指定
-	router.Static("/dist", "./frontend/dist")
-
-	// ルーターの設定
-	// URLへのアクセスに対して静的ページを返す
-	router.StaticFS("/main", http.Dir("./frontend/dist"))
+	router.Static("/main", "./frontend/dist")
 
 	// ************************************************
 	// トップ画面から使用するAPI
