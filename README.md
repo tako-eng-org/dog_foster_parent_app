@@ -1,6 +1,6 @@
-# 犬の里親募集アプリ
+## 犬の里親募集アプリ
 
-## start
+### start
 ```sh
 # ローカル開発する場合に必要なモジュール
 go get realize
@@ -18,7 +18,30 @@ docker-compose up -d pgadmin
 # access to http://localhost:8001
 ```
 
-# GoLand(IDE)でDockerコンテナへリモートデバッグする方法
+### ディレクトリ構成(編集中)
+参考元(gin公式サンプル)：
+[https://github.com/gothinkster/golang-gin-realworld-example-app/blob/master/users/serializers.go#L14-L34](https://github.com/gothinkster/golang-gin-realworld-example-app/blob/master/users/serializers.go#L14-L34)
+
+```
+models
+|- db.go
+|   
+|_ entities
+    |- user.go
+    |- post.go
+    |_ post_image.go
+    |_省略
+controllers
+|- post_controller.go
+|- user_controller.go
+|_省略
+serializers (controllerと対)
+|- post_serializer.go
+|- user_serializer.go
+|_省略
+```
+
+### GoLand(IDE)でDockerコンテナへリモートデバッグする方法
 ```docker-compose logs -f dog_app```
 でログを確認する。<br>
 下記ログ出力していればdlvは起動している。
