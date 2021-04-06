@@ -87,18 +87,8 @@ export default {
         }).then((response) => {
           if ((response.status != 200)) {
             throw new Error('レスポンスエラー')
-
           } else {
-            let responseData = response.data
-            console.log(responseData)
-
-            // CreatedAt(投稿日時)をYYYY/MM/DD hh:mmに整形する
-            // 整形前サンプル： "2021-03-08T22:17:32.132636Z"
-            // for (let i = 0; i < responseData.length; i++) {
-            //   responseData[i].created_at = responseData[i].created_at.replace(/^(.{10})T(.{5}).+$/, "$1 $2");
-            // }
-
-            this.records = responseData;
+            this.records = response.data;
           }
         })
       })
