@@ -33,35 +33,36 @@ func Index(c *gin.Context) {
 // 投稿テーブルへ登録する
 //*******************************************************************
 func Create(c *gin.Context) {
-	// 数値に変換する
-	publishing, _ := strconv.Atoi(c.PostForm("publishing"))
-	gender, _ := strconv.Atoi(c.PostForm("gender"))
-	spay, _ := strconv.Atoi(c.PostForm("spay"))
-	singlePerson, _ := strconv.Atoi(c.PostForm("single_person"))
-	seniorPerson, _ := strconv.Atoi(c.PostForm("senior_person"))
-	transferStatus, _ := strconv.Atoi(c.PostForm("transter_status"))
-	transfablePrefecture, _ := strconv.Atoi(c.PostForm("transferable_prefecture"))
 	userId, _ := strconv.ParseUint(c.PostForm("user_id"), 10, 64)
 	postImageId, _ := strconv.ParseUint(c.PostForm("post_image_id"), 10, 64)
 
 	// テーブルに登録するためのレコード情報
 	var record = entity.Post{
-		Publishing:             publishing,
+		Publishing:             strToInt(c.PostForm("publishing")),
 		DogName:                c.PostForm("dog_name"),
 		Breed:                  c.PostForm("breed"),
-		Gender:                 gender,
-		Spay:                   spay,
+		Gender:                 strToInt(c.PostForm("gender")),
+		Spay:                   strToInt(c.PostForm("spay")),
 		Old:                    c.PostForm("old"),
-		SinglePerson:           singlePerson,
-		SeniorPerson:           seniorPerson,
-		TransferStatus:         transferStatus,
+		SinglePerson:           strToInt(c.PostForm("single_person")),
+		SeniorPerson:           strToInt(c.PostForm("senior_person")),
+		TransferStatus:         strToInt(c.PostForm("transter_status")),
 		Introduction:           c.PostForm("introduction"),
 		AppealPoint:            c.PostForm("appeal_point"),
-		TransferablePrefecture: transfablePrefecture,
+		TransferablePrefecture: strToInt(c.PostForm("transferable_prefecture")),
 		OtherMessage:           c.PostForm("other_message"),
 		UserId:                 userId,
 		TopImagePath:           c.PostForm("top_image_path"),
 		PostImageId:            postImageId,
 	}
 	db.InsertRecord(&record)
+}
+
+// 文字列を数値に変換する
+func strToInt(arg string) int {
+	ret, err := strconv.Atoi(arg)
+	if err != nil {
+		fmt.Printf("This function was error: %q\n", err)
+	}
+	return ret
 }
