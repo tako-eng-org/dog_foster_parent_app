@@ -19,8 +19,11 @@ func CountPublishedPostNum(c *gin.Context) {
 // 投稿を1ページ表示(20件)分取得する
 //*******************************************************************
 func Index(c *gin.Context) {
-	page := c.DefaultQuery("page", "1")    // ?page=1(デフォルト)
-	c.JSON(200, db.FindIndexRecords(page)) // URLへのアクセスに対してJSONを返す
+	page := c.DefaultQuery("page", "1")               // ?page=1(デフォルト)
+	postModel, _ := db.FindIndexRecords(page)         //ORMを叩いてデータとerrを取得する
+	c.Set("my_post_model", postModel)                 //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostSerializer{c, postModel} //結果をコンテキストとスライス[]に格納する
+	c.JSON(http.StatusOK, posts.Response())           //コンテキストに入ったデータを整形してリターン
 }
 
 //*******************************************************************
