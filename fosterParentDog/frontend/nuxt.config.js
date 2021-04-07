@@ -40,7 +40,10 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    proxy: true,
+    prefix: '/fosterparent',
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
@@ -57,8 +60,9 @@ export default {
   router: {
     // .env.local or prod にて環境変数NODE_ENVを設定し、
     // モードによってルートパスを切り替える。
+    // server.go の router.StaticFSに繋がる
     base: process.env.NODE_ENV === 'production'
-      ? '/fosterparent/main'
+      ? '/fosterparent/'
       : '/',
   },
 

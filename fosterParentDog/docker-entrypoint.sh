@@ -1,12 +1,12 @@
 #!/bin/sh
 echo "-----`basename $0`-----"
 
-echo "-----realize install start-----"
-GO111MODULE=off go get github.com/oxequa/realize;
-echo "-----realize installed-----"
+export GO111MODULE=on #go.modをgo build時に実行するための環境変数設定
+export GOPATH=''
 
-# go.modをgo build時に実行するための環境変数設定
-export GO111MODULE=on
-
-echo "-----realize start-----"
-realize start
+echo "-----remoteDebug or hotReload start-----"
+#dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient
+/go/bin/realize start;
+echo "-----remoteDebug or hotReload end-----"
+sleep 5000;
+exit 1
