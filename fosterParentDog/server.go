@@ -15,25 +15,48 @@ func main() {
 }
 
 func serve() {
-	// デフォルトのミドルウェアでginのルーターを作成
-	// Logger と アプリケーションクラッシュをキャッチするRecoveryミドルウェア を保有しています
-	router := gin.Default()
 
-	// 静的ファイルのパスを指定
-	router.Static("/main", "./frontend/dist")
+	database := db.Open()
+	defer database.Close()
+
+	postController := controller.PostController{
+		Database: database,
+	}
+
+	router := gin.Default()                   // デフォルトのミドルウェアでginのルーターを作成
+	router.Static("/main", "./frontend/dist") // 静的ファイルのパスを指定
 
 	// ************************************************
 	// トップ画面から使用するAPI
 	// ************************************************
 	// 公開済み投稿数を取得する
-	router.GET("/pageCount", controller.CountPublishedPostNum)
+	router.GET("/pageCount", postController.CountPublishedPostNum)
 
 	// 投稿を1ページ表示分取得する
 	// ex: localhost:8000/fosterparent/index?page=1
-	router.GET("/index", controller.Index)
+	router.GET("/index", postController.Index)
 
 	// ************************************************
 	// 投稿詳細画面から使用するAPI
+	// ************************************************
+	// 投稿を対象idの1件分取得する
+	// ex: localhost:8000/fosterparent/post?postId=1
+	router.GET("/post", postController.FetchPostOneRecord)
+
+	// 投稿idをもとに、投稿画像を取得する
+	// ex: localhost:8000/fosterparent/images?postId=44
+	router.GET("/images", postController.FetchPostImagePaths)
+
+	// 投稿idをもとに、投稿画像を取得する
+	// ex: localhost:8000/fosterparent/detail/44
+	router.GET("/transferable_prefecture", postController.FetchPostTransferablePrefecture)
+
+	// 投稿idをもとに、投稿画像を取得する
+	// ex: localhost:8000/fosterparent/?????????
+	//router.GET("/user_profile", postController.FetchPostUserProfile)
+
+	// ************************************************
+	// test
 	// ************************************************
 	// 投稿レコード情報をDBへ登録する
 	router.POST("/addRecord", postController.Create)
