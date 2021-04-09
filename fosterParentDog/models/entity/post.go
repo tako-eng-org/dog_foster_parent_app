@@ -1,6 +1,8 @@
 package entity
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 //投稿記事テーブル用
 //ユーザーが投稿した公開及び非公開記事のテーブルである。
@@ -22,4 +24,85 @@ type Post struct {
 	UserId                 uint64 `gorm:"type:int;					"`              //ユーザーID
 	TopImagePath           string `gorm:"type:varchar(150);	not null"` //top投稿画像パス
 	PostImageId            uint64 `gorm:"type:int;					"`              //投稿画像ID
+}
+
+//setter
+func (s *Post) SetPublishing(i interface{}) int {
+	var r, _ = i.(int)
+	return r
+}
+
+func (s *Post) SetDogName(i interface{}) string {
+	var r, _ = i.(string)
+	return r
+}
+
+func (s *Post) SetBreed(i interface{}) string {
+	var r, _ = i.(string)
+	return r
+}
+
+func (s *Post) SetGender(i interface{}) int {
+	var r, _ = i.(int)
+	return r
+}
+
+func (s *Post) SetSpay(i interface{}) int {
+	var r, _ = i.(int)
+	return r
+}
+
+func (s *Post) SetOld(i interface{}) string {
+	var r, _ = i.(string)
+	return r
+}
+
+func (s *Post) SetSinglePerson(i interface{}) int {
+	var r, _ = i.(int)
+	return r
+}
+
+func (s *Post) SetSeniorPerson(i interface{}) int {
+	var r, _ = i.(int)
+	return r
+}
+
+func (s *Post) SetTransferStatus(i interface{}) int {
+	var r, _ = i.(int)
+	return r
+}
+
+func (s *Post) SetIntroduction(i interface{}) string {
+	var r, _ = i.(string)
+	return r
+}
+
+func (s *Post) SetAppealPoint(i interface{}) string {
+	var r, _ = i.(string)
+	return r
+}
+
+func (s *Post) SetTransferablePrefecture(i interface{}) int {
+	var r, _ = i.(int)
+	return r
+}
+
+func (s *Post) SetOtherMessage(i interface{}) string {
+	var r, _ = i.(string)
+	return r
+}
+
+func (s *Post) SetUserId(i interface{}) uint64 {
+	var r, _ = i.(uint64)
+	return r
+}
+
+func (s *Post) SetTopImagePath(i interface{}) string {
+	var r, _ = i.(string)
+	return r
+}
+
+func (s *Post) SetPostImageId(i interface{}) uint64 {
+	var r, _ = i.(uint64)
+	return r
 }
