@@ -36,7 +36,7 @@ func serve() {
 	// 投稿詳細画面から使用するAPI
 	// ************************************************
 	// 投稿レコード情報をDBへ登録する
-	router.POST("/addRecord", controller.Create)
+	router.POST("/addRecord", postController.Create)
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "ルートがない場合に表示するメッセージです"})
