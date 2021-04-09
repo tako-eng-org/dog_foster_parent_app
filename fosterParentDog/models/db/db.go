@@ -11,10 +11,16 @@ import (
 	_ "github.com/lib/pq" //postgres用ドライバ
 )
 
+type (
+	Database struct {
+		db *gorm.DB
+	}
+)
+
 //*******************************************************************
 // DB接続する
 //*******************************************************************
-func open() *gorm.DB {
+func Open() *Database {
 	// .envファイルから環境変数を読み出す
 	fileEnv := godotenv.Load(fmt.Sprintf("./%s.env", os.Getenv("GO_ENV")))
 
@@ -56,42 +62,46 @@ func open() *gorm.DB {
 	)
 
 	fmt.Println("db connected: ", &db)
-	return db
+	return &Database{db: db}
+}
+
+//*******************************************************************
+// DBをクローズする
+//*******************************************************************
+func (db *Database) Close() {
+	_ = db.db.Close()
 }
 
 //*******************************************************************
 // 公開済みレコードの数を取得する
 //*******************************************************************
 // return(ex): -> 41
-func CountPublishedPostNum() int64 {
+func (db *Database) CountPublishedPostNum() int64 {
 	var countNum int64
 
-	db := open()
 	//SELECT count(id) FROM "post"  WHERE (publishing = '0')
-	db.Table("post").
+	db.db.Table("post").
 		Select("count(id)").
 		Where("publishing = ?", "0").
 		Count(&countNum)
 
-	defer db.Close()
 	return countNum
 }
 
 //*******************************************************************
 // 公開済み投稿を1ページ表示分取得する
 //*******************************************************************
-func FindIndexRecords(page string) ([]entity.Post, error) {
-	db := open() // return *gorm.DB
+func (db *Database) FindIndexRecords(page string) ([]entity.Post, error) {
+
 	model := []entity.Post{}
 	pageNum, _ := strconv.Atoi(page) // 数値に変換する
 	numberPerPage := 20              // 1ページあたりの表示件数
 
-	err := db.Order("id desc").
+	err := db.db.Order("id desc").
 		Limit(numberPerPage).
 		Offset((pageNum - 1) * numberPerPage).
 		Find(&model). // ポインタを渡してメモリアドレスに結果を格納する
 		Error
-	defer db.Close()
 	return model, err
 }
 
@@ -138,8 +148,6 @@ func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, er
 //*******************************************************************
 // レコードを登録する
 //*******************************************************************
-func InsertRecord(registerRecord *entity.Post) {
-	db := open()
-	db.Create(&registerRecord) // insert
-	defer db.Close()
+func (db *Database) InsertRecord(registerRecord *entity.Post) {
+	db.db.Create(&registerRecord) // insert
 }
