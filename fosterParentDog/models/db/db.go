@@ -3,7 +3,6 @@ package db
 import (
 	"fmt"
 	entity "fpdapp/models/entity"
-	serializer "fpdapp/serializers"
 	"os"
 	"strconv"
 
@@ -53,6 +52,7 @@ func open() *gorm.DB {
 		&entity.PostImage{},
 		&entity.PostPrefecture{},
 		&entity.Prefecture{},
+		&entity.TransferablePrefecture{},
 	)
 
 	fmt.Println("db connected: ", &db)
@@ -98,39 +98,41 @@ func FindIndexRecords(page string) ([]entity.Post, error) {
 //*******************************************************************
 // [第1引数]の投稿IDでレコードを取得する
 //*******************************************************************
-func FindPostOneRecord(postIdStr string) []serializer.PostResponse {
-	var records []serializer.PostResponse
-	db := open()
-	// 数値に変換する
-	//postId, _ := strconv.Atoi(postIdStr)
+func (db *Database) FindPostOneRecord(postId string) ([]entity.Post, error) {
+	model := []entity.Post{}
 
-	db.Where("id = ?", postIdStr).First(&records)
-	defer db.Close()
+	err := db.db.Where("id = ?", postId).First(&model).Error
 
-	return records
+	return model, err
 }
 
 //*******************************************************************
-// [第1引数]の投稿IDで、投稿画像デーブルから投稿画像パスを取得する
+// [第1引数]の投稿IDで、投稿画像テーブルから投稿画像パスを取得する
 //*******************************************************************
-type Results struct {
-	Id        uint
-	ImagePath string //名前はテーブル定義と統一すれば取得できる。
-}
+func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, error) {
+	model := []entity.PostImage{}
 
-func FindPostImagePaths(postIdStr string) []Results {
-	var ResultUrls []Results
-	db := open()
+	//SELECT post.id as post_id,
+	//post_image.id as post_image_id
+	//post_image.image_path
+	//FROM "post"
+	//left join post_image
+	//on post.id = post_image.post_id
+	//WHERE (post.id = '44')
+	err := db.db.Table("post").
+		Select("post.id as post_id,"+
+			" post_image.id as post_image_id,"+
+			" post_image.image_path").
+		Joins("left join post_image"+
+			" on post.id = post_image.post_id ").
+		Where("post.id = ?", postIdStr).
+		Scan(&model).
+		Error
 
-	// TODO 全部取れてない気がする
-	db.Table("post").
-		Select("post_image.id, post_image.image_path").
-		Joins("join post_image on post.id = post_image.post_id").
-		Where("post.id <> ?", postIdStr).
-		Scan(&ResultUrls)
-
-	defer db.Close()
-	return ResultUrls
+	if err != nil {
+		fmt.Println(err)
+	}
+	return model, err
 }
 
 //*******************************************************************
@@ -141,21 +143,3 @@ func InsertRecord(registerRecord *entity.Post) {
 	db.Create(&registerRecord) // insert
 	defer db.Close()
 }
-
-////debug-----------------------start
-//func Get20Records(page string) ([]entity.Post, error) {
-//	db := open() // return *gorm.DB
-//	model := []entity.Post{}
-//	pageNum, _ := strconv.Atoi(page) // 数値に変換する
-//	numberPerPage := 20              // 1ページあたりの表示件数
-//
-//	err := db.Order("id desc").
-//		Limit(numberPerPage).
-//		Offset((pageNum - 1) * numberPerPage).
-//		Find(&model). // ポインタを渡してメモリアドレスに結果を格納する
-//		Error
-//	//fmt.Printf("%v", model)
-//	defer db.Close()
-//	return model, err
-//}
-////------------------
