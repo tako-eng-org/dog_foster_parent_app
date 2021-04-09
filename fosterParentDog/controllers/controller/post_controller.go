@@ -66,3 +66,15 @@ func strToInt(arg string) int {
 	}
 	return ret
 }
+
+//*******************************************************************
+// 投稿idをもとに、投稿画像を取得する
+//*******************************************************************
+func (pc *PostController) FetchPostTransferablePrefecture(c *gin.Context) {
+	postId := c.Query("postId")
+	model, _ := pc.Database.FindPostFetchPostTransferablePrefecture(postId) //ORMを叩いてデータとerrを取得する
+
+	c.Set("my_post_transferable_prefecture_model", model)               //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostTransferablePrefectureSerializer{c, model} //結果をコンテキストとスライス[]に格納する
+	c.JSON(http.StatusOK, posts.ResponsePostTransferablePrefecture())   //コンテキストに入ったデータを整形してリターン
+}
