@@ -2,6 +2,7 @@ package main
 
 import (
 	"fpdapp/controllers/controller"
+	"fpdapp/models/db"
 	"log"
 	"net/http"
 
