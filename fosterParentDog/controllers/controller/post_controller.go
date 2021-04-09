@@ -1,70 +1,87 @@
 package controller
 
 import (
-	"fmt"
 	db "fpdapp/models/db"
-	entity "fpdapp/models/entity"
+	"fpdapp/models/entity"
 	"fpdapp/serializers"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+)
+
+type (
+	PostController struct {
+		Database *db.Database
+	}
 )
 
 //*******************************************************************
 // 公開済み投稿数を取得する
 //*******************************************************************
-func CountPublishedPostNum(c *gin.Context) {
-	c.JSON(200, db.CountPublishedPostNum()) // URLへのアクセスに対してJSONを返す
+func (pc *PostController) CountPublishedPostNum(c *gin.Context) {
+	c.JSON(http.StatusOK, pc.Database.CountPublishedPostNum()) // URLへのアクセスに対してJSONを返す
 }
 
 //*******************************************************************
 // 投稿を1ページ表示(20件)分取得する
 //*******************************************************************
-func Index(c *gin.Context) {
-	page := c.DefaultQuery("page", "1")               // ?page=1(デフォルト)
-	postModel, _ := db.FindIndexRecords(page)         //ORMを叩いてデータとerrを取得する
-	c.Set("my_post_model", postModel)                 //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostSerializer{c, postModel} //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.Response())           //コンテキストに入ったデータを整形してリターン
+func (pc *PostController) Index(c *gin.Context) {
+	page := c.DefaultQuery("page", "1")                // ?page=1(デフォルト)
+	postModel, _ := pc.Database.FindIndexRecords(page) //ORMを叩いてデータとerrを取得する
+	c.Set("my_post_model", postModel)                  //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostSerializer{c, postModel}  //結果をコンテキストとスライス[]に格納する
+	c.JSON(http.StatusOK, posts.Response())            //コンテキストに入ったデータを整形してリターン
 }
 
 //*******************************************************************
 // 投稿テーブルへ登録する
 //*******************************************************************
-func Create(c *gin.Context) {
-	userId, _ := strconv.ParseUint(c.PostForm("user_id"), 10, 64)
-	postImageId, _ := strconv.ParseUint(c.PostForm("post_image_id"), 10, 64)
-
-	// テーブルに登録するためのレコード情報
-	var record = entity.Post{
-		Publishing:             strToInt(c.PostForm("publishing")),
-		DogName:                c.PostForm("dog_name"),
-		Breed:                  c.PostForm("breed"),
-		Gender:                 strToInt(c.PostForm("gender")),
-		Spay:                   strToInt(c.PostForm("spay")),
-		Old:                    c.PostForm("old"),
-		SinglePerson:           strToInt(c.PostForm("single_person")),
-		SeniorPerson:           strToInt(c.PostForm("senior_person")),
-		TransferStatus:         strToInt(c.PostForm("transter_status")),
-		Introduction:           c.PostForm("introduction"),
-		AppealPoint:            c.PostForm("appeal_point"),
-		TransferablePrefecture: strToInt(c.PostForm("transferable_prefecture")),
-		OtherMessage:           c.PostForm("other_message"),
-		UserId:                 userId,
-		TopImagePath:           c.PostForm("top_image_path"),
-		PostImageId:            postImageId,
+func (pc *PostController) Create(c *gin.Context) {
+	t := entity.Post{}
+	var record = entity.Post{ // テーブルに登録するためのレコード情報
+		Publishing:             t.SetPublishing(c.PostForm("publishing")),
+		DogName:                t.SetDogName(c.PostForm("dog_name")),
+		Breed:                  t.SetBreed(c.PostForm("breed")),
+		Gender:                 t.SetGender(c.PostForm("gender")),
+		Spay:                   t.SetSpay(c.PostForm("spay")),
+		Old:                    t.SetOld(c.PostForm("old")),
+		SinglePerson:           t.SetSinglePerson(c.PostForm("single_person")),
+		SeniorPerson:           t.SetSeniorPerson(c.PostForm("senior_person")),
+		TransferStatus:         t.SetTransferablePrefecture(c.PostForm("transter_status")),
+		Introduction:           t.SetIntroduction(c.PostForm("introduction")),
+		AppealPoint:            t.SetAppealPoint(c.PostForm("appeal_point")),
+		TransferablePrefecture: t.SetTransferablePrefecture(c.PostForm("transferable_prefecture")),
+		OtherMessage:           t.SetOtherMessage(c.PostForm("other_message")),
+		UserId:                 t.SetUserId(c.PostForm("user_id")),
+		TopImagePath:           t.SetTopImagePath(c.PostForm("top_image_path")),
+		PostImageId:            t.SetPostImageId(c.PostForm("post_image_id")),
 	}
-	db.InsertRecord(&record)
+	pc.Database.InsertRecord(&record)
+
+	c.JSON(http.StatusCreated, "****************created")
 }
 
-// 文字列を数値に変換する
-func strToInt(arg string) int {
-	ret, err := strconv.Atoi(arg)
-	if err != nil {
-		fmt.Printf("This function was error: %q\n", err)
-	}
-	return ret
+//*******************************************************************
+// 投稿を対象idの1件取得する
+//*******************************************************************
+func (pc *PostController) FetchPostOneRecord(c *gin.Context) {
+	postId := c.Query("postId")
+	postModel, _ := pc.Database.FindPostOneRecord(postId) //ORMを叩いてデータとerrを取得する
+	c.Set("my_post_model", postModel)                     //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostSerializer{c, postModel}     //結果をコンテキストとスライス[]に格納する
+	c.JSON(http.StatusOK, posts.Response())               //コンテキストに入ったデータを整形してリターン
+}
+
+//*******************************************************************
+// 投稿idをもとに、投稿画像を取得する
+//*******************************************************************
+func (pc *PostController) FetchPostImagePaths(c *gin.Context) {
+	postId := c.Query("postId")
+	postImageModel, _ := pc.Database.FindPostImagePaths(postId) //ORMを叩いてデータとerrを取得する
+
+	c.Set("my_post_image_model", postImageModel)                //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostImageSerializer{c, postImageModel} //結果をコンテキストとスライス[]に格納する
+	c.JSON(http.StatusOK, posts.ResponsePostImage())            //コンテキストに入ったデータを整形してリターン
 }
 
 //*******************************************************************
