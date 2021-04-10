@@ -1,4 +1,7 @@
 export default {
+  target: 'static',
+  ssr: false, // サーバーサイドレンダリングを無効化
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'frontend',
@@ -51,8 +54,9 @@ export default {
   proxy: {
     '/': {
       target: process.env.NODE_ENV === 'production'
-        ? 'http://localhost:8000'
-        : 'http://dog_app:8000',
+        ? 'http://localhost:8000' //本番は本番用ドメインに修正すること
+        : 'http://localhost:8000',
+// : 'http://dog_app:8000',
       logLevel: 'debug'
     },
   },
@@ -64,6 +68,6 @@ export default {
     base: process.env.NODE_ENV === 'production'
       ? '/fosterparent/'
       : '/',
+    // : '/',
   },
-
 }
