@@ -13,9 +13,9 @@
              height="130">
       </div>
       <div class="row">
-        <NuxtLink to="/detail">
+        <nuxt-link :to="`/detail/${record.id}`">
           #{{ record.id }} {{ record.dog_name }}
-        </NuxtLink>
+        </nuxt-link>
       </div>
       <div class="row"><p>犬種 : {{ record.breed }}</p></div>
       <div class="row"><p>性別 : {{ record.gender }}</p></div>
@@ -85,7 +85,7 @@ export default {
             page: page,
           }
         }).then((response) => {
-          if ((response.status != 200)) {
+          if ((response.status !== 200)) {
             throw new Error('レスポンスエラー')
           } else {
             this.records = response.data;
@@ -100,7 +100,7 @@ export default {
     doSetPagenation() {
       return new Promise((resolve, reject) => {
         axios.get('/fosterparent/api/pageCount').then((response) => {
-          if ((response.status != 200)) {
+          if ((response.status !== 200)) {
             throw new Error('レスポンスエラー')
           } else {
             this.totalCount = response.data; // 公開済記事数 ex: 41
