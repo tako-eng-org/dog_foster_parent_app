@@ -180,7 +180,7 @@ export default {
           postId: currentPostId,
         }
       }).then((response) => {
-        if ((response.status != 200)) {
+        if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
           let responseData = response.data
@@ -200,7 +200,7 @@ export default {
           postId: currentPostId,
         }
       }).then((response) => {
-        if ((response.status != 200)) {
+        if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
           this.image_paths = response.data;
@@ -215,7 +215,7 @@ export default {
           postId: currentPostId,
         }
       }).then((response) => {
-        if ((response.status != 200)) {
+        if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
           this.transferable_prefectures = response.data;
@@ -230,7 +230,7 @@ export default {
           postId: currentPostId,
         }
       }).then((response) => {
-        if ((response.status != 200)) {
+        if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
           this.user_profile = response.data;
