@@ -60,7 +60,7 @@ func serve() {
 	// test
 	// ************************************************
 	// 投稿レコード情報をDBへ登録する
-	router.POST("/addRecord", postController.Create)
+	router.POST("/add_record", postController.Create)
 
 	// ************************************************
 	// 異常系
