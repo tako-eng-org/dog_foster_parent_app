@@ -17,6 +17,12 @@ type (
 	}
 )
 
+// テーブル名
+const PostTable = "posts"
+const PostImageTable = "post_images"
+const TransferablePrefecturestable = "transferable_prefectures"
+const UserTable = "public.users"
+
 //*******************************************************************
 // DB接続する
 //*******************************************************************
@@ -80,7 +86,7 @@ func (db *Database) CountPublishedPostNum() int64 {
 	var countNum int64
 
 	//SELECT count(id) FROM "post"  WHERE (publishing = '0')
-	db.db.Table("post").
+	db.db.Table(PostTable).
 		Select("count(id)").
 		Where("publishing = ?", "0").
 		Count(&countNum)
@@ -129,13 +135,60 @@ func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, er
 	//left join post_image
 	//on post.id = post_image.post_id
 	//WHERE (post.id = '44')
-	err := db.db.Table("post").
-		Select("post.id as post_id,"+
-			" post_image.id as post_image_id,"+
-			" post_image.image_path").
-		Joins("left join post_image"+
-			" on post.id = post_image.post_id ").
-		Where("post.id = ?", postIdStr).
+	err := db.db.Table(PostTable).
+		Select(PostTable+".id as post_id,"+
+			" "+PostImageTable+".id as post_image_id,"+
+			" "+PostImageTable+".image_path").
+		Joins("left join "+PostImageTable+
+			" on "+PostTable+".id = "+PostImageTable+".post_id ").
+		Where(PostTable+".id = ?", postIdStr).
+		Scan(&model).
+		Error
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	return model, err
+}
+
+//*******************************************************************
+// [第1引数]の投稿IDで、譲渡可能都道府県を取得する
+//*******************************************************************
+func (db *Database) FindPostFetchPostTransferablePrefecture(postIdStr string) ([]entity.TransferablePrefecture, error) {
+	model := []entity.TransferablePrefecture{}
+
+	//select transferable_prefecture.id, transferable_prefecture.transferable_prefecture_id from transferable_prefecture where post_id = 44;
+	err := db.db.Table(TransferablePrefecturestable).
+		Select(TransferablePrefecturestable+".id,"+
+			" "+TransferablePrefecturestable+".post_id,"+
+			" "+TransferablePrefecturestable+".transferable_prefecture_id").
+		Where(TransferablePrefecturestable+".post_id = ?", postIdStr).
+		Scan(&model).
+		Error
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	return model, err
+}
+
+//*******************************************************************
+// [第1引数]の投稿IDで、ユーザー情報を取得する
+//*******************************************************************
+func (db *Database) FindPostUserProfile(postIdStr string) ([]entity.User, error) {
+	model := []entity.User{}
+
+	/*
+		select B.*
+		from post A
+		inner join public.user B
+		on A.user_id = B.id
+		where A.id = 44;
+	*/
+	err := db.db.Table(PostTable+" A").
+		Select("B.*").
+		Joins("inner join "+UserTable+" B on A.user_id = B.id").
+		Where("A.id = ?", postIdStr).
 		Scan(&model).
 		Error
 
