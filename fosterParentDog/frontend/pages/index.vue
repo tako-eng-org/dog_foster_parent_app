@@ -83,7 +83,7 @@ export default {
      */
     doFetchIndexRecords(page) {
       return new Promise((resolve, reject) => {
-        axios.get('/fosterparent/api/index', {
+        axios.get('api/index', {
           params: {
             page: page,
           }
@@ -105,7 +105,7 @@ export default {
      */
     doSetPagenation() {
       return new Promise((resolve, reject) => {
-        axios.get('/fosterparent/api/pageCount').then((response) => {
+        axios.get('api/published_post_count').then((response) => {
           if ((response.status !== 200)) {
             throw new Error('レスポンスエラー')
           } else {

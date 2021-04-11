@@ -1,9 +1,5 @@
 <template>
   <div className="container">
-    <h1>Detail</h1>
-    <!--    <div v-bind:post_id_>-->
-    <h1>{{ $route.params.id }}</h1>
-    <!--    </div>-->
     <div class="container" v-for="record in records" v-bind:key="record.id">
       <div class='col-xs-12'>
         <img class='float-left'
@@ -81,26 +77,15 @@ export default {
   },
   components: {},
   computed: {
-    // 表示対象の情報を返却する
     computedRecords() {
-
-      if (this.$route.params.id !== undefined) {
-        console.log("idがありません_computed")
-      }
-
-      this.doFetchOneRecords(this.$route.params['id']);
-      this.doFetchPostImagePaths(this.$route.params['id']);
-      this.doFetchTransferablePrefecture(this.$route.params['id']);
     },
   },
 
   mounted: function () {
-    if (this.$route.params.id !== undefined) {
-      console.log("idがありません_mounted")
-    }
     this.doFetchOneRecords(this.$route.params['id']);
     this.doFetchPostImagePaths(this.$route.params['id']);
     this.doFetchTransferablePrefecture(this.$route.params['id']);
+    this.doFetchUserProfile(this.$route.params['id']);
   },
 
   methods: {
@@ -109,20 +94,13 @@ export default {
      * @param {int} postID
      */
     doFetchOneRecords(currentPostId) {
-      axios.get('/fosterparent/api/post', {
-        params: {
-          postId: currentPostId,
-        }
+      axios.get('api/post', {
+        params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
-          let responseData = response.data
-          // console.log(responseData)
-          console.log("111111111111")
-          console.log(response.data["transter_status"])
-          console.log("111111111111")
-          this.records = responseData;
+          this.records = response.data;
         }
       })
     },
@@ -132,10 +110,8 @@ export default {
      * @param {int} postID
      */
     doFetchPostImagePaths(currentPostId) {
-      axios.get('/fosterparent/api/images', {
-        params: {
-          postId: currentPostId,
-        }
+      axios.get('api/images', {
+        params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
@@ -150,10 +126,8 @@ export default {
      * @param {int} postID
      */
     doFetchTransferablePrefecture(currentPostId) {
-      axios.get('/fosterparent/api/transferable_prefecture', {
-        params: {
-          postId: currentPostId,
-        }
+      axios.get('api/transferable_prefecture', {
+        params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
@@ -168,10 +142,8 @@ export default {
      * @param {int} postID
      */
     doFetchUserProfile(currentPostId) {
-      axios.get('/fosterparent/api/user_profile', {
-        params: {
-          postId: currentPostId,
-        }
+      axios.get('api/user_profile', {
+        params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
