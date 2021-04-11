@@ -48,8 +48,8 @@ func Open() *Database {
 	// 詳細なログを表示
 	db.LogMode(true)
 
-	// 登録するテーブル名を単数形にする（デフォルトは複数形）
-	db.SingularTable(true)
+	// 登録するテーブル名を複数形で扱う（デフォルトは複数形）
+	db.SingularTable(false)
 
 	// マイグレーション（テーブルが無い時は自動生成）
 	db.AutoMigrate(
