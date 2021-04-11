@@ -104,11 +104,10 @@ export default {
   },
 
   methods: {
-    getLabel(mapName, i) {
-      return mapName.find(map => map.value === i).label
-    },
-
-    // 1ページに表示する分、レコードを取得する
+    /**
+     * 投稿IDに紐づいた基礎投稿情報を取得する
+     * @param {int} postID
+     */
     doFetchOneRecords(currentPostId) {
       axios.get('/fosterparent/api/post', {
         params: {
@@ -128,7 +127,10 @@ export default {
       })
     },
 
-    // 1ページに表示する分、レコードを取得する
+    /**
+     * 投稿IDに紐づいた画像パスを取得する
+     * @param {int} postID
+     */
     doFetchPostImagePaths(currentPostId) {
       axios.get('/fosterparent/api/images', {
         params: {
@@ -143,7 +145,10 @@ export default {
       })
     },
 
-    // 投稿IDに紐づく譲渡可能都道府県を取得する
+    /**
+     * 投稿IDに紐づいた譲渡可能都道府県を取得する
+     * @param {int} postID
+     */
     doFetchTransferablePrefecture(currentPostId) {
       axios.get('/fosterparent/api/transferable_prefecture', {
         params: {
@@ -158,7 +163,10 @@ export default {
       })
     },
 
-    // 1ページに表示する分、ユーザー情報を取得する
+    /**
+     * 投稿IDのユーザーIDに紐づいたユーザー情報を取得する
+     * @param {int} postID
+     */
     doFetchUserProfile(currentPostId) {
       axios.get('/fosterparent/api/user_profile', {
         params: {

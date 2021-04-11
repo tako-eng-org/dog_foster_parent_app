@@ -77,7 +77,10 @@ export default {
   },
 
   methods: {
-    // 1ページに表示する分、レコードを取得する
+    /**
+     * 指定したページの投稿一覧を取得する
+     * @param {int} pageNum
+     */
     doFetchIndexRecords(page) {
       return new Promise((resolve, reject) => {
         axios.get('/fosterparent/api/index', {
@@ -94,9 +97,12 @@ export default {
       })
     },
 
-    // ページネーションのため
-    // ・公開済記事総数を取得し、設定する。
-    // ・総ページ数を算出し、設定する。
+    /**
+     * ページネーションのため
+     * ・公開済記事総数を取得し、設定する。
+     * ・総ページ数を算出し、設定する。
+     * @param {int} postID
+     */
     doSetPagenation() {
       return new Promise((resolve, reject) => {
         axios.get('/fosterparent/api/pageCount').then((response) => {
