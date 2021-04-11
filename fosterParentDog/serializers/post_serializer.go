@@ -6,12 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 配列
-type EntityPost []entity.Post
-
+//*******************************************************************
+// Post
+//*******************************************************************
 type PostSerializer struct {
-	C *gin.Context
-	EntityPost
+	C          *gin.Context
+	EntityPost []entity.Post
 }
 
 type PostResponse struct {
@@ -36,31 +36,82 @@ type PostResponse struct {
 	PostImageId            uint64 `json:"post_image_id"`           //投稿画像ID
 }
 
-// *PostSerializer型の構造体 selfのレシーバを使用して、メソッドを定義する
-func (self *PostSerializer) Response() []PostResponse {
-	myPostModel := self.C.MustGet("my_post_model").([]entity.Post)
-	postRet := []PostResponse{}
+func (ps *PostSerializer) Response() []PostResponse {
+	myPostModel := ps.C.MustGet("my_post_model").([]entity.Post)
+	var retSlice []PostResponse
 	for i := 0; i < len(myPostModel); i++ {
-		postRet = append(postRet, PostResponse{
-			ID:                     myPostModel[i].ID,
-			CreatedAt:              myPostModel[i].CreatedAt.Format("2006-01-02 15:04"),
-			UpdatedAt:              myPostModel[i].UpdatedAt.Format("2006-01-02 15:04"),
-			Publishing:             myPostModel[i].Publishing,
-			DogName:                myPostModel[i].DogName,
-			Breed:                  myPostModel[i].Breed,
-			Gender:                 myPostModel[i].Gender,
-			Spay:                   myPostModel[i].SeniorPerson,
-			Old:                    myPostModel[i].Old,
-			SinglePerson:           myPostModel[i].SinglePerson,
-			SeniorPerson:           myPostModel[i].SeniorPerson,
-			TransferStatus:         myPostModel[i].TransferStatus,
-			Introduction:           myPostModel[i].Introduction,
-			AppealPoint:            myPostModel[i].AppealPoint,
-			TransferablePrefecture: myPostModel[i].TransferablePrefecture,
-			OtherMessage:           myPostModel[i].OtherMessage,
-			UserId:                 myPostModel[i].UserId,
-			TopImagePath:           myPostModel[i].TopImagePath,
-			PostImageId:            myPostModel[i].PostImageId,
+		retSlice = append(retSlice, PostResponse{
+			ID:                     ps.EntityPost[i].ID,
+			CreatedAt:              ps.EntityPost[i].CreatedAt.Format("2006-01-02 15:04"),
+			UpdatedAt:              ps.EntityPost[i].UpdatedAt.Format("2006-01-02 15:04"),
+			Publishing:             ps.EntityPost[i].Publishing,
+			DogName:                ps.EntityPost[i].DogName,
+			Breed:                  ps.EntityPost[i].Breed,
+			Gender:                 ps.EntityPost[i].Gender,
+			Spay:                   ps.EntityPost[i].SeniorPerson,
+			Old:                    ps.EntityPost[i].Old,
+			SinglePerson:           ps.EntityPost[i].SinglePerson,
+			SeniorPerson:           ps.EntityPost[i].SeniorPerson,
+			TransferStatus:         ps.EntityPost[i].TransferStatus,
+			Introduction:           ps.EntityPost[i].Introduction,
+			AppealPoint:            ps.EntityPost[i].AppealPoint,
+			TransferablePrefecture: ps.EntityPost[i].TransferablePrefecture,
+			OtherMessage:           ps.EntityPost[i].OtherMessage,
+			UserId:                 ps.EntityPost[i].UserId,
+			TopImagePath:           ps.EntityPost[i].TopImagePath,
+			PostImageId:            ps.EntityPost[i].PostImageId,
+		})
+	}
+	return retSlice
+}
+
+//*******************************************************************
+// PostImage
+//*******************************************************************
+type PostImageSerializer struct {
+	C               *gin.Context
+	EntityPostImage []entity.PostImage
+}
+
+type PostImageResponse struct {
+	PostID      uint   `json:"post_id"`
+	PostImageID uint   `json:"post_image_id"`
+	ImagePath   string `json:"image_path"`
+}
+
+func (ps *PostImageSerializer) ResponsePostImage() []PostImageResponse {
+	myModel := ps.C.MustGet("my_post_image_model").([]entity.PostImage)
+	var postRet []PostImageResponse
+	for i := 0; i < len(myModel); i++ {
+		postRet = append(postRet, PostImageResponse{
+			PostID:      ps.EntityPostImage[i].PostId, //post_id
+			PostImageID: ps.EntityPostImage[i].ID,     //TODO 取得できていない
+			ImagePath:   ps.EntityPostImage[i].ImagePath,
+		})
+	}
+	return postRet
+}
+
+//*******************************************************************
+// PostTransferablePrefecture
+//*******************************************************************
+type PostTransferablePrefectureSerializer struct {
+	C                                *gin.Context
+	EntityPostTransferablePrefecture []entity.TransferablePrefecture
+}
+
+type PostTransferablePrefectureResponse struct {
+	PostId                       uint `json:"post_id"`
+	PostTransferablePrefectureId int  `json:"post_transferable_prefecture_id"`
+}
+
+func (ps *PostTransferablePrefectureSerializer) ResponsePostTransferablePrefecture() []PostTransferablePrefectureResponse {
+	myModel := ps.C.MustGet("my_post_transferable_prefecture_model").([]entity.TransferablePrefecture)
+	var postRet []PostTransferablePrefectureResponse
+	for i := 0; i < len(myModel); i++ {
+		postRet = append(postRet, PostTransferablePrefectureResponse{
+			PostId:                       ps.EntityPostTransferablePrefecture[i].PostId,
+			PostTransferablePrefectureId: ps.EntityPostTransferablePrefecture[i].TransferablePrefectureId,
 		})
 	}
 	return postRet
