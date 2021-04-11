@@ -26,11 +26,11 @@ func (pc *PostController) CountPublishedPostNum(c *gin.Context) {
 // 投稿を1ページ表示(20件)分取得する
 //*******************************************************************
 func (pc *PostController) Index(c *gin.Context) {
-	page := c.DefaultQuery("page", "1")                // ?page=1(デフォルト)
-	postModel, _ := pc.Database.FindIndexRecords(page) //ORMを叩いてデータとerrを取得する
-	c.Set("my_post_model", postModel)                  //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostSerializer{c, postModel}  //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.Response())            //コンテキストに入ったデータを整形してリターン
+	page := c.DefaultQuery("page", "1") // ?page=1(デフォルト)
+	postModel, _ := pc.Database.FindIndexRecords(page)
+	c.Set("my_post_model", postModel) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostSerializer{C: c, EntityPost: postModel}
+	c.JSON(http.StatusOK, posts.Response())
 }
 
 //*******************************************************************
@@ -66,10 +66,10 @@ func (pc *PostController) Create(c *gin.Context) {
 //*******************************************************************
 func (pc *PostController) FetchPostOneRecord(c *gin.Context) {
 	postId := c.Query("postId")
-	postModel, _ := pc.Database.FindPostOneRecord(postId) //ORMを叩いてデータとerrを取得する
-	c.Set("my_post_model", postModel)                     //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostSerializer{c, postModel}     //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.Response())               //コンテキストに入ったデータを整形してリターン
+	postModel, _ := pc.Database.FindPostOneRecord(postId)            //ORMを叩いてデータとerrを取得する
+	c.Set("my_post_model", postModel)                                //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostSerializer{C: c, EntityPost: postModel} //結果をコンテキストとスライス[]に格納する
+	c.JSON(http.StatusOK, posts.Response())                          //コンテキストに入ったデータを整形してリターン
 }
 
 //*******************************************************************
@@ -79,9 +79,9 @@ func (pc *PostController) FetchPostImagePaths(c *gin.Context) {
 	postId := c.Query("postId")
 	postImageModel, _ := pc.Database.FindPostImagePaths(postId) //ORMを叩いてデータとerrを取得する
 
-	c.Set("my_post_image_model", postImageModel)                //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostImageSerializer{c, postImageModel} //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.ResponsePostImage())            //コンテキストに入ったデータを整形してリターン
+	c.Set("my_post_image_model", postImageModel)                                    //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostImageSerializer{C: c, EntityPostImage: postImageModel} //結果をコンテキストとスライス[]に格納する
+	c.JSON(http.StatusOK, posts.ResponsePostImage())                                //コンテキストに入ったデータを整形してリターン
 }
 
 //*******************************************************************
@@ -91,9 +91,9 @@ func (pc *PostController) FetchPostTransferablePrefecture(c *gin.Context) {
 	postId := c.Query("postId")
 	model, _ := pc.Database.FindPostFetchPostTransferablePrefecture(postId) //ORMを叩いてデータとerrを取得する
 
-	c.Set("my_post_transferable_prefecture_model", model)               //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostTransferablePrefectureSerializer{c, model} //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.ResponsePostTransferablePrefecture())   //コンテキストに入ったデータを整形してリターン
+	c.Set("my_post_transferable_prefecture_model", model)                                                    //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostTransferablePrefectureSerializer{C: c, EntityPostTransferablePrefecture: model} //結果をコンテキストとスライス[]に格納する
+	c.JSON(http.StatusOK, posts.ResponsePostTransferablePrefecture())                                        //コンテキストに入ったデータを整形してリターン
 }
 
 //*******************************************************************
