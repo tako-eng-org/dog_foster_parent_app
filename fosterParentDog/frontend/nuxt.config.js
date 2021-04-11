@@ -1,12 +1,27 @@
+console.log(process.env.API_PREFIX);
+let axiosTarget = '';
+let pathRewrite = {};
+if (process.env.NODE_ENV === 'production') {
+  // 本番用
+  axiosTarget = 'https://tako-eng.com/'//本番用に後で書き換える
+} else if (process.env.NODE_ENV === 'staging') {
+  //Docker用
+  axiosTarget = 'http://localhost:8000/fosterparent'
+} else {
+  //devサーバー用
+  axiosTarget = 'http://localhost:8000/fosterparent/api/'
+  pathRewrite = {"^/api": ""}
+}
+
 export default {
-  target: 'static',
+  target: 'server',
   ssr: false, // サーバーサイドレンダリングを無効化
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'frontend',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'ja'
     },
     meta: [
       {charset: 'utf-8'},
@@ -42,22 +57,21 @@ export default {
     'bootstrap-vue/nuxt',
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    proxy: true,
-    prefix: '/fosterparent',
-  },
-
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 
+  // Axios module configuration: https://go.nuxtjs.dev/config-axios
+  axios: {
+    debug: true,
+    proxy: true,
+    // baseURL: 'http://localhost:8000/fosterparent/',
+    prefix: '/fosterparent/api/',
+  },
+
   proxy: {
-    '/': {
-      target: process.env.NODE_ENV === 'production'
-        ? 'http://localhost:8000' //本番は本番用ドメインに修正すること
-        : 'http://localhost:8000',
-// : 'http://dog_app:8000',
-      logLevel: 'debug'
+    'api/': {// /にすると、/が全部プロキシを挟んでしまうので、api/を挟んだ場合のみにする。
+      target: axiosTarget,
+      pathRewrite: pathRewrite,
     },
   },
 
@@ -65,9 +79,8 @@ export default {
     // .env.local or prod にて環境変数NODE_ENVを設定し、
     // モードによってルートパスを切り替える。
     // server.go の router.StaticFSに繋がる
-    base: process.env.NODE_ENV === 'production'
+    base: process.env.NODE_ENV === 'development'
       ? '/fosterparent/'
-      : '/',
-    // : '/',
+      : '/fosterparent/',
   },
 }
