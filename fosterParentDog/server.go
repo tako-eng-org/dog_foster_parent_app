@@ -31,7 +31,7 @@ func serve() {
 	// トップ画面から使用するAPI
 	// ************************************************
 	// 公開済み投稿数を取得する
-	router.GET("/pageCount", postController.CountPublishedPostNum)
+	router.GET("/published_post_count", postController.CountPublishedPostNum)
 
 	// 投稿を1ページ表示分取得する
 	// ex: localhost:8000/fosterparent/index?page=1
