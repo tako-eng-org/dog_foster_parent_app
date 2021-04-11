@@ -54,7 +54,7 @@ func serve() {
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/?????????
-	//router.GET("/user_profile", postController.FetchPostUserProfile)
+	router.GET("/user_profile", postController.FetchPostUserProfile)
 
 	// ************************************************
 	// test
