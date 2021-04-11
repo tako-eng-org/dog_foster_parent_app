@@ -18,7 +18,7 @@
         </nuxt-link>
       </div>
       <div class="row"><p>犬種 : {{ record.breed }}</p></div>
-      <div class="row"><p>性別 : {{ record.gender }}</p></div>
+      <div class="row"><p>性別 : {{ $getLabel(gender_map, record.gender) }}</p></div>
       <div class="row"><p>自己紹介 : {{ record.introduction }}</p></div>
       <div class="row"><p>投稿日時 : {{ record.created_at }}</p></div>
       <br>
@@ -42,6 +42,7 @@
 
 <script>
 import pagenation from "../components/pagenation";
+import gender_map from '@/assets/json/gender.json';
 
 const axios = require('axios');
 process.env.DEBUG = 'nuxt:*' // nuxt.jsについてログ出力する
@@ -57,6 +58,8 @@ export default {
 
   data() {
     return {
+      gender_map: gender_map,
+
       records: [], // 投稿記事
       // show: true,
 
