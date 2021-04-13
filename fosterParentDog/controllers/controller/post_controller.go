@@ -39,22 +39,22 @@ func (pc *PostController) Index(c *gin.Context) {
 func (pc *PostController) Create(c *gin.Context) {
 	t := entity.Post{}
 	var record = entity.Post{ // テーブルに登録するためのレコード情報
-		Publishing:             t.SetPublishing(c.PostForm("publishing")),
-		DogName:                t.SetDogName(c.PostForm("dog_name")),
-		Breed:                  t.SetBreed(c.PostForm("breed")),
-		Gender:                 t.SetGender(c.PostForm("gender")),
-		Spay:                   t.SetSpay(c.PostForm("spay")),
-		Old:                    t.SetOld(c.PostForm("old")),
-		SinglePerson:           t.SetSinglePerson(c.PostForm("single_person")),
-		SeniorPerson:           t.SetSeniorPerson(c.PostForm("senior_person")),
-		TransferStatus:         t.SetTransferablePrefecture(c.PostForm("transter_status")),
-		Introduction:           t.SetIntroduction(c.PostForm("introduction")),
-		AppealPoint:            t.SetAppealPoint(c.PostForm("appeal_point")),
-		TransferablePrefecture: t.SetTransferablePrefecture(c.PostForm("transferable_prefecture")),
-		OtherMessage:           t.SetOtherMessage(c.PostForm("other_message")),
-		UserId:                 t.SetUserId(c.PostForm("user_id")),
-		TopImagePath:           t.SetTopImagePath(c.PostForm("top_image_path")),
-		PostImageId:            t.SetPostImageId(c.PostForm("post_image_id")),
+		Publishing:       t.ToInt(c.PostForm("publishing")),
+		DogName:          t.ToStr(c.PostForm("dog_name")),
+		Breed:            t.ToStr(c.PostForm("breed")),
+		Gender:           t.ToInt(c.PostForm("gender")),
+		Spay:             t.ToInt(c.PostForm("spay")),
+		Old:              t.ToStr(c.PostForm("old")),
+		SinglePerson:     t.ToInt(c.PostForm("single_person")),
+		SeniorPerson:     t.ToInt(c.PostForm("senior_person")),
+		TransferStatus:   t.ToInt(c.PostForm("transfer_status")),
+		Introduction:     t.ToStr(c.PostForm("introduction")),
+		AppealPoint:      t.ToStr(c.PostForm("appeal_point")),
+		PostPrefectureId: t.ToInt(c.PostForm("transferable_prefecture")),
+		OtherMessage:     t.ToStr(c.PostForm("other_message")),
+		UserId:           t.ToInt64(c.PostForm("user_id")),
+		TopImagePath:     t.ToStr(c.PostForm("top_image_path")),
+		PostImageId:      t.ToInt64(c.PostForm("post_image_id")),
 	}
 	pc.Database.InsertRecord(&record)
 
