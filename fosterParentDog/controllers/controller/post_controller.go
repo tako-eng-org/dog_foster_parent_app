@@ -11,27 +11,38 @@ import (
 //*******************************************************************
 // 公開済み投稿数を取得する
 //*******************************************************************
-func (pc *Controller) CountPublishedPost(c *gin.Context) {
-	c.JSON(http.StatusOK, pc.Database.CountPublishedPost()) // URLへのアクセスに対してJSONを返す
+func (cont *Controller) CountPublishedPost(c *gin.Context) {
+	count, _ := cont.DbConn.CountPublishedPost()
+	c.JSON(http.StatusOK, count)
 }
 
 //*******************************************************************
 // 投稿を1ページ表示(20件)分取得する
 //*******************************************************************
-func (pc *Controller) Index(c *gin.Context) {
-	page := c.DefaultQuery("page", "1") // ?page=1(デフォルト)
-	postModel, _ := pc.Database.FindIndex(page)
-	c.Set("my_post_model", postModel) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostSerializer{C: c, EntityPost: postModel}
-	c.JSON(http.StatusOK, posts.Response())
+func (cont *Controller) Index(c *gin.Context) {
+	//page := c.DefaultQuery("page", "1") // ?page=1(デフォルト)
+	//postModel, _ := cont.DbConn.FindIndex(page)
+	//
+	//fmt.Println("-------Index_s")
+	//fmt.Println(postModel)
+	//fmt.Println("-------Index_e")
+	//
+	//for i := 0; i < len(postModel); i++ {
+	//	tmp := append()
+	//	//PostResponce{}に、postModelの項目たちをセットする
+	//}
+	//
+	//c.Set("my_post_model", postModel) //回避 (*conttext).MustGet: panic("Key \"" + key + "\" does not exist")
+	//posts := serializers.PostSerializer{C: c, EntityPost: postModel}
+	//c.JSON(http.StatusOK, posts.Response())
 }
 
 //*******************************************************************
 // 投稿を対象idの1件取得する
 //*******************************************************************
-func (pc *Controller) FetchOnePost(c *gin.Context) {
+func (cont *Controller) FetchOnePost(c *gin.Context) {
 	postId := c.Query("postId")
-	postModel, _ := pc.Database.FindOnePost(postId) //ORMを叩いてデータとerrを取得する
+	postModel, _ := cont.DbConn.FindOnePost(postId) //ORMを叩いてデータとerrを取得する
 	c.Set("my_post_model", postModel)               //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
 	posts := serializers.PostSerializer{C: c, EntityPost: postModel}
 	c.JSON(http.StatusOK, posts.Response())
@@ -40,7 +51,7 @@ func (pc *Controller) FetchOnePost(c *gin.Context) {
 //*******************************************************************
 // 投稿記事テーブルへ記事を登録する
 //*******************************************************************
-func (pc *Controller) Create(c *gin.Context) {
+func (cont *Controller) Create(c *gin.Context) {
 	t := entity.Post{}
 	var record = entity.Post{ // テーブルに登録するためのレコード情報
 		Publishing:       t.ToInt(c.PostForm("publishing")),
@@ -60,7 +71,7 @@ func (pc *Controller) Create(c *gin.Context) {
 		TopImagePath:     t.ToStr(c.PostForm("top_image_path")),
 		PostImageId:      t.ToInt64(c.PostForm("post_image_id")),
 	}
-	pc.Database.InsertPost(&record)
+	cont.DbConn.InsertPost(&record)
 
 	c.JSON(http.StatusCreated, "****************created")
 }

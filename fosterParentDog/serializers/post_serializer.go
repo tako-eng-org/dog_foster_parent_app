@@ -6,12 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//*******************************************************************
-// Post
-//*******************************************************************
 type PostSerializer struct {
 	C          *gin.Context
-	EntityPost []entity.Post
+	EntityPost entity.Post
 }
 
 type PostResponse struct {
@@ -36,31 +33,31 @@ type PostResponse struct {
 	PostImageId      uint64 `json:"post_image_id"`      //投稿画像ID
 }
 
-func (ps *PostSerializer) Response() []PostResponse {
-	myPostModel := ps.C.MustGet("my_post_model").([]entity.Post)
-	var retSlice []PostResponse
-	for i := 0; i < len(myPostModel); i++ {
-		retSlice = append(retSlice, PostResponse{
-			ID:               ps.EntityPost[i].ID,
-			CreatedAt:        ps.EntityPost[i].CreatedAt.Format("2006-01-02 15:04"),
-			UpdatedAt:        ps.EntityPost[i].UpdatedAt.Format("2006-01-02 15:04"),
-			Publishing:       ps.EntityPost[i].Publishing,
-			DogName:          ps.EntityPost[i].DogName,
-			Breed:            ps.EntityPost[i].Breed,
-			Gender:           ps.EntityPost[i].Gender,
-			Spay:             ps.EntityPost[i].SeniorPerson,
-			Old:              ps.EntityPost[i].Old,
-			SinglePerson:     ps.EntityPost[i].SinglePerson,
-			SeniorPerson:     ps.EntityPost[i].SeniorPerson,
-			TransferStatus:   ps.EntityPost[i].TransferStatus,
-			Introduction:     ps.EntityPost[i].Introduction,
-			AppealPoint:      ps.EntityPost[i].AppealPoint,
-			PostPrefectureId: ps.EntityPost[i].PostPrefectureId,
-			OtherMessage:     ps.EntityPost[i].OtherMessage,
-			UserId:           ps.EntityPost[i].UserId,
-			TopImagePath:     ps.EntityPost[i].TopImagePath,
-			PostImageId:      ps.EntityPost[i].PostImageId,
-		})
+func (ps *PostSerializer) Response() PostResponse {
+	//myPostModel := ps.C.MustGet("my_post_model").([]entity.Post)
+	//var retSlice PostResponse
+	//for i := 0; i < len(myPostModel); i++ {
+	ret := PostResponse{
+		ID:               ps.EntityPost.ID,
+		CreatedAt:        ps.EntityPost.CreatedAt.Format("2006-01-02 15:04"),
+		UpdatedAt:        ps.EntityPost.UpdatedAt.Format("2006-01-02 15:04"),
+		Publishing:       ps.EntityPost.Publishing,
+		DogName:          ps.EntityPost.DogName,
+		Breed:            ps.EntityPost.Breed,
+		Gender:           ps.EntityPost.Gender,
+		Spay:             ps.EntityPost.SeniorPerson,
+		Old:              ps.EntityPost.Old,
+		SinglePerson:     ps.EntityPost.SinglePerson,
+		SeniorPerson:     ps.EntityPost.SeniorPerson,
+		TransferStatus:   ps.EntityPost.TransferStatus,
+		Introduction:     ps.EntityPost.Introduction,
+		AppealPoint:      ps.EntityPost.AppealPoint,
+		PostPrefectureId: ps.EntityPost.PostPrefectureId,
+		OtherMessage:     ps.EntityPost.OtherMessage,
+		UserId:           ps.EntityPost.UserId,
+		TopImagePath:     ps.EntityPost.TopImagePath,
+		PostImageId:      ps.EntityPost.PostImageId,
 	}
-	return retSlice
+	//}
+	return ret
 }

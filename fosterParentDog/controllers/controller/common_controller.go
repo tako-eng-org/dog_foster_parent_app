@@ -4,6 +4,6 @@ import "fpdapp/models/db"
 
 type (
 	Controller struct {
-		Database *db.Database
+		DbConn *db.Database
 	}
 )

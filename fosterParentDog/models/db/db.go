@@ -11,11 +11,9 @@ import (
 	_ "github.com/lib/pq" //postgres用ドライバ
 )
 
-type (
-	Database struct {
-		db *gorm.DB
-	}
-)
+type Database struct {
+	connection *gorm.DB
+}
 
 //*******************************************************************
 // DB接続する
@@ -30,7 +28,7 @@ func Open() *Database {
 	}
 
 	// DB接続
-	db, err := gorm.Open(os.Getenv("RDBMS_NAME"),
+	conn, err := gorm.Open(os.Getenv("RDBMS_NAME"),
 		"host= "+os.Getenv("DB_HOST")+
 			" port="+os.Getenv("DB_PORT")+
 			" user="+os.Getenv("DB_USER")+
@@ -43,47 +41,48 @@ func Open() *Database {
 	}
 
 	// DBエンジンを「InnoDB」に設定
-	db.Set("gorm:table_options", "ENGINE=InnoDB")
+	conn.Set("gorm:table_options", "ENGINE=InnoDB")
 
 	// 詳細なログを表示
-	db.LogMode(true)
+	conn.LogMode(true)
 
 	// 登録するテーブル名を複数形で扱う（デフォルトは複数形）
-	db.SingularTable(false)
+	conn.SingularTable(false)
 
 	// マイグレーション（テーブルが無い時は自動生成）
-	db.AutoMigrate(
+	conn.AutoMigrate(
 		&entity.User{},
 		&entity.Post{},
 		&entity.PostImage{},
 		&entity.PostPrefecture{},
 	)
 
-	fmt.Println("db connected: ", &db)
-	return &Database{db: db}
+	fmt.Println("db connected: ", &conn)
+	return &Database{connection: conn}
 }
 
 //*******************************************************************
 // DBをクローズする
 //*******************************************************************
 func (db *Database) Close() {
-	_ = db.db.Close()
+	_ = db.connection.Close()
 }
 
 //*******************************************************************
 // 公開済みレコードの数を取得する
 //*******************************************************************
 // return(ex): -> 41
-func (db *Database) CountPublishedPost() int64 {
+func (db *Database) CountPublishedPost() (int64, error) {
 	var postNum int64
 
 	//SELECT count(id) FROM "post"  WHERE (publishing = '0')
-	db.db.Table("posts").
+	err := db.connection.Table("posts").
 		Select("count(id)").
 		Where("publishing = ?", "0").
-		Count(&postNum)
+		Count(&postNum).
+		Error
 
-	return postNum
+	return postNum, err
 }
 
 //*******************************************************************
@@ -95,7 +94,7 @@ func (db *Database) FindIndex(page string) ([]entity.Post, error) {
 	pageNum, _ := strconv.Atoi(page) // 数値に変換する
 	numberPerPage := 20              // 1ページあたりの表示件数
 
-	err := db.db.Order("id desc").
+	err := db.connection.Order("id desc").
 		Limit(numberPerPage).
 		Offset((pageNum - 1) * numberPerPage).
 		Find(&model). // ポインタを渡してメモリアドレスに結果を格納する
@@ -103,13 +102,28 @@ func (db *Database) FindIndex(page string) ([]entity.Post, error) {
 	return model, err
 }
 
+/*
+func (connection *Database) FindIndex(page string) ([]entity.Post, error) {
+
+	var model []entity.Post
+	pageNum, _ := strconv.Atoi(page) // 数値に変換する
+	numberPerPage := 20              // 1ページあたりの表示件数
+
+	err := connection.connection.Order("id desc").
+		Limit(numberPerPage).
+		Offset((pageNum - 1) * numberPerPage).
+		Find(&model). // ポインタを渡してメモリアドレスに結果を格納する
+		Error
+	return model, err
+}
+*/
 //*******************************************************************
 // [第1引数]の投稿IDでレコードを取得する
 //*******************************************************************
-func (db *Database) FindOnePost(postId string) ([]entity.Post, error) {
-	var model []entity.Post
+func (db *Database) FindOnePost(postId string) (entity.Post, error) {
+	var model entity.Post
 
-	err := db.db.Where("id = ?", postId).First(&model).Error
+	err := db.connection.Where("id = ?", postId).First(&model).Error
 
 	return model, err
 }
@@ -127,7 +141,7 @@ func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, er
 	//left join post_image
 	//on post.id = post_image.post_id
 	//WHERE (post.id = '44')
-	err := db.db.Table("posts").
+	err := db.connection.Table("posts").
 		Select("posts.id as post_id,"+
 			" post_images.id as post_image_id,"+
 			" post_images.image_path").
@@ -150,7 +164,7 @@ func (db *Database) FindPostPrefecture(postIdStr string) ([]entity.PostPrefectur
 	var model []entity.PostPrefecture
 
 	//select post_prefecture.id, post_prefecture.post_prefecture_id from post_prefecture where post_id = 44;
-	err := db.db.Table("post_prefectures").
+	err := db.connection.Table("post_prefectures").
 		Select("post_prefectures.id,"+
 			" post_prefectures.post_id,"+
 			" post_prefectures.post_prefecture_id").
@@ -177,7 +191,7 @@ func (db *Database) FindPostUser(postIdStr string) (entity.User, error) {
 		on A.user_id = B.id
 		where A.id = 44;
 	*/
-	err := db.db.Table("posts A").
+	err := db.connection.Table("posts A").
 		Select("B.*").
 		Joins("inner join public.users B on A.user_id = B.id").
 		Where("A.id = ?", postIdStr).
@@ -194,5 +208,5 @@ func (db *Database) FindPostUser(postIdStr string) (entity.User, error) {
 // レコードを登録する
 //*******************************************************************
 func (db *Database) InsertPost(registerRecord *entity.Post) {
-	db.db.Create(&registerRecord) // insert
+	db.connection.Create(&registerRecord) // insert
 }

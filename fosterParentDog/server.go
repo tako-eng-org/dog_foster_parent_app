@@ -19,7 +19,7 @@ func serve() {
 	defer database.Close()
 
 	controller := controller.Controller{
-		Database: database,
+		DbConn: database,
 	}
 
 	router := gin.Default()                   // デフォルトのミドルウェアでginのルーターを作成

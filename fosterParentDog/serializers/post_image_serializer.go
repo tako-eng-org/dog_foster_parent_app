@@ -8,7 +8,7 @@ import (
 
 type PostImageSerializer struct {
 	C               *gin.Context
-	EntityPostImage []entity.PostImage
+	EntityPostImage entity.PostImage
 }
 
 type PostImageResponse struct {
@@ -17,15 +17,12 @@ type PostImageResponse struct {
 	ImagePath   string `json:"image_path"`
 }
 
-func (ps *PostImageSerializer) ResponsePostImage() []PostImageResponse {
-	myModel := ps.C.MustGet("my_post_image_model").([]entity.PostImage)
-	var postRet []PostImageResponse
-	for i := 0; i < len(myModel); i++ {
-		postRet = append(postRet, PostImageResponse{
-			PostID:      ps.EntityPostImage[i].PostId,
-			PostImageID: ps.EntityPostImage[i].ID,
-			ImagePath:   ps.EntityPostImage[i].ImagePath,
-		})
+func (ps *PostImageSerializer) Response() PostImageResponse {
+	//myModel := ps.C.MustGet("my_post_image_model").(entity.PostImage)
+	ret := PostImageResponse{
+		PostID:      ps.EntityPostImage.PostId,
+		PostImageID: ps.EntityPostImage.ID,
+		ImagePath:   ps.EntityPostImage.ImagePath,
 	}
-	return postRet
+	return ret
 }
