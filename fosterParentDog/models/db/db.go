@@ -74,22 +74,22 @@ func (db *Database) Close() {
 // 公開済みレコードの数を取得する
 //*******************************************************************
 // return(ex): -> 41
-func (db *Database) CountPublishedPostNum() int64 {
-	var countNum int64
+func (db *Database) CountPublishedPost() int64 {
+	var postNum int64
 
 	//SELECT count(id) FROM "post"  WHERE (publishing = '0')
 	db.db.Table("posts").
 		Select("count(id)").
 		Where("publishing = ?", "0").
-		Count(&countNum)
+		Count(&postNum)
 
-	return countNum
+	return postNum
 }
 
 //*******************************************************************
 // 公開済み投稿を1ページ表示分取得する
 //*******************************************************************
-func (db *Database) FindIndexRecords(page string) ([]entity.Post, error) {
+func (db *Database) FindIndex(page string) ([]entity.Post, error) {
 
 	var model []entity.Post
 	pageNum, _ := strconv.Atoi(page) // 数値に変換する
@@ -106,7 +106,7 @@ func (db *Database) FindIndexRecords(page string) ([]entity.Post, error) {
 //*******************************************************************
 // [第1引数]の投稿IDでレコードを取得する
 //*******************************************************************
-func (db *Database) FindPostOneRecord(postId string) ([]entity.Post, error) {
+func (db *Database) FindOnePost(postId string) ([]entity.Post, error) {
 	var model []entity.Post
 
 	err := db.db.Where("id = ?", postId).First(&model).Error
@@ -146,7 +146,7 @@ func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, er
 //*******************************************************************
 // [第1引数]の投稿IDで、譲渡可能都道府県を取得する
 //*******************************************************************
-func (db *Database) FindPostFetchPostTransferablePrefecture(postIdStr string) ([]entity.TransferablePrefecture, error) {
+func (db *Database) FindPostPrefecture(postIdStr string) ([]entity.PostPrefecture, error) {
 	var model []entity.PostPrefecture
 
 	//select post_prefecture.id, post_prefecture.post_prefecture_id from post_prefecture where post_id = 44;
@@ -193,6 +193,6 @@ func (db *Database) FindPostUser(postIdStr string) (entity.User, error) {
 //*******************************************************************
 // レコードを登録する
 //*******************************************************************
-func (db *Database) InsertRecord(registerRecord *entity.Post) {
+func (db *Database) InsertPost(registerRecord *entity.Post) {
 	db.db.Create(&registerRecord) // insert
 }
