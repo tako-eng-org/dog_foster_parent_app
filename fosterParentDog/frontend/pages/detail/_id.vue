@@ -38,10 +38,10 @@
       </div>
     </div>
 
-    <div class="row"><p>投稿者情報</p></div>
-    <div class="container" v-for="record in user_profile" v-bind:key="record.id">
-      <div class="row"><p>ニックネーム : {{ record.nickname }}</p></div>
-      <div class="row"><p>プロフィール : {{ record.profile }}</p></div>
+    <div class="container" v-bind:key="user.id">
+      <div class="row"><p>投稿者情報</p></div>
+      <div class="row"><p>ニックネーム : {{ user.nickname }}</p></div>
+      <div class="row"><p>プロフィール : {{ user.profile }}</p></div>
     </div>
   </div>
 </template>
@@ -73,6 +73,7 @@ export default {
       image_paths: [], //画像URL
       user_profile: [], //ユーザー情報
       transferable_prefectures: [], //譲渡可能都道府県
+      user: {}, //ユーザー情報
     }
   },
   components: {},
@@ -141,14 +142,14 @@ export default {
      * 投稿IDのユーザーIDに紐づいたユーザー情報を取得する
      * @param {int} postID
      */
-    doFetchUserProfile(currentPostId) {
-      axios.get('api/user_profile', {
+    getUser(currentPostId) {
+      axios.get('api/user', {
         params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
-          this.user_profile = response.data;
+          this.user = response.data;
         }
       })
     }

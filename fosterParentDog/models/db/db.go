@@ -175,8 +175,8 @@ func (db *Database) FindPostFetchPostTransferablePrefecture(postIdStr string) ([
 //*******************************************************************
 // [第1引数]の投稿IDで、ユーザー情報を取得する
 //*******************************************************************
-func (db *Database) FindPostUserProfile(postIdStr string) ([]entity.User, error) {
-	var model []entity.User
+func (db *Database) FindPostUser(postIdStr string) (entity.User, error) {
+	var model entity.User
 
 	/*
 		select B.*

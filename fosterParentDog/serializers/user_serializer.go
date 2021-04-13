@@ -6,10 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//PostImage-------------------------------
 type UserSerializer struct {
 	C          *gin.Context
-	EntityUser []entity.User
+	EntityUser entity.User
 }
 
 type UserResponse struct {
@@ -25,21 +24,17 @@ type UserResponse struct {
 }
 
 // *PostSerializer型の構造体 selfのレシーバを使用して、メソッドを定義する
-func (us *UserSerializer) ResponseUser() []UserResponse {
-	myModel := us.C.MustGet("my_post_user_model").([]entity.User)
-	var postRet []UserResponse
-	for i := 0; i < len(myModel); i++ {
-		postRet = append(postRet, UserResponse{
-			ID:             us.EntityUser[i].ID,
-			CreatedAt:      us.EntityUser[i].CreatedAt.Format("2006-01-02 15:04"),
-			UpdatedAt:      us.EntityUser[i].UpdatedAt.Format("2006-01-02 15:04"),
-			Name:           us.EntityUser[i].Name,
-			Email:          us.EntityUser[i].Email,
-			TwitterAccount: us.EntityUser[i].TwitterAccount,
-			Nickname:       us.EntityUser[i].Nickname,
-			Profile:        us.EntityUser[i].Profile,
-			WebUrl:         us.EntityUser[i].WebUrl,
-		})
+func (us *UserSerializer) ResponseUser() UserResponse {
+	ret := UserResponse{
+		ID:             us.EntityUser.ID,
+		CreatedAt:      us.EntityUser.CreatedAt.Format("2006-01-02 15:04"),
+		UpdatedAt:      us.EntityUser.UpdatedAt.Format("2006-01-02 15:04"),
+		Name:           us.EntityUser.Name,
+		Email:          us.EntityUser.Email,
+		TwitterAccount: us.EntityUser.TwitterAccount,
+		Nickname:       us.EntityUser.Nickname,
+		Profile:        us.EntityUser.Profile,
+		WebUrl:         us.EntityUser.WebUrl,
 	}
-	return postRet
+	return ret
 }

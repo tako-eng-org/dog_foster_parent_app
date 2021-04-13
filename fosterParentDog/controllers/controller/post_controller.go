@@ -97,13 +97,13 @@ func (pc *PostController) FetchPostTransferablePrefecture(c *gin.Context) {
 }
 
 //*******************************************************************
-// 投稿idをもとに、user情報を取得する
+// 投稿idをもとに、ユーザー情報を取得する
 //*******************************************************************
-func (pc *PostController) FetchPostUserProfile(c *gin.Context) {
+func (pc *PostController) FetchPostUser(c *gin.Context) {
 	postId := c.Query("postId")
-	model, _ := pc.Database.FindPostUserProfile(postId) //ORMを叩いてデータとerrを取得する
+	model, _ := pc.Database.FindPostUser(postId) //ORMを叩いてデータとerrを取得する
 
-	c.Set("my_post_user_model", model)            //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.UserSerializer{c, model} //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.ResponseUser())   //コンテキストに入ったデータを整形してリターン
+	c.Set("my_post_user_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.UserSerializer{C: c, EntityUser: model}
+	c.JSON(http.StatusOK, posts.ResponseUser())
 }
