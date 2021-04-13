@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	entity "fpdapp/models/entity"
+	"fpdapp/models/entity"
 	"os"
 	"strconv"
 
@@ -99,7 +99,7 @@ func (db *Database) CountPublishedPostNum() int64 {
 //*******************************************************************
 func (db *Database) FindIndexRecords(page string) ([]entity.Post, error) {
 
-	model := []entity.Post{}
+	var model []entity.Post
 	pageNum, _ := strconv.Atoi(page) // 数値に変換する
 	numberPerPage := 20              // 1ページあたりの表示件数
 
@@ -115,7 +115,7 @@ func (db *Database) FindIndexRecords(page string) ([]entity.Post, error) {
 // [第1引数]の投稿IDでレコードを取得する
 //*******************************************************************
 func (db *Database) FindPostOneRecord(postId string) ([]entity.Post, error) {
-	model := []entity.Post{}
+	var model []entity.Post
 
 	err := db.db.Where("id = ?", postId).First(&model).Error
 
@@ -126,7 +126,7 @@ func (db *Database) FindPostOneRecord(postId string) ([]entity.Post, error) {
 // [第1引数]の投稿IDで、投稿画像テーブルから投稿画像パスを取得する
 //*******************************************************************
 func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, error) {
-	model := []entity.PostImage{}
+	var model []entity.PostImage
 
 	//SELECT post.id as post_id,
 	//post_image.id as post_image_id
@@ -155,7 +155,7 @@ func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, er
 // [第1引数]の投稿IDで、譲渡可能都道府県を取得する
 //*******************************************************************
 func (db *Database) FindPostFetchPostTransferablePrefecture(postIdStr string) ([]entity.TransferablePrefecture, error) {
-	model := []entity.TransferablePrefecture{}
+	var model []entity.PostPrefecture
 
 	//select transferable_prefecture.id, transferable_prefecture.transferable_prefecture_id from transferable_prefecture where post_id = 44;
 	err := db.db.Table(TransferablePrefecturestable).
@@ -176,7 +176,7 @@ func (db *Database) FindPostFetchPostTransferablePrefecture(postIdStr string) ([
 // [第1引数]の投稿IDで、ユーザー情報を取得する
 //*******************************************************************
 func (db *Database) FindPostUserProfile(postIdStr string) ([]entity.User, error) {
-	model := []entity.User{}
+	var model []entity.User
 
 	/*
 		select B.*
