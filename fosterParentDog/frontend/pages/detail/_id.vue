@@ -1,6 +1,7 @@
 <template>
   <div class="detail">
-    <div class="container" v-for="post in posts" v-bind:key="post.id">
+    <!--    <div class="container" v-for="post in posts" v-bind:key="post.id">-->
+    <div class="container" v-bind:key="post.id">
       <div class='col-xs-12'>
         <img class='float-left'
              style='padding:0;margin:0 15px 0 0;'
@@ -11,12 +12,14 @@
       <div class="row"><p>投稿No : {{ post.id }}</p></div>
       <div class="row"><p>犬の名前 : {{ post.dog_name }}</p></div>
       <div class="row"><p>犬種 : {{ post.breed }}</p></div>
-      <div class="row"><p>性別 : {{ $getLabel(genderMap, post.gender) }}</p></div>
-      <div class="row"><p>去勢/避妊手術 : {{ $getLabel(spayMap, post.spay) }}</p></div>
+      <div class="row"><p>性別*debug* : {{ post.gender }}</p></div>
+      <!--  FIXME: postは配列でなくオブジェクトで取得・表示したいが、配列でないとgetLabelエラーになる  -->
+      <!--      <div class="row"><p>性別 : {{ $getLabel(genderMap, post.gender) }}</p></div>-->
+      <!--      <div class="row"><p>去勢/避妊手術 : {{ $getLabel(spayMap, post.spay) }}</p></div>-->
       <div class="row"><p>年齢 : {{ post.old }}</p></div>
-      <div class="row"><p>単身者への譲渡 : {{ $getLabel(singlePersonMap, post.single_person) }}</p></div>
-      <div class="row"><p>高齢者への譲渡 : {{ $getLabel(seniorPersonMap, post.senior_person) }}</p></div>
-      <div class="row"><p>譲渡ステータス : {{ $getLabel(transferStatusMap, post.transter_status) }}</p></div>
+      <!--      <div class="row"><p>単身者への譲渡 : {{ $getLabel(singlePersonMap, post.single_person) }}</p></div>-->
+      <!--      <div class="row"><p>高齢者への譲渡 : {{ $getLabel(seniorPersonMap, post.senior_person) }}</p></div>-->
+      <!--      <div class="row"><p>譲渡ステータス : {{ $getLabel(transferStatusMap, post.transter_status) }}</p></div>-->
       <div class="row"><p>自己紹介 : {{ post.introduction }}</p></div>
       <div class="row"><p>投稿日時 : {{ post.created_at }}</p></div>
       <div class="row"><p>性格アピールポイント : {{ post.appeal_point }}</p></div>
@@ -48,28 +51,29 @@
 
 <script>
 const axios = require('axios');
-process.env.DEBUG = 'nuxt:*' // nuxt.jsについてログ出力する
 
-import genderMap from '@/assets/json/gender.json'
-import prefectureMap from '@/assets/json/prefecture.json'
-import seniorPersonMap from '@/assets/json/senior_person.json'
-import singlePersonMap from '@/assets/json/single_person.json'
-import spayMap from '@/assets/json/spay.json'
-import transferStatusMap from '@/assets/json/transfer_status.json'
+import GenderMap from '@/assets/json/gender.json'
+import PrefectureMap from '@/assets/json/prefecture.json'
+import SeniorPersonMap from '@/assets/json/senior_person.json'
+import SinglePersonMap from '@/assets/json/single_person.json'
+import SpayMap from '@/assets/json/spay.json'
+import TransferStatusMap from '@/assets/json/transfer_status.json'
 
 
 export default {
   data: function () {
     return {
       //storeの共通資材
-      genderMap: genderMap,
-      prefectureMap: prefectureMap,
-      seniorPersonMap: seniorPersonMap,
-      singlePersonMap: singlePersonMap,
-      spayMap: spayMap,
-      transferStatusMap: transferStatusMap,
+      genderMap: GenderMap,
+      prefectureMap: PrefectureMap,
+      seniorPersonMap: SeniorPersonMap,
+      singlePersonMap: SinglePersonMap,
+      spayMap: SpayMap,
+      transferStatusMap: TransferStatusMap,
 
-      posts: [], // 投稿記事
+      //FIXME: postは配列でなくオブジェクトで取得・表示したいが、配列でないとgetLabelエラーになる
+      // posts: [], // 投稿記事
+      post: {},
       imagePaths: [], //画像URL
       postPrefectures: [], //譲渡可能都道府県
       user: {}, //ユーザー情報
@@ -96,7 +100,8 @@ export default {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
-          this.posts = response.data;
+          // this.posts = response.data;
+          this.post = response.data;
         }
       })
     },
