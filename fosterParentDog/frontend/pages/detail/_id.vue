@@ -1,38 +1,38 @@
 <template>
-  <div className="container">
-    <div class="container" v-for="record in records" v-bind:key="record.id">
+  <div class="detail">
+    <div class="container" v-for="post in posts" v-bind:key="post.id">
       <div class='col-xs-12'>
         <img class='float-left'
              style='padding:0;margin:0 15px 0 0;'
-             v-bind:src="record.top_image_path"
+             v-bind:src="post.top_image_path"
              width="180"
              height="180">
       </div>
-      <div class="row"><p>投稿No : {{ record.id }}</p></div>
-      <div class="row"><p>犬の名前 : {{ record.dog_name }}</p></div>
-      <div class="row"><p>犬種 : {{ record.breed }}</p></div>
-      <div class="row"><p>性別 : {{ $getLabel(gender_map, record.gender) }}</p></div>
-      <div class="row"><p>去勢/避妊手術 : {{ $getLabel(spay_map, record.spay) }}</p></div>
-      <div class="row"><p>年齢 : {{ record.old }}</p></div>
-      <div class="row"><p>単身者への譲渡 : {{ $getLabel(single_person_map, record.single_person) }}</p></div>
-      <div class="row"><p>高齢者への譲渡 : {{ $getLabel(senior_person_map, record.senior_person) }}</p></div>
-      <div class="row"><p>譲渡ステータス : {{ $getLabel(transfer_status_map, record.transter_status) }}</p></div>
-      <div class="row"><p>自己紹介 : {{ record.introduction }}</p></div>
-      <div class="row"><p>投稿日時 : {{ record.created_at }}</p></div>
-      <div class="row"><p>性格アピールポイント : {{ record.appeal_point }}</p></div>
+      <div class="row"><p>投稿No : {{ post.id }}</p></div>
+      <div class="row"><p>犬の名前 : {{ post.dog_name }}</p></div>
+      <div class="row"><p>犬種 : {{ post.breed }}</p></div>
+      <div class="row"><p>性別 : {{ $getLabel(genderMap, post.gender) }}</p></div>
+      <div class="row"><p>去勢/避妊手術 : {{ $getLabel(spayMap, post.spay) }}</p></div>
+      <div class="row"><p>年齢 : {{ post.old }}</p></div>
+      <div class="row"><p>単身者への譲渡 : {{ $getLabel(singlePersonMap, post.single_person) }}</p></div>
+      <div class="row"><p>高齢者への譲渡 : {{ $getLabel(seniorPersonMap, post.senior_person) }}</p></div>
+      <div class="row"><p>譲渡ステータス : {{ $getLabel(transferStatusMap, post.transter_status) }}</p></div>
+      <div class="row"><p>自己紹介 : {{ post.introduction }}</p></div>
+      <div class="row"><p>投稿日時 : {{ post.created_at }}</p></div>
+      <div class="row"><p>性格アピールポイント : {{ post.appeal_point }}</p></div>
       <div class="row"><p>譲渡可能都道府県 : </p>
-        <div class="transferable" v-for="record in transferable_prefectures" v-bind:key="record.post_id">
-          <p>{{ $getLabel(prefecture_map, record.post_transferable_prefecture_id) }} </p>
+        <div class="transferable" v-for="postPrefecture in postPrefectures" v-bind:key="postPrefecture.post_id">
+          <p>{{ $getLabel(prefectureMap, postPrefecture.post_prefecture_id) }} </p>
         </div>
       </div>
-      <div class="row"><p>健康状態や譲渡条件などの特記事項 : {{ record.other_message }}</p></div>
+      <div class="row"><p>健康状態や譲渡条件などの特記事項 : {{ post.other_message }}</p></div>
     </div>
 
-    <div class="container" v-for="record in image_paths" v-bind:key="record.post_id">
+    <div class="container" v-for="imagePath in imagePaths" v-bind:key="imagePath.post_id">
       <div class='col-xs-12'>
         <img class='float-left'
              style='padding:0;margin:0 15px 0 0;'
-             v-bind:src="record.image_path"
+             v-bind:src="imagePath.image_path"
              width="180"
              height="180">
       </div>
@@ -50,43 +50,38 @@
 const axios = require('axios');
 process.env.DEBUG = 'nuxt:*' // nuxt.jsについてログ出力する
 
-import gender_map from '@/assets/json/gender.json'
-import prefecture_map from '@/assets/json/prefecture.json'
-import senior_person_map from '@/assets/json/senior_person.json'
-import single_person_map from '@/assets/json/single_person.json'
-import spay_map from '@/assets/json/spay.json'
-import transfer_status_map from '@/assets/json/transfer_status.json'
+import genderMap from '@/assets/json/gender.json'
+import prefectureMap from '@/assets/json/prefecture.json'
+import seniorPersonMap from '@/assets/json/senior_person.json'
+import singlePersonMap from '@/assets/json/single_person.json'
+import spayMap from '@/assets/json/spay.json'
+import transferStatusMap from '@/assets/json/transfer_status.json'
 
 
 export default {
   data: function () {
     return {
       //storeの共通資材
-      gender_map: gender_map,
-      prefecture_map: prefecture_map,
-      senior_person_map: senior_person_map,
-      single_person_map: single_person_map,
-      spay_map: spay_map,
-      transfer_status_map: transfer_status_map,
+      genderMap: genderMap,
+      prefectureMap: prefectureMap,
+      seniorPersonMap: seniorPersonMap,
+      singlePersonMap: singlePersonMap,
+      spayMap: spayMap,
+      transferStatusMap: transferStatusMap,
 
-      records: [], // 投稿記事
-      image_paths: [], //画像URL
-      user_profile: [], //ユーザー情報
-      transferable_prefectures: [], //譲渡可能都道府県
+      posts: [], // 投稿記事
+      imagePaths: [], //画像URL
+      postPrefectures: [], //譲渡可能都道府県
       user: {}, //ユーザー情報
     }
   },
   components: {},
-  computed: {
-    computedRecords() {
-    },
-  },
-
+  computed: {},
   mounted: function () {
-    this.doFetchOneRecords(this.$route.params['id']);
-    this.doFetchPostImagePaths(this.$route.params['id']);
-    this.doFetchTransferablePrefecture(this.$route.params['id']);
-    this.doFetchUserProfile(this.$route.params['id']);
+    this.getDetail(this.$route.params['id']);
+    this.getPostImagePaths(this.$route.params['id']);
+    this.getPostPrefecture(this.$route.params['id']);
+    this.getUser(this.$route.params['id']);
   },
 
   methods: {
@@ -94,14 +89,14 @@ export default {
      * 投稿IDに紐づいた基礎投稿情報を取得する
      * @param {int} postID
      */
-    doFetchOneRecords(currentPostId) {
+    getDetail(currentPostId) {
       axios.get('api/post', {
         params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
-          this.records = response.data;
+          this.posts = response.data;
         }
       })
     },
@@ -110,14 +105,14 @@ export default {
      * 投稿IDに紐づいた画像パスを取得する
      * @param {int} postID
      */
-    doFetchPostImagePaths(currentPostId) {
+    getPostImagePaths(currentPostId) {
       axios.get('api/images', {
         params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
-          this.image_paths = response.data;
+          this.imagePaths = response.data;
         }
       })
     },
@@ -126,14 +121,14 @@ export default {
      * 投稿IDに紐づいた譲渡可能都道府県を取得する
      * @param {int} postID
      */
-    doFetchTransferablePrefecture(currentPostId) {
-      axios.get('api/transferable_prefecture', {
+    getPostPrefecture(currentPostId) {
+      axios.get('api/post_prefecture', {
         params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
           throw new Error('レスポンスエラー')
         } else {
-          this.transferable_prefectures = response.data;
+          this.postPrefectures = response.data;
         }
       })
     },

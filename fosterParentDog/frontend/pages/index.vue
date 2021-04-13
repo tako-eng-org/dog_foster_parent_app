@@ -4,23 +4,23 @@
       <h1>里親募集 掲示板</h1>
     </div>
     <!-- レコード表示 -->
-    <div class="container" v-for="record in records" v-bind:key="record.id">
+    <div class="container" v-for="post in posts" v-bind:key="post.id">
       <div class='col-xs-12'>
         <img class='float-left'
              style='padding:0;margin:0 15px 0 0;'
-             v-bind:src="record.top_image_path"
+             v-bind:src="post.top_image_path"
              width="130"
              height="130">
       </div>
       <div class="row">
-        <nuxt-link :to="`/detail/${record.id}`">
-          #{{ record.id }} {{ record.dog_name }}
+        <nuxt-link :to="`/detail/${post.id}`">
+          #{{ post.id }} {{ post.dog_name }}
         </nuxt-link>
       </div>
-      <div class="row"><p>犬種 : {{ record.breed }}</p></div>
-      <div class="row"><p>性別 : {{ $getLabel(gender_map, record.gender) }}</p></div>
-      <div class="row"><p>自己紹介 : {{ record.introduction }}</p></div>
-      <div class="row"><p>投稿日時 : {{ record.created_at }}</p></div>
+      <div class="row"><p>犬種 : {{ post.breed }}</p></div>
+      <div class="row"><p>性別 : {{ $getLabel(genderMap, post.gender) }}</p></div>
+      <div class="row"><p>自己紹介 : {{ post.introduction }}</p></div>
+      <div class="row"><p>投稿日時 : {{ post.created_at }}</p></div>
       <br>
     </div>
 
@@ -32,7 +32,7 @@
         :totalCount="totalCount"
         :perPage="perPage"
         :totalPages="totalPages"
-        @currentPage="doFetchIndexRecords"
+        @currentPage="getIndex"
       ></pagenation>
     </div>
 
@@ -42,7 +42,7 @@
 
 <script>
 import pagenation from "../components/pagenation";
-import gender_map from '@/assets/json/gender.json';
+import genderMap from '@/assets/json/gender.json';
 
 const axios = require('axios');
 process.env.DEBUG = 'nuxt:*' // nuxt.jsについてログ出力する
@@ -53,14 +53,14 @@ export default {
   },
 
   mounted() {
-    this.doFetchIndexRecords(this.currentPage).then(this.doSetPagenation());
+    this.getIndex(this.currentPage).then(this.generatePagination());
   },
 
   data() {
     return {
-      gender_map: gender_map,
+      genderMap: genderMap,
 
-      records: [], // 投稿記事
+      posts: [], // 投稿記事
       // show: true,
 
       //ページネーション設定
@@ -75,7 +75,7 @@ export default {
   computed: {
     // 表示対象の情報を返却する
     computedRecords() {
-      return this.records
+      return this.posts
     },
   },
 
@@ -84,7 +84,7 @@ export default {
      * 指定したページの投稿一覧を取得する
      * @param {int} pageNum
      */
-    doFetchIndexRecords(page) {
+    getIndex(page) {
       return new Promise((resolve, reject) => {
         axios.get('api/index', {
           params: {
@@ -94,7 +94,7 @@ export default {
           if ((response.status !== 200)) {
             throw new Error('レスポンスエラー')
           } else {
-            this.records = response.data;
+            this.posts = response.data;
           }
         })
       })
@@ -106,7 +106,7 @@ export default {
      * ・総ページ数を算出し、設定する。
      * @param {int} postID
      */
-    doSetPagenation() {
+    generatePagination() {
       return new Promise((resolve, reject) => {
         axios.get('api/published_post_count').then((response) => {
           if ((response.status !== 200)) {
