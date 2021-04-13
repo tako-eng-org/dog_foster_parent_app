@@ -14,6 +14,7 @@ func (cont *Controller) FetchPostImagePaths(c *gin.Context) {
 	postId := c.Query("postId")
 	postImageModel, _ := cont.DbConn.FindPostImagePaths(postId) //ORMを叩いてデータとerrを取得する
 
+	// FIXME: シリアライザーを通さず処理しており、期待動作するが要修正。
 	var ret []serializers.PostImageResponse
 	for i := 0; i < len(postImageModel); i++ {
 		ret = append(ret, serializers.PostImageResponse{

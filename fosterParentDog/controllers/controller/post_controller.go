@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"fpdapp/models/entity"
 	"fpdapp/serializers"
 	"net/http"
@@ -20,20 +21,41 @@ func (cont *Controller) CountPublishedPost(c *gin.Context) {
 // 投稿を1ページ表示(20件)分取得する
 //*******************************************************************
 func (cont *Controller) Index(c *gin.Context) {
-	//page := c.DefaultQuery("page", "1") // ?page=1(デフォルト)
-	//postModel, _ := cont.DbConn.FindIndex(page)
-	//
-	//fmt.Println("-------Index_s")
-	//fmt.Println(postModel)
-	//fmt.Println("-------Index_e")
-	//
-	//for i := 0; i < len(postModel); i++ {
-	//	tmp := append()
-	//	//PostResponce{}に、postModelの項目たちをセットする
-	//}
-	//
-	//c.Set("my_post_model", postModel) //回避 (*conttext).MustGet: panic("Key \"" + key + "\" does not exist")
-	//posts := serializers.PostSerializer{C: c, EntityPost: postModel}
+	page := c.DefaultQuery("page", "1") // ?page=1(デフォルト)
+	model, _ := cont.DbConn.FindIndex(page)
+
+	fmt.Println("-------Index_s")
+	fmt.Println(model)
+	fmt.Println("-------Index_e")
+
+	// FIXME: シリアライザーを通さず処理しており、期待動作するが要修正。
+	var ret []serializers.PostResponse
+	for i := 0; i < len(model); i++ {
+		ret = append(ret, serializers.PostResponse{
+			ID:               model[i].ID,
+			CreatedAt:        model[i].CreatedAt.Format("2006-01-02 15:04"),
+			UpdatedAt:        model[i].UpdatedAt.Format("2006-01-02 15:04"),
+			Publishing:       model[i].Publishing,
+			DogName:          model[i].DogName,
+			Breed:            model[i].Breed,
+			Gender:           model[i].Gender,
+			Spay:             model[i].SeniorPerson,
+			Old:              model[i].Old,
+			SinglePerson:     model[i].SinglePerson,
+			SeniorPerson:     model[i].SeniorPerson,
+			TransferStatus:   model[i].TransferStatus,
+			Introduction:     model[i].Introduction,
+			AppealPoint:      model[i].AppealPoint,
+			PostPrefectureId: model[i].PostPrefectureId,
+			OtherMessage:     model[i].OtherMessage,
+			UserId:           model[i].UserId,
+			TopImagePath:     model[i].TopImagePath,
+			PostImageId:      model[i].PostImageId,
+		})
+	}
+	c.Set("my_post_prefecture_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	//posts := serializers.PostPrefectureSerializer{C: c, EntityPostPrefecture: model}
+	c.JSON(http.StatusOK, ret)
 	//c.JSON(http.StatusOK, posts.Response())
 }
 

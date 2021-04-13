@@ -8,7 +8,7 @@ import (
 
 type PostPrefectureSerializer struct {
 	C                    *gin.Context
-	EntityPostPrefecture []entity.PostPrefecture
+	EntityPostPrefecture entity.PostPrefecture
 }
 
 type PostPrefectureResponse struct {
@@ -16,6 +16,16 @@ type PostPrefectureResponse struct {
 	PostPrefectureId int  `json:"post_prefecture_id"`
 }
 
+func (ps *PostPrefectureSerializer) ResponsePostPrefecture() PostPrefectureResponse {
+	//myModel := ps.C.MustGet("my_post_prefecture_model").(entity.PostPrefecture)
+	ret := PostPrefectureResponse{
+		PostId:           ps.EntityPostPrefecture.PostId,
+		PostPrefectureId: ps.EntityPostPrefecture.PostPrefectureId,
+	}
+	return ret
+}
+
+/*
 func (ps *PostPrefectureSerializer) ResponsePostPrefecture() []PostPrefectureResponse {
 	myModel := ps.C.MustGet("my_post_prefecture_model").([]entity.PostPrefecture)
 	var postRet []PostPrefectureResponse
@@ -27,3 +37,4 @@ func (ps *PostPrefectureSerializer) ResponsePostPrefecture() []PostPrefectureRes
 	}
 	return postRet
 }
+*/
