@@ -18,7 +18,7 @@ func serve() {
 	database := db.Open()
 	defer database.Close()
 
-	postController := controller.PostController{
+	controller := controller.Controller{
 		Database: database,
 	}
 
@@ -29,36 +29,36 @@ func serve() {
 	// トップ画面から使用するAPI
 	// ************************************************
 	// 公開済み投稿数を取得する
-	router.GET("/published_post_count", postController.CountPublishedPost)
+	router.GET("/published_post_count", controller.CountPublishedPost)
 
 	// 投稿を1ページ表示分取得する
 	// ex: localhost:8000/fosterparent/index?page=1
-	router.GET("/index", postController.Index)
+	router.GET("/index", controller.Index)
 
 	// ************************************************
 	// 投稿詳細画面から使用するAPI
 	// ************************************************
 	// 投稿を対象idの1件分取得する
 	// ex: localhost:8000/fosterparent/post?postId=1
-	router.GET("/post", postController.FetchOnePost)
+	router.GET("/post", controller.FetchOnePost)
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/images?postId=44
-	router.GET("/images", postController.FetchPostImagePaths)
+	router.GET("/images", controller.FetchPostImagePaths)
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/detail/44
-	router.GET("/post_prefecture", postController.FetchPostPrefecture)
+	router.GET("/post_prefecture", controller.FetchPostPrefecture)
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/?????????
-	router.GET("/user", postController.FetchPostUser)
+	router.GET("/user", controller.FetchPostUser)
 
 	// ************************************************
 	// test
 	// ************************************************
 	// 投稿レコード情報をDBへ登録する
-	router.POST("/add_record", postController.Create)
+	router.POST("/add_record", controller.Create)
 
 	// ************************************************
 	// 異常系

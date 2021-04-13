@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fpdapp/models/db"
 	"fpdapp/models/entity"
 	"fpdapp/serializers"
 	"net/http"
@@ -9,23 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type (
-	PostController struct {
-		Database *db.Database
-	}
-)
-
 //*******************************************************************
 // 公開済み投稿数を取得する
 //*******************************************************************
-func (pc *PostController) CountPublishedPost(c *gin.Context) {
+func (pc *Controller) CountPublishedPost(c *gin.Context) {
 	c.JSON(http.StatusOK, pc.Database.CountPublishedPost()) // URLへのアクセスに対してJSONを返す
 }
 
 //*******************************************************************
 // 投稿を1ページ表示(20件)分取得する
 //*******************************************************************
-func (pc *PostController) Index(c *gin.Context) {
+func (pc *Controller) Index(c *gin.Context) {
 	page := c.DefaultQuery("page", "1") // ?page=1(デフォルト)
 	postModel, _ := pc.Database.FindIndex(page)
 	c.Set("my_post_model", postModel) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
@@ -34,9 +27,20 @@ func (pc *PostController) Index(c *gin.Context) {
 }
 
 //*******************************************************************
-// 投稿テーブルへ登録する
+// 投稿を対象idの1件取得する
 //*******************************************************************
-func (pc *PostController) Create(c *gin.Context) {
+func (pc *Controller) FetchOnePost(c *gin.Context) {
+	postId := c.Query("postId")
+	postModel, _ := pc.Database.FindOnePost(postId) //ORMを叩いてデータとerrを取得する
+	c.Set("my_post_model", postModel)               //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostSerializer{C: c, EntityPost: postModel}
+	c.JSON(http.StatusOK, posts.Response())
+}
+
+//*******************************************************************
+// 投稿記事テーブルへ記事を登録する
+//*******************************************************************
+func (pc *Controller) Create(c *gin.Context) {
 	t := entity.Post{}
 	var record = entity.Post{ // テーブルに登録するためのレコード情報
 		Publishing:       t.ToInt(c.PostForm("publishing")),
@@ -59,51 +63,4 @@ func (pc *PostController) Create(c *gin.Context) {
 	pc.Database.InsertPost(&record)
 
 	c.JSON(http.StatusCreated, "****************created")
-}
-
-//*******************************************************************
-// 投稿を対象idの1件取得する
-//*******************************************************************
-func (pc *PostController) FetchOnePost(c *gin.Context) {
-	postId := c.Query("postId")
-	postModel, _ := pc.Database.FindOnePost(postId) //ORMを叩いてデータとerrを取得する
-	c.Set("my_post_model", postModel)               //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostSerializer{C: c, EntityPost: postModel}
-	c.JSON(http.StatusOK, posts.Response())
-}
-
-//*******************************************************************
-// 投稿idをもとに、投稿画像パスを取得する
-//*******************************************************************
-func (pc *PostController) FetchPostImagePaths(c *gin.Context) {
-	postId := c.Query("postId")
-	postImageModel, _ := pc.Database.FindPostImagePaths(postId) //ORMを叩いてデータとerrを取得する
-
-	c.Set("my_post_image_model", postImageModel) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostImageSerializer{C: c, EntityPostImage: postImageModel}
-	c.JSON(http.StatusOK, posts.ResponsePostImage())
-}
-
-//*******************************************************************
-// 投稿idをもとに、譲渡可能都道府県idを取得する
-//*******************************************************************
-func (pc *PostController) FetchPostPrefecture(c *gin.Context) {
-	postId := c.Query("postId")
-	model, _ := pc.Database.FindPostPrefecture(postId) //ORMを叩いてデータとerrを取得する
-
-	c.Set("my_post_prefecture_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostPrefectureSerializer{C: c, EntityPostPrefecture: model}
-	c.JSON(http.StatusOK, posts.ResponsePostPrefecture())
-}
-
-//*******************************************************************
-// 投稿idをもとに、ユーザー情報を取得する
-//*******************************************************************
-func (pc *PostController) FetchPostUser(c *gin.Context) {
-	postId := c.Query("postId")
-	model, _ := pc.Database.FindPostUser(postId) //ORMを叩いてデータとerrを取得する
-
-	c.Set("my_post_user_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.UserSerializer{C: c, EntityUser: model}
-	c.JSON(http.StatusOK, posts.ResponseUser())
 }
