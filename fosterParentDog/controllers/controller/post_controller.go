@@ -1,7 +1,7 @@
 package controller
 
 import (
-	db "fpdapp/models/db"
+	"fpdapp/models/db"
 	"fpdapp/models/entity"
 	"fpdapp/serializers"
 	"net/http"
@@ -18,8 +18,8 @@ type (
 //*******************************************************************
 // 公開済み投稿数を取得する
 //*******************************************************************
-func (pc *PostController) CountPublishedPostNum(c *gin.Context) {
-	c.JSON(http.StatusOK, pc.Database.CountPublishedPostNum()) // URLへのアクセスに対してJSONを返す
+func (pc *PostController) CountPublishedPost(c *gin.Context) {
+	c.JSON(http.StatusOK, pc.Database.CountPublishedPost()) // URLへのアクセスに対してJSONを返す
 }
 
 //*******************************************************************
@@ -27,7 +27,7 @@ func (pc *PostController) CountPublishedPostNum(c *gin.Context) {
 //*******************************************************************
 func (pc *PostController) Index(c *gin.Context) {
 	page := c.DefaultQuery("page", "1") // ?page=1(デフォルト)
-	postModel, _ := pc.Database.FindIndexRecords(page)
+	postModel, _ := pc.Database.FindIndex(page)
 	c.Set("my_post_model", postModel) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
 	posts := serializers.PostSerializer{C: c, EntityPost: postModel}
 	c.JSON(http.StatusOK, posts.Response())
@@ -56,7 +56,7 @@ func (pc *PostController) Create(c *gin.Context) {
 		TopImagePath:     t.ToStr(c.PostForm("top_image_path")),
 		PostImageId:      t.ToInt64(c.PostForm("post_image_id")),
 	}
-	pc.Database.InsertRecord(&record)
+	pc.Database.InsertPost(&record)
 
 	c.JSON(http.StatusCreated, "****************created")
 }
@@ -64,36 +64,36 @@ func (pc *PostController) Create(c *gin.Context) {
 //*******************************************************************
 // 投稿を対象idの1件取得する
 //*******************************************************************
-func (pc *PostController) FetchPostOneRecord(c *gin.Context) {
+func (pc *PostController) FetchOnePost(c *gin.Context) {
 	postId := c.Query("postId")
-	postModel, _ := pc.Database.FindPostOneRecord(postId)            //ORMを叩いてデータとerrを取得する
-	c.Set("my_post_model", postModel)                                //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostSerializer{C: c, EntityPost: postModel} //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.Response())                          //コンテキストに入ったデータを整形してリターン
+	postModel, _ := pc.Database.FindOnePost(postId) //ORMを叩いてデータとerrを取得する
+	c.Set("my_post_model", postModel)               //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostSerializer{C: c, EntityPost: postModel}
+	c.JSON(http.StatusOK, posts.Response())
 }
 
 //*******************************************************************
-// 投稿idをもとに、投稿画像を取得する
+// 投稿idをもとに、投稿画像パスを取得する
 //*******************************************************************
 func (pc *PostController) FetchPostImagePaths(c *gin.Context) {
 	postId := c.Query("postId")
 	postImageModel, _ := pc.Database.FindPostImagePaths(postId) //ORMを叩いてデータとerrを取得する
 
-	c.Set("my_post_image_model", postImageModel)                                    //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostImageSerializer{C: c, EntityPostImage: postImageModel} //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.ResponsePostImage())                                //コンテキストに入ったデータを整形してリターン
+	c.Set("my_post_image_model", postImageModel) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostImageSerializer{C: c, EntityPostImage: postImageModel}
+	c.JSON(http.StatusOK, posts.ResponsePostImage())
 }
 
 //*******************************************************************
-// 投稿idをもとに、投稿画像を取得する
+// 投稿idをもとに、譲渡可能都道府県idを取得する
 //*******************************************************************
-func (pc *PostController) FetchPostTransferablePrefecture(c *gin.Context) {
+func (pc *PostController) FetchPostPrefecture(c *gin.Context) {
 	postId := c.Query("postId")
-	model, _ := pc.Database.FindPostFetchPostTransferablePrefecture(postId) //ORMを叩いてデータとerrを取得する
+	model, _ := pc.Database.FindPostPrefecture(postId) //ORMを叩いてデータとerrを取得する
 
-	c.Set("my_post_transferable_prefecture_model", model)                                                    //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostTransferablePrefectureSerializer{C: c, EntityPostTransferablePrefecture: model} //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.ResponsePostTransferablePrefecture())                                        //コンテキストに入ったデータを整形してリターン
+	c.Set("my_post_prefecture_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	posts := serializers.PostPrefectureSerializer{C: c, EntityPostPrefecture: model}
+	c.JSON(http.StatusOK, posts.ResponsePostPrefecture())
 }
 
 //*******************************************************************

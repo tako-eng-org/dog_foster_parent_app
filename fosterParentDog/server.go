@@ -11,12 +11,10 @@ import (
 )
 
 func main() {
-	// サーバーを起動する
-	serve()
+	serve() // サーバーを起動する
 }
 
 func serve() {
-
 	database := db.Open()
 	defer database.Close()
 
@@ -31,7 +29,7 @@ func serve() {
 	// トップ画面から使用するAPI
 	// ************************************************
 	// 公開済み投稿数を取得する
-	router.GET("/published_post_count", postController.CountPublishedPostNum)
+	router.GET("/published_post_count", postController.CountPublishedPost)
 
 	// 投稿を1ページ表示分取得する
 	// ex: localhost:8000/fosterparent/index?page=1
@@ -42,7 +40,7 @@ func serve() {
 	// ************************************************
 	// 投稿を対象idの1件分取得する
 	// ex: localhost:8000/fosterparent/post?postId=1
-	router.GET("/post", postController.FetchPostOneRecord)
+	router.GET("/post", postController.FetchOnePost)
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/images?postId=44
@@ -50,7 +48,7 @@ func serve() {
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/detail/44
-	router.GET("/transferable_prefecture", postController.FetchPostTransferablePrefecture)
+	router.GET("/post_prefecture", postController.FetchPostPrefecture)
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/?????????
