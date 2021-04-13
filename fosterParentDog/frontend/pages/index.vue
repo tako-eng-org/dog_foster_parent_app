@@ -5,13 +5,7 @@
     </div>
     <!-- レコード表示 -->
     <div class="container" v-for="post in posts" v-bind:key="post.id">
-      <div class='col-xs-12'>
-        <img class='float-left'
-             style='padding:0;margin:0 15px 0 0;'
-             v-bind:src="post.top_image_path"
-             width="130"
-             height="130">
-      </div>
+      <ImageObj :imagepath="post.top_image_path"/>
       <div class="row">
         <nuxt-link :to="`/detail/${post.id}`">
           #{{ post.id }} {{ post.dog_name }}
@@ -33,22 +27,22 @@
         :perPage="perPage"
         :totalPages="totalPages"
         @currentPage="getIndex"
-      ></pagenation>
+      ></Pagenation>
     </div>
 
-    <!--  テンプレート終わり  -->
   </div>
 </template>
 
 <script>
-import pagenation from "../components/pagenation";
+import axios from 'axios'
+import Pagenation from "../components/Pagenation";
+import ImageObj from "@/components/Image.vue";
 import genderMap from '@/assets/json/gender.json';
-
-const axios = require('axios');
 
 export default {
   components: {
-    pagenation,
+    Pagenation,
+    ImageObj,
   },
 
   mounted() {
@@ -60,7 +54,6 @@ export default {
       genderMap: genderMap,
 
       posts: [], // 投稿記事
-      // show: true,
 
       //ページネーション設定
       currentPage: 1, //現在のページ（初期は1）

@@ -2,13 +2,7 @@
   <div class="detail">
     <!--    <div class="container" v-for="post in posts" v-bind:key="post.id">-->
     <div class="container" v-bind:key="post.id">
-      <div class='col-xs-12'>
-        <img class='float-left'
-             style='padding:0;margin:0 15px 0 0;'
-             v-bind:src="post.top_image_path"
-             width="180"
-             height="180">
-      </div>
+      <ImageObj :imagepath="post.top_image_path"/>
       <div class="row"><p>投稿No : {{ post.id }}</p></div>
       <div class="row"><p>犬の名前 : {{ post.dog_name }}</p></div>
       <div class="row"><p>犬種 : {{ post.breed }}</p></div>
@@ -32,13 +26,7 @@
     </div>
 
     <div class="container" v-for="imagePath in imagePaths" v-bind:key="imagePath.post_id">
-      <div class='col-xs-12'>
-        <img class='float-left'
-             style='padding:0;margin:0 15px 0 0;'
-             v-bind:src="imagePath.image_path"
-             width="180"
-             height="180">
-      </div>
+      <ImageObj :imagepath="imagePath.image_path"/>
     </div>
 
     <div class="container" v-bind:key="user.id">
@@ -58,6 +46,8 @@ import SeniorPersonMap from '@/assets/json/senior_person.json'
 import SinglePersonMap from '@/assets/json/single_person.json'
 import SpayMap from '@/assets/json/spay.json'
 import TransferStatusMap from '@/assets/json/transfer_status.json'
+
+import ImageObj from "@/components/Image.vue";
 
 
 export default {
@@ -79,7 +69,9 @@ export default {
       user: {}, //ユーザー情報
     }
   },
-  components: {},
+  components: {
+    ImageObj,
+  },
   computed: {},
   mounted: function () {
     this.getDetail(this.$route.params['id']);
