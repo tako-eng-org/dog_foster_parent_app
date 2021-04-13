@@ -45,7 +45,6 @@ import pagenation from "../components/pagenation";
 import genderMap from '@/assets/json/gender.json';
 
 const axios = require('axios');
-process.env.DEBUG = 'nuxt:*' // nuxt.jsについてログ出力する
 
 export default {
   components: {
