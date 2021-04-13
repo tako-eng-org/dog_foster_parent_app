@@ -17,12 +17,6 @@ type (
 	}
 )
 
-// テーブル名
-const PostTable = "posts"
-const PostImageTable = "post_images"
-const TransferablePrefecturestable = "transferable_prefectures"
-const UserTable = "public.users"
-
 //*******************************************************************
 // DB接続する
 //*******************************************************************
@@ -86,7 +80,7 @@ func (db *Database) CountPublishedPostNum() int64 {
 	var countNum int64
 
 	//SELECT count(id) FROM "post"  WHERE (publishing = '0')
-	db.db.Table(PostTable).
+	db.db.Table("posts").
 		Select("count(id)").
 		Where("publishing = ?", "0").
 		Count(&countNum)
@@ -135,13 +129,13 @@ func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, er
 	//left join post_image
 	//on post.id = post_image.post_id
 	//WHERE (post.id = '44')
-	err := db.db.Table(PostTable).
-		Select(PostTable+".id as post_id,"+
-			" "+PostImageTable+".id as post_image_id,"+
-			" "+PostImageTable+".image_path").
-		Joins("left join "+PostImageTable+
-			" on "+PostTable+".id = "+PostImageTable+".post_id ").
-		Where(PostTable+".id = ?", postIdStr).
+	err := db.db.Table("posts").
+		Select("posts.id as post_id,"+
+			" post_images.id as post_image_id,"+
+			" post_images.image_path").
+		Joins("left join post_images"+
+			" on posts.id = post_images.post_id ").
+		Where("posts.id = ?", postIdStr).
 		Scan(&model).
 		Error
 
@@ -157,12 +151,12 @@ func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, er
 func (db *Database) FindPostFetchPostTransferablePrefecture(postIdStr string) ([]entity.TransferablePrefecture, error) {
 	var model []entity.PostPrefecture
 
-	//select transferable_prefecture.id, transferable_prefecture.transferable_prefecture_id from transferable_prefecture where post_id = 44;
-	err := db.db.Table(TransferablePrefecturestable).
-		Select(TransferablePrefecturestable+".id,"+
-			" "+TransferablePrefecturestable+".post_id,"+
-			" "+TransferablePrefecturestable+".transferable_prefecture_id").
-		Where(TransferablePrefecturestable+".post_id = ?", postIdStr).
+	//select post_prefecture.id, post_prefecture.post_prefecture_id from post_prefecture where post_id = 44;
+	err := db.db.Table("post_prefectures").
+		Select("post_prefectures.id,"+
+			" post_prefectures.post_id,"+
+			" post_prefectures.post_prefecture_id").
+		Where("post_prefectures.post_id = ?", postIdStr).
 		Scan(&model).
 		Error
 
@@ -185,9 +179,9 @@ func (db *Database) FindPostUser(postIdStr string) (entity.User, error) {
 		on A.user_id = B.id
 		where A.id = 44;
 	*/
-	err := db.db.Table(PostTable+" A").
+	err := db.db.Table("posts A").
 		Select("B.*").
-		Joins("inner join "+UserTable+" B on A.user_id = B.id").
+		Joins("inner join public.users B on A.user_id = B.id").
 		Where("A.id = ?", postIdStr).
 		Scan(&model).
 		Error
