@@ -26,7 +26,7 @@
 
     <!--  ページ数表示  -->
     <div class="container">
-      <pagenation
+      <Pagenation
         :showPages="showPages"
         :currentPage="currentPage"
         :totalCount="totalCount"
