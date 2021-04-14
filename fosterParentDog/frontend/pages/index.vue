@@ -84,7 +84,8 @@ export default {
           }
         }).then((response) => {
           if ((response.status !== 200)) {
-            throw new Error('レスポンスエラー')
+            // TODO エラー時メッセージをわかりやすい文へ
+            throw new Error(response.statusText)
           } else {
             this.posts = response.data;
           }
@@ -102,7 +103,7 @@ export default {
       return new Promise((resolve, reject) => {
         axios.get('api/published_post_count').then((response) => {
           if ((response.status !== 200)) {
-            throw new Error('レスポンスエラー')
+            throw new Error(response.statusText)
           } else {
             this.totalCount = response.data; // 公開済記事数 ex: 41
             this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
