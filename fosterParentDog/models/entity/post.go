@@ -25,3 +25,18 @@ type Post struct {
 	TopImagePath     string `gorm:"type:varchar(150);	not null"` //top投稿画像パス
 	PostImageId      uint64 `gorm:"type:int;					"`              //投稿画像ID
 }
+
+//FIXME: Userなど別レシーバでも使えるようにしたい
+func (s *Post) ToInt(i interface{}) int {
+	var r, _ = i.(int)
+	return r
+}
+func (s *Post) ToStr(i interface{}) string {
+	var r, _ = i.(string)
+	return r
+}
+
+func (s *Post) ToInt64(i interface{}) uint64 {
+	var r, _ = i.(uint64)
+	return r
+}
