@@ -97,33 +97,19 @@ func (db *Database) FindIndex(page string) ([]entity.Post, error) {
 	err := db.connection.Order("id desc").
 		Limit(numberPerPage).
 		Offset((pageNum - 1) * numberPerPage).
-		Find(&model). // ポインタを渡してメモリアドレスに結果を格納する
+		Find(&model).
 		Error
 	return model, err
 }
 
-/*
-func (connection *Database) FindIndex(page string) ([]entity.Post, error) {
-
-	var model []entity.Post
-	pageNum, _ := strconv.Atoi(page) // 数値に変換する
-	numberPerPage := 20              // 1ページあたりの表示件数
-
-	err := connection.connection.Order("id desc").
-		Limit(numberPerPage).
-		Offset((pageNum - 1) * numberPerPage).
-		Find(&model). // ポインタを渡してメモリアドレスに結果を格納する
-		Error
-	return model, err
-}
-*/
 //*******************************************************************
 // [第1引数]の投稿IDでレコードを取得する
 //*******************************************************************
 func (db *Database) FindOnePost(postId string) (entity.Post, error) {
 	var model entity.Post
 
-	err := db.connection.Where("id = ?", postId).First(&model).Error
+	//SELECT * FROM "posts"  WHERE "posts"."deleted_at" IS NULL AND (("posts"."id" = '2')) ORDER BY "posts"."id" ASC LIMIT 1
+	err := db.connection.First(&model, postId).Error
 
 	return model, err
 }
