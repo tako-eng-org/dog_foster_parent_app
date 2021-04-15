@@ -7,8 +7,8 @@ import (
 )
 
 type UserSerializer struct {
-	C          *gin.Context
-	EntityUser entity.User
+	C    *gin.Context
+	User entity.User
 }
 
 type UserResponse struct {
@@ -23,18 +23,17 @@ type UserResponse struct {
 	WebUrl         string `json:"web_url"`         //websiteやSNSなどのURL
 }
 
-// *PostSerializer型の構造体 selfのレシーバを使用して、メソッドを定義する
 func (us *UserSerializer) ResponseUser() UserResponse {
-	ret := UserResponse{
-		ID:             us.EntityUser.ID,
-		CreatedAt:      us.EntityUser.CreatedAt.Format("2006-01-02 15:04"),
-		UpdatedAt:      us.EntityUser.UpdatedAt.Format("2006-01-02 15:04"),
-		Name:           us.EntityUser.Name,
-		Email:          us.EntityUser.Email,
-		TwitterAccount: us.EntityUser.TwitterAccount,
-		Nickname:       us.EntityUser.Nickname,
-		Profile:        us.EntityUser.Profile,
-		WebUrl:         us.EntityUser.WebUrl,
+	response := UserResponse{
+		ID:             us.User.ID,
+		CreatedAt:      us.User.CreatedAt.Format("2006-01-02 15:04"),
+		UpdatedAt:      us.User.UpdatedAt.Format("2006-01-02 15:04"),
+		Name:           us.User.Name,
+		Email:          us.User.Email,
+		TwitterAccount: us.User.TwitterAccount,
+		Nickname:       us.User.Nickname,
+		Profile:        us.User.Profile,
+		WebUrl:         us.User.WebUrl,
 	}
-	return ret
+	return response
 }

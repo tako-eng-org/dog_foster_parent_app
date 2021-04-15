@@ -8,34 +8,11 @@ import (
 )
 
 //*******************************************************************
-// 投稿idをもとに、投稿画像パスを取得する
+// 投稿idをもとに、投稿画像パスリストを取得する
 //*******************************************************************
-func (cont *Controller) FetchPostImagePaths(c *gin.Context) {
-	postId := c.Query("postId")
-	postImageModel, _ := cont.DbConn.FindPostImagePaths(postId) //ORMを叩いてデータとerrを取得する
-
-	// FIXME: シリアライザーを通さず処理しており、期待動作するが要修正。
-	var ret []serializers.PostImageResponse
-	for i := 0; i < len(postImageModel); i++ {
-		ret = append(ret, serializers.PostImageResponse{
-			PostID:      postImageModel[i].PostId,
-			PostImageID: postImageModel[i].ID,
-			ImagePath:   postImageModel[i].ImagePath,
-		})
-	}
-
-	c.Set("my_post_image_model", postImageModel) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	//posts := serializers.PostImageSerializer{C: c, EntityPostImage: postImageModel}
-	c.JSON(http.StatusOK, ret)
+func (cont *Controller) FetchPostImagePathList(c *gin.Context) {
+	model, _ := cont.DbConn.FindPostImagePathList(c.Query("postId"))
+	c.Set("my_post_image_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	serializer := serializers.PostImagesSerializer{C: c, PostImages: model}
+	c.JSON(http.StatusOK, serializer.Response())
 }
-
-/*
-func (cont *Controller) FetchPostImagePaths(c *gin.Context) {
-	postId := c.Query("postId")
-	postImageModel, _ := cont.DbConn.FindPostImagePaths(postId) //ORMを叩いてデータとerrを取得する
-
-	c.Set("my_post_image_model", postImageModel) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostImageSerializer{C: c, EntityPostImage: postImageModel}
-	c.JSON(http.StatusOK, posts.ResponsePostImage())
-}
-*/

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"fpdapp/models/entity"
 	"fpdapp/serializers"
 	"net/http"
@@ -12,88 +11,56 @@ import (
 //*******************************************************************
 // 公開済み投稿数を取得する
 //*******************************************************************
+// TODO 今更思ったけど、 published_post_count のエンドポイントじゃなくて post_count のエンドポイントを作成してクエリで公開、非公開を指定できた方が汎用性高くないかな？
+// https://github.com/tako-eng-org/dog_foster_parent_app/pull/24#discussion_r611191794
 func (cont *Controller) CountPublishedPost(c *gin.Context) {
 	count, _ := cont.DbConn.CountPublishedPost()
 	c.JSON(http.StatusOK, count)
 }
 
 //*******************************************************************
-// 投稿を1ページ表示(20件)分取得する
+// 投稿を1ページ表示件数分取得する
 //*******************************************************************
-func (cont *Controller) Index(c *gin.Context) {
+func (cont *Controller) IndexList(c *gin.Context) {
 	page := c.DefaultQuery("page", "1") // ?page=1(デフォルト)
 	model, _ := cont.DbConn.FindIndex(page)
-
-	fmt.Println("-------Index_s")
-	fmt.Println(model)
-	fmt.Println("-------Index_e")
-
-	// FIXME: シリアライザーを通さず処理しており、期待動作するが要修正。
-	var ret []serializers.PostResponse
-	for i := 0; i < len(model); i++ {
-		ret = append(ret, serializers.PostResponse{
-			ID:               model[i].ID,
-			CreatedAt:        model[i].CreatedAt.Format("2006-01-02 15:04"),
-			UpdatedAt:        model[i].UpdatedAt.Format("2006-01-02 15:04"),
-			Publishing:       model[i].Publishing,
-			DogName:          model[i].DogName,
-			Breed:            model[i].Breed,
-			Gender:           model[i].Gender,
-			Spay:             model[i].SeniorPerson,
-			Old:              model[i].Old,
-			SinglePerson:     model[i].SinglePerson,
-			SeniorPerson:     model[i].SeniorPerson,
-			TransferStatus:   model[i].TransferStatus,
-			Introduction:     model[i].Introduction,
-			AppealPoint:      model[i].AppealPoint,
-			PostPrefectureId: model[i].PostPrefectureId,
-			OtherMessage:     model[i].OtherMessage,
-			UserId:           model[i].UserId,
-			TopImagePath:     model[i].TopImagePath,
-			PostImageId:      model[i].PostImageId,
-		})
-	}
 	c.Set("my_post_prefecture_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	//posts := serializers.PostPrefectureSerializer{C: c, EntityPostPrefecture: model}
-	c.JSON(http.StatusOK, ret)
-	//c.JSON(http.StatusOK, posts.Response())
+	serializer := serializers.PostsSerializer{C: c, Posts: model}
+	c.JSON(http.StatusOK, serializer.Response())
 }
 
 //*******************************************************************
 // 投稿を対象idの1件取得する
 //*******************************************************************
-func (cont *Controller) FetchOnePost(c *gin.Context) {
-	postId := c.Query("postId")
-	postModel, _ := cont.DbConn.FindOnePost(postId) //ORMを叩いてデータとerrを取得する
-	c.Set("my_post_model", postModel)               //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostSerializer{C: c, EntityPost: postModel}
-	c.JSON(http.StatusOK, posts.Response())
+func (cont *Controller) FetchPost(c *gin.Context) {
+	model, _ := cont.DbConn.FindPost(c.Query("postId"))
+	c.Set("my_post_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
+	serializer := serializers.PostSerializer{C: c, Post: model}
+	c.JSON(http.StatusOK, serializer.Response())
 }
 
 //*******************************************************************
-// 投稿記事テーブルへ記事を登録する
+// 投稿記事テーブルへ記事を1件登録する
 //*******************************************************************
 func (cont *Controller) Create(c *gin.Context) {
-	t := entity.Post{}
-	var record = entity.Post{ // テーブルに登録するためのレコード情報
-		Publishing:       t.ToInt(c.PostForm("publishing")),
-		DogName:          t.ToStr(c.PostForm("dog_name")),
-		Breed:            t.ToStr(c.PostForm("breed")),
-		Gender:           t.ToInt(c.PostForm("gender")),
-		Spay:             t.ToInt(c.PostForm("spay")),
-		Old:              t.ToStr(c.PostForm("old")),
-		SinglePerson:     t.ToInt(c.PostForm("single_person")),
-		SeniorPerson:     t.ToInt(c.PostForm("senior_person")),
-		TransferStatus:   t.ToInt(c.PostForm("transfer_status")),
-		Introduction:     t.ToStr(c.PostForm("introduction")),
-		AppealPoint:      t.ToStr(c.PostForm("appeal_point")),
-		PostPrefectureId: t.ToInt(c.PostForm("transferable_prefecture")),
-		OtherMessage:     t.ToStr(c.PostForm("other_message")),
-		UserId:           t.ToInt64(c.PostForm("user_id")),
-		TopImagePath:     t.ToStr(c.PostForm("top_image_path")),
-		PostImageId:      t.ToInt64(c.PostForm("post_image_id")),
+	var post = entity.Post{
+		Publishing:       ToInt(c.PostForm("publishing")),
+		DogName:          ToStr(c.PostForm("dog_name")),
+		Breed:            ToStr(c.PostForm("breed")),
+		Gender:           ToInt(c.PostForm("gender")),
+		Spay:             ToInt(c.PostForm("spay")),
+		Old:              ToStr(c.PostForm("old")),
+		SinglePerson:     ToInt(c.PostForm("single_person")),
+		SeniorPerson:     ToInt(c.PostForm("senior_person")),
+		TransferStatus:   ToInt(c.PostForm("transfer_status")),
+		Introduction:     ToStr(c.PostForm("introduction")),
+		AppealPoint:      ToStr(c.PostForm("appeal_point")),
+		PostPrefectureId: ToInt(c.PostForm("transferable_prefecture")),
+		OtherMessage:     ToStr(c.PostForm("other_message")),
+		UserId:           ToInt64(c.PostForm("user_id")),
+		TopImagePath:     ToStr(c.PostForm("top_image_path")),
+		PostImageId:      ToInt64(c.PostForm("post_image_id")),
 	}
-	cont.DbConn.InsertPost(&record)
-
-	c.JSON(http.StatusCreated, "****************created")
+	cont.DbConn.InsertPost(&post)
+	c.JSON(http.StatusCreated, post.ID)
 }
