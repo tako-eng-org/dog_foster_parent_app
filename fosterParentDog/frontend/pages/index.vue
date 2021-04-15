@@ -82,12 +82,13 @@ export default {
           }
         }).then((response) => {
           if ((response.status !== 200)) {
-            // TODO エラー時メッセージをわかりやすい文へ
+            //FIXME エラーをコンソールに出力しない。
+            //TODO エラー時メッセージをわかりやすい文へ
             throw new Error(response.statusText)
           } else {
             this.posts = response.data;
           }
-        })
+        }).catch(err => alert(err));
       })
     },
 
@@ -106,7 +107,7 @@ export default {
             this.totalCount = response.data; // 公開済記事数 ex: 41
             this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
           }
-        })
+        }).catch(err => alert(err));
       })
     },
   },
