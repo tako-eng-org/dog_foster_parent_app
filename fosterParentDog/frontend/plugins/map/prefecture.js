@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-Vue.prototype.$prefecture = [
+Vue.prototype.$PREFECTURE = [
   {
     value: 1,
     label: "北海道"

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-Vue.prototype.$gender = [
+Vue.prototype.$GENDER = [
   {
     value: 0,
     label: "女の子"

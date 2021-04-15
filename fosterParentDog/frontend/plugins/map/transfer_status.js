@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-Vue.prototype.$transferStatus = [
+Vue.prototype.$TRANSFER_STATUS = [
   {
     value: 0,
     label: "応募受付中"

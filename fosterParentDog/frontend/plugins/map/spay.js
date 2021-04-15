@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-Vue.prototype.$spay = [
+Vue.prototype.$SPAY = [
   {
     value: 0,
     label: "手術済"

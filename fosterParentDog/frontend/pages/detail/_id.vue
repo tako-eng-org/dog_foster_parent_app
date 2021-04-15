@@ -1,25 +1,23 @@
 <template>
   <div class="detail">
-    <!--    <div class="container" v-for="post in posts" v-bind:key="post.id">-->
     <div class="container" v-bind:key="post.id">
       <ImageObj :imagepath="post.top_image_path"/>
       <div class="row"><p>投稿No : {{ post.id }}</p></div>
       <div class="row"><p>犬の名前 : {{ post.dog_name }}</p></div>
       <div class="row"><p>犬種 : {{ post.breed }}</p></div>
       <div class="row"><p>性別*debug* : {{ post.gender }}</p></div>
-      <!--  FIXME: postは配列でなくオブジェクトで取得・表示したいが、配列でないとgetLabelエラーになる  -->
-      <!--      <div class="row"><p>性別 : {{ $getLabel(genderMap, post.gender) }}</p></div>-->
-      <!--      <div class="row"><p>去勢/避妊手術 : {{ $getLabel(spayMap, post.spay) }}</p></div>-->
+      <div class="row"><p>性別 : {{ $getLabel($GENDER, post.gender) }}</p></div>
+      <div class="row"><p>去勢/避妊手術 : {{ $getLabel($SPAY, post.spay) }}</p></div>
       <div class="row"><p>年齢 : {{ post.old }}</p></div>
-      <!--      <div class="row"><p>単身者への譲渡 : {{ $getLabel(singlePersonMap, post.single_person) }}</p></div>-->
-      <!--      <div class="row"><p>高齢者への譲渡 : {{ $getLabel(seniorPersonMap, post.senior_person) }}</p></div>-->
-      <!--      <div class="row"><p>譲渡ステータス : {{ $getLabel(transferStatusMap, post.transter_status) }}</p></div>-->
+      <div class="row"><p>単身者への譲渡 : {{ $getLabel($SINGLE_PERSON, post.single_person) }}</p></div>
+      <div class="row"><p>高齢者への譲渡 : {{ $getLabel($SENIOR_PERSON, post.senior_person) }}</p></div>
+      <div class="row"><p>譲渡ステータス : {{ $getLabel($TRANSFER_STATUS, post.transter_status) }}</p></div>
       <div class="row"><p>自己紹介 : {{ post.introduction }}</p></div>
       <div class="row"><p>投稿日時 : {{ post.created_at }}</p></div>
       <div class="row"><p>性格アピールポイント : {{ post.appeal_point }}</p></div>
       <div class="row"><p>譲渡可能都道府県 : </p>
         <div class="transferable" v-for="postPrefecture in postPrefectures" v-bind:key="postPrefecture.post_id">
-          <p>{{ $getLabel(prefectureMap, postPrefecture.post_prefecture_id) }} </p>
+          <p>{{ $getLabel($PREFECTURE, postPrefecture.post_prefecture_id) }} </p>
         </div>
       </div>
       <div class="row"><p>健康状態や譲渡条件などの特記事項 : {{ post.other_message }}</p></div>
@@ -38,31 +36,13 @@
 </template>
 
 <script>
-const axios = require('axios');
-
-import GenderMap from '@/assets/json/gender.json'
-import PrefectureMap from '@/assets/json/prefecture.json'
-import SeniorPersonMap from '@/assets/json/senior_person.json'
-import SinglePersonMap from '@/assets/json/single_person.json'
-import SpayMap from '@/assets/json/spay.json'
-import TransferStatusMap from '@/assets/json/transfer_status.json'
-
+import axios from 'axios';
 import ImageObj from "@/components/Image.vue";
 
 
 export default {
   data: function () {
     return {
-      //storeの共通資材
-      genderMap: GenderMap,
-      prefectureMap: PrefectureMap,
-      seniorPersonMap: SeniorPersonMap,
-      singlePersonMap: SinglePersonMap,
-      spayMap: SpayMap,
-      transferStatusMap: TransferStatusMap,
-
-      //FIXME: postは配列でなくオブジェクトで取得・表示したいが、配列でないとgetLabelエラーになる
-      // posts: [], // 投稿記事
       post: {},
       imagePaths: [], //画像URL
       postPrefectures: [], //譲渡可能都道府県
@@ -73,6 +53,7 @@ export default {
     ImageObj,
   },
   computed: {},
+  //FIXME ページリロードするとサーバーのルートがなくなってしまう(mountedではない可能性)
   mounted: function () {
     this.getDetail(this.$route.params['id']);
     this.getPostImagePaths(this.$route.params['id']);
@@ -92,7 +73,6 @@ export default {
         if ((response.status !== 200)) {
           throw new Error(response.statusText)
         } else {
-          // this.posts = response.data;
           this.post = response.data;
         }
       })

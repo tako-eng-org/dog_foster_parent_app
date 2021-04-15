@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-Vue.prototype.$seniorPerson = [
+Vue.prototype.$SENIOR_PERSON = [
   {
     value: 0,
     label: "不可"

@@ -12,7 +12,7 @@
         </nuxt-link>
       </div>
       <div class="row"><p>犬種 : {{ post.breed }}</p></div>
-      <div class="row"><p>性別 : {{ $getLabel(genderMap, post.gender) }}</p></div>
+      <div class="row"><p>性別 : {{ $getLabel($GENDER, post.gender) }}</p></div>
       <div class="row"><p>自己紹介 : {{ post.introduction }}</p></div>
       <div class="row"><p>投稿日時 : {{ post.created_at }}</p></div>
       <br>
@@ -34,10 +34,9 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
 import Pagenation from "../components/Pagenation";
 import ImageObj from "@/components/Image.vue";
-import genderMap from '@/assets/json/gender.json';
 
 export default {
   components: {
@@ -47,12 +46,11 @@ export default {
 
   mounted() {
     this.getIndex(this.currentPage).then(this.generatePagination());
+    console.log()
   },
 
   data() {
     return {
-      genderMap: genderMap,
-
       posts: [], // 投稿記事
 
       //ページネーション設定
