@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"fpdapp/models/entity"
 	"os"
-	"strconv"
 
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
@@ -62,137 +61,8 @@ func Open() *Database {
 }
 
 //*******************************************************************
-// DBをクローズする
+// DB接続をクローズする
 //*******************************************************************
 func (db *Database) Close() {
 	_ = db.connection.Close()
-}
-
-//*******************************************************************
-// 公開済みレコードの数を取得する
-//*******************************************************************
-// return(ex): -> 41
-func (db *Database) CountPublishedPost() (int64, error) {
-	var postNum int64
-
-	//SELECT count(id) FROM "post"  WHERE (publishing = '0')
-	err := db.connection.Table("posts").
-		Select("count(id)").
-		Where("publishing = ?", "0").
-		Count(&postNum).
-		Error
-
-	return postNum, err
-}
-
-//*******************************************************************
-// 公開済み投稿を1ページ表示分取得する
-//*******************************************************************
-func (db *Database) FindIndex(page string) ([]entity.Post, error) {
-
-	var model []entity.Post
-	pageNum, _ := strconv.Atoi(page) // 数値に変換する
-	numberPerPage := 20              // 1ページあたりの表示件数
-
-	err := db.connection.Order("id desc").
-		Limit(numberPerPage).
-		Offset((pageNum - 1) * numberPerPage).
-		Find(&model).
-		Error
-	return model, err
-}
-
-//*******************************************************************
-// [第1引数]の投稿IDでレコードを取得する
-//*******************************************************************
-func (db *Database) FindOnePost(postId string) (entity.Post, error) {
-	var model entity.Post
-
-	//SELECT * FROM "posts"  WHERE "posts"."deleted_at" IS NULL AND (("posts"."id" = '2')) ORDER BY "posts"."id" ASC LIMIT 1
-	err := db.connection.First(&model, postId).Error
-
-	return model, err
-}
-
-//*******************************************************************
-// [第1引数]の投稿IDで、投稿画像テーブルから投稿画像パスを取得する
-//*******************************************************************
-func (db *Database) FindPostImagePaths(postIdStr string) ([]entity.PostImage, error) {
-	var model []entity.PostImage
-
-	//SELECT post.id as post_id,
-	//post_image.id as post_image_id
-	//post_image.image_path
-	//FROM "post"
-	//left join post_image
-	//on post.id = post_image.post_id
-	//WHERE (post.id = '44')
-	err := db.connection.Table("posts").
-		Select("posts.id as post_id,"+
-			" post_images.id as post_image_id,"+
-			" post_images.image_path").
-		Joins("left join post_images"+
-			" on posts.id = post_images.post_id ").
-		Where("posts.id = ?", postIdStr).
-		Scan(&model).
-		Error
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	return model, err
-}
-
-//*******************************************************************
-// [第1引数]の投稿IDで、譲渡可能都道府県を取得する
-//*******************************************************************
-func (db *Database) FindPostPrefecture(postIdStr string) ([]entity.PostPrefecture, error) {
-	var model []entity.PostPrefecture
-
-	//select post_prefecture.id, post_prefecture.post_prefecture_id from post_prefecture where post_id = 44;
-	err := db.connection.Table("post_prefectures").
-		Select("post_prefectures.id,"+
-			" post_prefectures.post_id,"+
-			" post_prefectures.post_prefecture_id").
-		Where("post_prefectures.post_id = ?", postIdStr).
-		Scan(&model).
-		Error
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	return model, err
-}
-
-//*******************************************************************
-// [第1引数]の投稿IDで、ユーザー情報を取得する
-//*******************************************************************
-func (db *Database) FindPostUser(postIdStr string) (entity.User, error) {
-	var model entity.User
-
-	/*
-		select B.*
-		from post A
-		inner join public.user B
-		on A.user_id = B.id
-		where A.id = 44;
-	*/
-	err := db.connection.Table("posts A").
-		Select("B.*").
-		Joins("inner join public.users B on A.user_id = B.id").
-		Where("A.id = ?", postIdStr).
-		Scan(&model).
-		Error
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	return model, err
-}
-
-//*******************************************************************
-// レコードを登録する
-//*******************************************************************
-func (db *Database) InsertPost(registerRecord *entity.Post) {
-	db.connection.Create(&registerRecord) // insert
 }
