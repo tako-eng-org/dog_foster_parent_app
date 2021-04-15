@@ -23,7 +23,7 @@ type UserResponse struct {
 	WebUrl         string `json:"web_url"`         //websiteやSNSなどのURL
 }
 
-func (us *UserSerializer) ResponseUser() UserResponse {
+func (us *UserSerializer) Response() UserResponse {
 	response := UserResponse{
 		ID:             us.User.ID,
 		CreatedAt:      us.User.CreatedAt.Format("2006-01-02 15:04"),
