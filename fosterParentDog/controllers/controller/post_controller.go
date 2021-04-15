@@ -33,10 +33,38 @@ func (cont *Controller) IndexList(c *gin.Context) {
 // 投稿を対象idの1件取得する
 //*******************************************************************
 func (cont *Controller) FetchPost(c *gin.Context) {
-	model, _ := cont.DbConn.FindPost(c.Query("postId"))
-	c.Set("my_post_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	serializer := serializers.PostSerializer{C: c, Post: model}
-	c.JSON(http.StatusOK, serializer.Response())
+	postId := c.Query("postId")
+
+	// post
+	postModel, _ := cont.DbConn.FindPost(postId)
+	postSerializer := serializers.PostSerializer{C: c, Post: postModel}
+
+	// postImage
+	postImageModel, _ := cont.DbConn.FindPostImagePathList(postId)
+	postImageSerializer := serializers.PostImagesSerializer{C: c, PostImages: postImageModel}
+
+	// postPrefecture
+	postPrefectureListModel, _ := cont.DbConn.FindPostPrefectureList(postId)
+	postPrefectureListSerializer := serializers.PostPrefecturesSerializer{C: c, PostPrefectures: postPrefectureListModel}
+
+	// postUser
+	postUserModel, _ := cont.DbConn.FindPostUser(postId)
+	postUserSerializer := serializers.UserSerializer{C: c, User: postUserModel}
+
+	type Response struct {
+		Post            serializers.PostResponse             `json:"post"`
+		PostImages      []serializers.PostImageResponse      `json:"post_images"`
+		PostPrefectures []serializers.PostPrefectureResponse `json:"post_prefectures"`
+		User            serializers.UserResponse             `json:"user"`
+	}
+
+	var r Response
+	r.Post = postSerializer.Response()
+	r.PostImages = postImageSerializer.Response()
+	r.PostPrefectures = postPrefectureListSerializer.Response()
+	r.User = postUserSerializer.Response()
+
+	c.JSON(http.StatusOK, r)
 }
 
 //*******************************************************************

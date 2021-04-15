@@ -38,13 +38,12 @@
 import axios from 'axios';
 import ImageObj from "@/components/Image.vue";
 
-
 export default {
   data: function () {
     return {
-      post: {},
-      imagePaths: [], //画像URL
-      postPrefectures: [], //譲渡可能都道府県
+      post: {}, //基礎投稿
+      imagePaths: {}, //画像パスリスト
+      postPrefectures: {}, //譲渡可能都道府県リスト
       user: {}, //ユーザー情報
     }
   },
@@ -55,14 +54,11 @@ export default {
   //FIXME ページリロードするとサーバーのルートがなくなってしまう(mountedではない可能性)
   mounted: function () {
     this.getDetail(this.$route.params['id']);
-    this.getPostImagePaths(this.$route.params['id']);
-    this.getPostPrefecture(this.$route.params['id']);
-    this.getUser(this.$route.params['id']);
   },
 
   methods: {
     /**
-     * 投稿IDに紐づいた基礎投稿情報を取得する
+     * 投稿IDに紐づいた投稿記事を取得する
      * @param {int} postID
      */
     getDetail(currentPostId) {
@@ -72,59 +68,13 @@ export default {
         if ((response.status !== 200)) {
           throw new Error(response.statusText)
         } else {
-          this.post = response.data;
+          this.post = response.data.post;
+          this.imagePaths = response.data.post_images;
+          this.postPrefectures = response.data.post_prefectures;
+          this.user = response.data.user;
         }
       })
     },
-
-    /**
-     * 投稿IDに紐づいた画像パスを取得する
-     * @param {int} postID
-     */
-    getPostImagePaths(currentPostId) {
-      axios.get('api/images', {
-        params: {postId: currentPostId,}
-      }).then((response) => {
-        if ((response.status !== 200)) {
-          throw new Error(response.statusText)
-        } else {
-          this.imagePaths = response.data;
-        }
-      })
-    },
-
-    /**
-     * 投稿IDに紐づいた譲渡可能都道府県を取得する
-     * @param {int} postID
-     */
-    getPostPrefecture(currentPostId) {
-      axios.get('api/post_prefecture', {
-        params: {postId: currentPostId,}
-      }).then((response) => {
-        if ((response.status !== 200)) {
-          throw new Error(response.statusText)
-        } else {
-          this.postPrefectures = response.data;
-        }
-      })
-    },
-
-    /**
-     * 投稿IDのユーザーIDに紐づいたユーザー情報を取得する
-     * @param {int} postID
-     */
-    getUser(currentPostId) {
-      axios.get('api/user', {
-        params: {postId: currentPostId,}
-      }).then((response) => {
-        if ((response.status !== 200)) {
-          throw new Error(response.statusText)
-        } else {
-          this.user = response.data;
-        }
-      })
-    }
-
   },
 }
 </script>

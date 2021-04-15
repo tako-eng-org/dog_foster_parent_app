@@ -42,18 +42,6 @@ func serve() {
 	// ex: localhost:8000/fosterparent/post?postId=1
 	router.GET("/post", controller.FetchPost)
 
-	// 投稿idをもとに、投稿画像を取得する
-	// ex: localhost:8000/fosterparent/images?postId=44
-	router.GET("/images", controller.FetchPostImagePathList)
-
-	// 投稿idをもとに、投稿画像を取得する
-	// ex: localhost:8000/fosterparent/detail/44
-	router.GET("/post_prefecture", controller.FetchPostPrefectureList)
-
-	// 投稿idをもとに、投稿画像を取得する
-	// ex: localhost:8000/fosterparent/?????????
-	router.GET("/user", controller.FetchPostUser)
-
 	// ************************************************
 	// 投稿編集画面
 	// ************************************************
