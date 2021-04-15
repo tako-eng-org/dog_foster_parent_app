@@ -41,6 +41,12 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '@/plugins/utils',
+    '@/plugins/map/gender',
+    '@/plugins/map/prefecture',
+    '@/plugins/map/senior_person',
+    '@/plugins/map/single_person',
+    '@/plugins/map/spay',
+    '@/plugins/map/transfer_status',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

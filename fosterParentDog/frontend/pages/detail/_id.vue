@@ -5,7 +5,6 @@
       <div class="row"><p>投稿No : {{ post.id }}</p></div>
       <div class="row"><p>犬の名前 : {{ post.dog_name }}</p></div>
       <div class="row"><p>犬種 : {{ post.breed }}</p></div>
-      <div class="row"><p>性別*debug* : {{ post.gender }}</p></div>
       <div class="row"><p>性別 : {{ $getLabel($GENDER, post.gender) }}</p></div>
       <div class="row"><p>去勢/避妊手術 : {{ $getLabel($SPAY, post.spay) }}</p></div>
       <div class="row"><p>年齢 : {{ post.old }}</p></div>
