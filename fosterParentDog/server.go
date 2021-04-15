@@ -33,29 +33,29 @@ func serve() {
 
 	// 投稿を1ページ表示分取得する
 	// ex: localhost:8000/fosterparent/index?page=1
-	router.GET("/index", controller.Index)
+	router.GET("/index", controller.IndexList)
 
 	// ************************************************
 	// 投稿詳細画面から使用するAPI
 	// ************************************************
 	// 投稿を対象idの1件分取得する
 	// ex: localhost:8000/fosterparent/post?postId=1
-	router.GET("/post", controller.FetchOnePost)
+	router.GET("/post", controller.FetchPost)
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/images?postId=44
-	router.GET("/images", controller.FetchPostImagePaths)
+	router.GET("/images", controller.FetchPostImagePathList)
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/detail/44
-	router.GET("/post_prefecture", controller.FetchPostPrefecture)
+	router.GET("/post_prefecture", controller.FetchPostPrefectureList)
 
 	// 投稿idをもとに、投稿画像を取得する
 	// ex: localhost:8000/fosterparent/?????????
 	router.GET("/user", controller.FetchPostUser)
 
 	// ************************************************
-	// test
+	// 投稿編集画面
 	// ************************************************
 	// 投稿レコード情報をDBへ登録する
 	router.POST("/add_record", controller.Create)
