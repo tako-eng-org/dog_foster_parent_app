@@ -72,22 +72,22 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 //*******************************************************************
 func (cont *Controller) Create(c *gin.Context) {
 	var post = entity.Post{
-		Publishing:       ToInt(c.PostForm("publishing")),
-		DogName:          ToStr(c.PostForm("dog_name")),
-		Breed:            ToStr(c.PostForm("breed")),
-		Gender:           ToInt(c.PostForm("gender")),
-		Spay:             ToInt(c.PostForm("spay")),
-		Old:              ToStr(c.PostForm("old")),
-		SinglePerson:     ToInt(c.PostForm("single_person")),
-		SeniorPerson:     ToInt(c.PostForm("senior_person")),
-		TransferStatus:   ToInt(c.PostForm("transfer_status")),
-		Introduction:     ToStr(c.PostForm("introduction")),
-		AppealPoint:      ToStr(c.PostForm("appeal_point")),
-		PostPrefectureId: ToInt(c.PostForm("transferable_prefecture")),
-		OtherMessage:     ToStr(c.PostForm("other_message")),
-		UserId:           ToInt64(c.PostForm("user_id")),
-		TopImagePath:     ToStr(c.PostForm("top_image_path")),
-		PostImageId:      ToInt64(c.PostForm("post_image_id")),
+		Publishing:       strToInt(c.PostForm("publishing")),
+		DogName:          c.PostForm("dog_name"),
+		Breed:            c.PostForm("breed"),
+		Gender:           strToInt(c.PostForm("gender")),
+		Spay:             strToInt(c.PostForm("spay")),
+		Old:              c.PostForm("old"),
+		SinglePerson:     strToInt(c.PostForm("single_person")),
+		SeniorPerson:     strToInt(c.PostForm("senior_person")),
+		TransferStatus:   strToInt(c.PostForm("transfer_status")),
+		Introduction:     c.PostForm("introduction"),
+		AppealPoint:      c.PostForm("appeal_point"),
+		PostPrefectureId: strToInt(c.PostForm("transferable_prefecture")),
+		OtherMessage:     c.PostForm("other_message"),
+		UserId:           strToInt64(c.PostForm("user_id")),
+		TopImagePath:     c.PostForm("top_image_path"),
+		PostImageId:      strToInt64(c.PostForm("post_image_id")),
 	}
 	cont.DbConn.InsertPost(&post)
 	c.JSON(http.StatusCreated, post.ID)

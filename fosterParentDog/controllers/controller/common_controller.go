@@ -1,6 +1,10 @@
 package controller
 
-import "fpdapp/models/db"
+import (
+	"fpdapp/models/db"
+	"log"
+	"strconv"
+)
 
 type (
 	Controller struct {
@@ -11,16 +15,18 @@ type (
 //*******************************************************************
 // 型変換する
 //*******************************************************************
-func ToInt(i interface{}) int {
-	var r, _ = i.(int)
-	return r
-}
-func ToStr(i interface{}) string {
-	var r, _ = i.(string)
+func strToInt(i string) int {
+	r, err := strconv.Atoi(i)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return r
 }
 
-func ToInt64(i interface{}) uint64 {
-	var r, _ = i.(uint64)
+func strToInt64(i string) uint64 {
+	var r, err = strconv.ParseUint(i, 10, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return r
 }
