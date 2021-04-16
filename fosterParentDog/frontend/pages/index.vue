@@ -76,19 +76,16 @@ export default {
      */
     getIndex(page) {
       return new Promise((resolve, reject) => {
-        axios.get('api/index', {
-          params: {
-            page: page,
-          }
-        }).then((response) => {
-          if ((response.status !== 200)) {
-            //FIXME エラーをコンソールに出力しない。
-            //TODO エラー時メッセージをわかりやすい文へ
-            throw new Error(response.statusText)
-          } else {
-            this.posts = response.data;
-          }
-        }).catch(err => alert(err));
+        axios.get('api/index', {params: {page: page,}})
+          .then((response) => {
+            if ((response.status !== 200)) {
+              //FIXME エラーをコンソールに出力しない。
+              //TODO エラー時メッセージをわかりやすい文へ
+              throw new Error(response.statusText)
+            } else {
+              this.posts = response.data;
+            }
+          }).catch(err => alert(err));
       })
     },
 
@@ -100,14 +97,15 @@ export default {
      */
     generatePagination() {
       return new Promise((resolve, reject) => {
-        axios.get('api/published_post_count').then((response) => {
-          if ((response.status !== 200)) {
-            throw new Error(response.statusText)
-          } else {
-            this.totalCount = response.data; // 公開済記事数 ex: 41
-            this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
-          }
-        }).catch(err => alert(err));
+        axios.get('api/post_count', {params: {publishing: 0,}})//0=公開設定
+          .then((response) => {
+            if ((response.status !== 200)) {
+              throw new Error(response.statusText)
+            } else {
+              this.totalCount = response.data; // 公開済記事数 ex: 41
+              this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
+            }
+          }).catch(err => alert(err));
       })
     },
   },
