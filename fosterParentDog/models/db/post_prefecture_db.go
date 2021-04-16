@@ -1,14 +1,14 @@
 package db
 
 import (
-	"fmt"
 	"fpdapp/models/entity"
+	"log"
 )
 
 //*******************************************************************
 // [第1引数]の投稿IDで、譲渡可能都道府県を取得する
 //*******************************************************************
-func (db *Database) FindPostPrefectureList(postId string) ([]entity.PostPrefecture, error) {
+func (db *Database) FindPostPrefectureList(postId string) []entity.PostPrefecture {
 	var model []entity.PostPrefecture
 
 	//select post_prefecture.id, post_prefecture.post_prefecture_id from post_prefecture where post_id = 44;
@@ -19,10 +19,9 @@ func (db *Database) FindPostPrefectureList(postId string) ([]entity.PostPrefectu
 		Where("post_prefectures.post_id = ?", postId).
 		Scan(&model).
 		Error
-
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
-	return model, err
+	return model
 }

@@ -1,14 +1,14 @@
 package db
 
 import (
-	"fmt"
 	"fpdapp/models/entity"
+	"log"
 )
 
 //*******************************************************************
 // [第1引数]の投稿IDで、ユーザー情報を取得する
 //*******************************************************************
-func (db *Database) FindPostUser(postId string) (entity.User, error) {
+func (db *Database) FindPostUser(postId string) entity.User {
 	var model entity.User
 
 	/*
@@ -24,10 +24,9 @@ func (db *Database) FindPostUser(postId string) (entity.User, error) {
 		Where("A.id = ?", postId).
 		Scan(&model).
 		Error
-
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
-	return model, err
+	return model
 }

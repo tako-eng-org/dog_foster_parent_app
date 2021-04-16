@@ -1,14 +1,14 @@
 package db
 
 import (
-	"fmt"
 	"fpdapp/models/entity"
+	"log"
 )
 
 //*******************************************************************
 // [第1引数]の投稿IDで、投稿画像テーブルから投稿画像パスを取得する
 //*******************************************************************
-func (db *Database) FindPostImagePathList(postId string) ([]entity.PostImage, error) {
+func (db *Database) FindPostImagePathList(postId string) []entity.PostImage {
 	var model []entity.PostImage
 
 	//SELECT post.id as post_id,
@@ -27,10 +27,9 @@ func (db *Database) FindPostImagePathList(postId string) ([]entity.PostImage, er
 		Where("posts.id = ?", postId).
 		Scan(&model).
 		Error
-
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
-	return model, err
+	return model
 }

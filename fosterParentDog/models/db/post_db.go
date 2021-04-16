@@ -2,30 +2,33 @@ package db
 
 import (
 	"fpdapp/models/entity"
+	"log"
 	"strconv"
 )
 
 //*******************************************************************
-// 公開済みレコードの数を取得する
+// 公開済みレコードの数を取得する ex:return -> 41
 //*******************************************************************
-// return(ex): -> 41
-func (db *Database) CountPublishedPost() (int, error) {
+func (db *Database) CountPost(publishParam string) int {
 	var postNum int
 
 	//SELECT count(id) FROM "post"  WHERE (publishing = '0')
 	err := db.connection.Table("posts").
 		Select("count(id)").
-		Where("publishing = ?", "0").
+		Where("publishing = ?", publishParam).
 		Count(&postNum).
 		Error
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	return postNum, err
+	return postNum
 }
 
 //*******************************************************************
 // 公開済み投稿を1ページ表示分取得する
 //*******************************************************************
-func (db *Database) FindIndex(page string) ([]entity.Post, error) {
+func (db *Database) FindIndex(page string) []entity.Post {
 	var model []entity.Post
 	pageNum, _ := strconv.Atoi(page) // 数値に変換する
 	numberPerPage := 20              // 1ページあたりの表示件数
@@ -35,20 +38,26 @@ func (db *Database) FindIndex(page string) ([]entity.Post, error) {
 		Offset((pageNum - 1) * numberPerPage).
 		Find(&model).
 		Error
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	return model, err
+	return model
 }
 
 //*******************************************************************
 // [第1引数]の投稿IDでレコードを取得する
 //*******************************************************************
-func (db *Database) FindPost(postId string) (entity.Post, error) {
+func (db *Database) FindPost(postId string) entity.Post {
 	var model entity.Post
 
 	//SELECT * FROM "posts"  WHERE "posts"."deleted_at" IS NULL AND (("posts"."id" = '2')) ORDER BY "posts"."id" ASC LIMIT 1
 	err := db.connection.First(&model, postId).Error
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	return model, err
+	return model
 }
 
 //*******************************************************************
