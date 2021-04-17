@@ -70,6 +70,7 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 // 投稿記事テーブルへ記事を1件登録する
 //*******************************************************************
 func (cont *Controller) Create(c *gin.Context) {
+	// TODO バリデーション（投稿編集画面作成時に実装予定）
 	var post = entity.Post{
 		Publishing:       strToInt(c.PostForm("publishing")),
 		DogName:          c.PostForm("dog_name"),
