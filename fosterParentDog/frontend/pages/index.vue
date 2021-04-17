@@ -1,21 +1,21 @@
 <template>
   <div class="top">
-    <div class="container">
-      <h1>里親募集 掲示板</h1>
-    </div>
+    <h1>里親募集 掲示板</h1>
     <!-- レコード表示 -->
     <div class="container" v-for="post in posts" v-bind:key="post.id">
-      <ImageObj :imagepath="post.top_image_path"/>
-      <div class="row">
-        <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
-        <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
-          #{{ post.id }} {{ post.dog_name }}
-        </NuxtLink>
+      <ImageComponent :imagepath="post.top_image_path"/>
+      <div class="goDetail">
+        <div class="row">
+          <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
+          <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
+            #{{ post.id }} {{ post.dog_name }}
+          </NuxtLink>
+        </div>
       </div>
-      <div class="row"><p>犬種 : {{ post.breed }}</p></div>
-      <div class="row"><p>性別 : {{ $getLabel($GENDER, post.gender) }}</p></div>
-      <div class="row"><p>自己紹介 : {{ post.introduction }}</p></div>
-      <div class="row"><p>投稿日時 : {{ post.created_at }}</p></div>
+      <BreedComponent :breed="post.breed"/>
+      <GenderComponent :gender="post.gender"/>
+      <IntroductionComponent :introduction="post.introduction"/>
+      <CreatedAtComponent :createdAt="post.created_at"/>
       <br>
     </div>
 
@@ -37,12 +37,10 @@
 <script>
 import axios from 'axios';
 import Pagenation from "../components/Pagenation";
-import ImageObj from "@/components/Image.vue";
 
 export default {
   components: {
     Pagenation,
-    ImageObj,
   },
 
   mounted() {

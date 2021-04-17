@@ -30,7 +30,7 @@ type PostResponse struct {
 	Old              string `json:"old"`                //年齢
 	SinglePerson     int    `json:"single_person"`      //単身者への譲渡
 	SeniorPerson     int    `json:"senior_person"`      //高齢者への譲渡
-	TransferStatus   int    `json:"transter_status"`    //譲渡ステータス
+	TransferStatus   int    `json:"transfer_status"`    //譲渡ステータス
 	Introduction     string `json:"introduction"`       //犬の自己紹介
 	AppealPoint      string `json:"appeal_point"`       //性格アピールポイント
 	PostPrefectureId int    `json:"post_prefecture_id"` //譲渡可能都道府県ID
