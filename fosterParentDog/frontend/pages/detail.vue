@@ -6,7 +6,6 @@
         <div class="row">
           <p>投稿No : {{ post.postBase.id }}</p>
         </div>
-        s
       </div>
       <DogNameComponent :dogName="post.postBase.dog_name"/>
       <BreedComponent :breed="post.postBase.breed"/>
