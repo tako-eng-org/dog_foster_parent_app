@@ -7,9 +7,10 @@
     <div class="container" v-for="post in posts" v-bind:key="post.id">
       <ImageObj :imagepath="post.top_image_path"/>
       <div class="row">
-        <nuxt-link :to="`/detail/${post.id}`">
+        <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
+        <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
           #{{ post.id }} {{ post.dog_name }}
-        </nuxt-link>
+        </NuxtLink>
       </div>
       <div class="row"><p>犬種 : {{ post.breed }}</p></div>
       <div class="row"><p>性別 : {{ $getLabel($GENDER, post.gender) }}</p></div>

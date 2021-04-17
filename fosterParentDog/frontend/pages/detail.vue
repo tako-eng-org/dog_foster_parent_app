@@ -52,7 +52,7 @@ export default {
   },
   computed: {},
   mounted: function () {
-    this.getDetail(this.$route.params['id']);
+    this.getDetail(this.$route.query.postId);
   },
 
   methods: {
