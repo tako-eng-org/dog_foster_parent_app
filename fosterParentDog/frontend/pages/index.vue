@@ -46,7 +46,6 @@ export default {
 
   mounted() {
     this.getIndex(this.currentPage).then(this.generatePagination());
-    console.log()
   },
 
   data() {
@@ -61,14 +60,7 @@ export default {
       totalPages: Number, //算出後の総ページ数
     }
   },
-
-  computed: {
-    // 表示対象の情報を返却する
-    computedRecords() {
-      return this.posts
-    },
-  },
-
+  computed: {},
   methods: {
     /**
      * 指定したページの投稿一覧を取得する
@@ -79,9 +71,7 @@ export default {
         axios.get('api/index', {params: {page: page,}})
           .then((response) => {
             if ((response.status !== 200)) {
-              //FIXME エラーをコンソールに出力しない。
-              //TODO エラー時メッセージをわかりやすい文へ
-              throw new Error(response.statusText)
+              console.error(`Error:${response.statusText}, ${this.getIndex.name}`)
             } else {
               this.posts = response.data;
             }
@@ -100,7 +90,7 @@ export default {
         axios.get('api/post_count', {params: {publishing: 0,}})//0=公開設定
           .then((response) => {
             if ((response.status !== 200)) {
-              throw new Error(response.statusText)
+              console.error(`Error:${response.statusText}, ${this.generatePagination.name}`)
             } else {
               this.totalCount = response.data; // 公開済記事数 ex: 41
               this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3

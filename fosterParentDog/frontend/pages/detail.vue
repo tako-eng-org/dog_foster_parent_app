@@ -36,7 +36,7 @@
 
 <script>
 import axios from 'axios';
-import ImageObj from "@/components/Image.vue";
+import ImageObj from "~/components/Image.vue";
 
 export default {
   data: function () {
@@ -51,7 +51,6 @@ export default {
     ImageObj,
   },
   computed: {},
-  //FIXME ページリロードするとサーバーのルートがなくなってしまう(mountedではない可能性)
   mounted: function () {
     this.getDetail(this.$route.params['id']);
   },
@@ -66,19 +65,19 @@ export default {
         params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {
-          throw new Error(response.statusText)
+          console.error(`Error:${response.statusText}, ${this.getDetail.name}`)
         } else {
           this.post = response.data.post;
           this.imagePaths = response.data.post_images;
           this.postPrefectures = response.data.post_prefectures;
           this.user = response.data.user;
         }
-      })
+      }).catch(err => alert(err));
     },
   },
 }
 </script>
 
 <!-- cssはassetsから自動で読み込む-->
-<style></style>
+<style scoped></style>
 

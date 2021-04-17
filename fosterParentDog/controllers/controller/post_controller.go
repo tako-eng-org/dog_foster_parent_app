@@ -23,7 +23,6 @@ func (cont *Controller) CountPost(c *gin.Context) {
 func (cont *Controller) IndexList(c *gin.Context) {
 	page := c.DefaultQuery("page", "1") // デフォルト ?page=1
 	model := cont.DbConn.FindIndex(page)
-	c.Set("my_post_prefecture_model", model) //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
 	serializer := serializers.PostsSerializer{C: c, Posts: model}
 	c.JSON(http.StatusOK, serializer.Response())
 }
