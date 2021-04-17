@@ -23,4 +23,4 @@ export default {
 </script>
 
 <!-- cssはassetsから自動で読み込む-->
-<style></style>
+<style scoped></style>

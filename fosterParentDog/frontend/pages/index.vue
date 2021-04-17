@@ -113,7 +113,7 @@ export default {
 </script>
 
 <!-- cssはassetsから自動で読み込む-->
-<style>
+<style scoped>
 .top {
   overflow: hidden;
   width: 100%;
