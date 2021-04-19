@@ -72,7 +72,7 @@ export default {
     debug: true,
     proxy: true,
     // baseURL: 'http://localhost:8000/fosterparent/',
-    prefix: '/fosterparent/api/',
+    prefix: '/fosterparent/',
   },
 
   proxy: {

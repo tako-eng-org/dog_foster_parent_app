@@ -57,7 +57,7 @@ export default {
      * @param {int} postID
      */
     getDetail(currentPostId) {
-      axios.get('api/post', {
+      this.$axios.get('api/post', {
         params: {postId: currentPostId,}
       }).then((response) => {
         if ((response.status !== 200)) {

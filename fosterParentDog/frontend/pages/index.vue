@@ -67,7 +67,7 @@ export default {
      */
     getIndex(page) {
       return new Promise((resolve, reject) => {
-        axios.get('api/index', {params: {page: page,}})
+        this.$axios.get('api/index', {params: {page: page, publishing: 0}})
           .then((response) => {
             if ((response.status !== 200)) {
               console.error(`Error:${response.statusText}, ${this.getIndex.name}`)
@@ -86,7 +86,7 @@ export default {
      */
     generatePagination() {
       return new Promise((resolve, reject) => {
-        axios.get('api/post_count', {params: {publishing: 0,}})//0=公開設定
+        this.$axios.get('api/post_count', {params: {publishing: 0,}})//0=公開設定
           .then((response) => {
             if ((response.status !== 200)) {
               console.error(`Error:${response.statusText}, ${this.generatePagination.name}`)
