@@ -6,13 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//単数
 type PostImageSerializer struct {
 	C         *gin.Context
 	PostImage entity.PostImage
 }
 
-//複数
 type PostImagesSerializer struct {
 	C          *gin.Context
 	PostImages []entity.PostImage
@@ -24,7 +22,6 @@ type PostImageResponse struct {
 	ImagePath   string `json:"image_path"`
 }
 
-//単数
 func (ps *PostImageSerializer) Response() PostImageResponse {
 	response := PostImageResponse{
 		PostID:      ps.PostImage.PostId,
@@ -34,7 +31,6 @@ func (ps *PostImageSerializer) Response() PostImageResponse {
 	return response
 }
 
-//複数
 func (ps *PostImagesSerializer) Response() []PostImageResponse {
 	var response []PostImageResponse
 	for _, image := range ps.PostImages {
