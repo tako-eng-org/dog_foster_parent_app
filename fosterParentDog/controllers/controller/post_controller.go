@@ -33,19 +33,15 @@ func (cont *Controller) IndexList(c *gin.Context) {
 func (cont *Controller) FetchPost(c *gin.Context) {
 	postId := c.Query("postId")
 
-	// post
 	postModel := cont.DbConn.FindPost(postId)
 	postSerializer := serializers.PostSerializer{C: c, Post: postModel}
 
-	// postImage
 	postImageModel := cont.DbConn.FindPostImagePathList(postId)
 	postImageSerializer := serializers.PostImagesSerializer{C: c, PostImages: postImageModel}
 
-	// postPrefecture
 	postPrefectureListModel := cont.DbConn.FindPostPrefectureList(postId)
 	postPrefectureListSerializer := serializers.PostPrefecturesSerializer{C: c, PostPrefectures: postPrefectureListModel}
 
-	// postUser
 	postUserModel := cont.DbConn.FindPostUser(postId)
 	postUserSerializer := serializers.UserSerializer{C: c, User: postUserModel}
 
