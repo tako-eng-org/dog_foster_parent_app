@@ -1,4 +1,4 @@
-console.log(process.env.API_PREFIX);
+require('dotenv').config()
 let axiosTarget = '';
 let pathRewrite = {};
 if (process.env.NODE_ENV === 'production') {
@@ -9,7 +9,8 @@ if (process.env.NODE_ENV === 'production') {
   axiosTarget = 'http://localhost:8000/fosterparent'
 } else {
   //devサーバー用
-  axiosTarget = 'http://localhost:8000/fosterparent/api/'
+  // axiosTarget = 'http://localhost:8000/fosterparent/api'
+  axiosTarget = 'http://[::1]:8000/fosterparent/api'
   pathRewrite = {"^/api": ""}
 }
 
@@ -40,14 +41,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '@/plugins/utils',
-    '@/plugins/components.js',
-    '@/plugins/map/gender',
-    '@/plugins/map/prefecture',
-    '@/plugins/map/senior_person',
-    '@/plugins/map/single_person',
-    '@/plugins/map/spay',
-    '@/plugins/map/transfer_status',
+    // '@/plugins/utils',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -72,6 +66,8 @@ export default {
     debug: true,
     proxy: true,
     // baseURL: 'http://localhost:8000/fosterparent/',
+    host: process.env.API_HOST,
+    port: process.env.API_PORT,
     prefix: '/fosterparent/',
   },
 
