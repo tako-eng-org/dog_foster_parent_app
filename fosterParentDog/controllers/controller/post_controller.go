@@ -45,20 +45,19 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 	postUserModel := cont.DbConn.FindPostUser(postId)
 	postUserSerializer := serializers.UserSerializer{C: c, User: postUserModel}
 
-	type Response struct {
+	response := struct {
 		Post            serializers.PostResponse             `json:"post"`
 		PostImages      []serializers.PostImageResponse      `json:"post_images"`
 		PostPrefectures []serializers.PostPrefectureResponse `json:"post_prefectures"`
 		User            serializers.UserResponse             `json:"user"`
+	}{
+		postSerializer.Response(),
+		postImageSerializer.Response(),
+		postPrefectureListSerializer.Response(),
+		postUserSerializer.Response(),
 	}
 
-	var r Response
-	r.Post = postSerializer.Response()
-	r.PostImages = postImageSerializer.Response()
-	r.PostPrefectures = postPrefectureListSerializer.Response()
-	r.User = postUserSerializer.Response()
-
-	c.JSON(http.StatusOK, r)
+	c.JSON(http.StatusOK, response)
 }
 
 //*******************************************************************
