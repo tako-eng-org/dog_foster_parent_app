@@ -1,9 +1,9 @@
 <template>
   <div class="top">
     <h1>里親募集 掲示板</h1>
-    <!-- レコード表示 -->
+    <!--  投稿記事 一覧表示  -->
     <div class="container" v-for="post in posts" v-bind:key="post.id">
-      <ImageComponent :imagepath="post.top_image_path"/>
+      <ImageTop :imagePath="post.top_image_path"/>
       <div class="goDetail">
         <div class="row">
           <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
@@ -12,10 +12,19 @@
           </NuxtLink>
         </div>
       </div>
-      <BreedComponent :breed="post.breed"/>
-      <GenderComponent :gender="post.gender"/>
-      <IntroductionComponent :introduction="post.introduction"/>
-      <CreatedAtComponent :createdAt="post.created_at"/>
+      <ViewOrTextBox :title="'犬種'"
+                     :name="post.breed"
+                     :isView="true"/>
+      <LabelOrDropdown :title="'性別'"
+                       :mapName="gender_map"
+                       :itemValue="post.gender"
+                       :isView="true"/>
+      <ViewOrTextBox :title="'自己紹介'"
+                     :name="post.introduction"
+                     :isView="true"/>
+      <ViewOnly :title="'投稿日時'"
+                :name="post.created_at"
+                :isView="true"/>
       <br>
     </div>
 
@@ -35,20 +44,34 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Pagenation from "../components/Pagenation";
+import ViewOrTextBox from "~/components/post/TextOrTextBox";
+import LabelOrDropdown from "~/components/post/LabelOrDropdown";
+import ViewOnly from "~/components/post/ReadOnly";
+import ImageTop from "~/components/post/Image";
+import CON from "~/components/const/const";
 
 export default {
   components: {
     Pagenation,
+    ViewOrTextBox,
+    LabelOrDropdown,
+    ViewOnly,
+    ImageTop,
+    CON,
   },
+
 
   mounted() {
     this.getIndex(this.currentPage).then(this.generatePagination());
+    console.log("--------this.gender_map");
+    console.log(this.gender_map);
   },
 
   data() {
     return {
+      gender_map: CON.data().GENDER,
+
       posts: [], // 投稿記事
 
       //ページネーション設定
@@ -57,6 +80,11 @@ export default {
       perPage: 20, //1ページの表示件数
       totalCount: Number, //取得したレコードの総件数
       totalPages: Number, //算出後の総ページ数
+
+      publishing: {
+        private: 0,
+        public: 1,
+      }
     }
   },
   computed: {},
@@ -67,12 +95,23 @@ export default {
      */
     getIndex(page) {
       return new Promise((resolve, reject) => {
-        this.$axios.get('api/index', {params: {page: page, publishing: 0}})
+        this.$axios.get('api/index',
+          {
+            params: {
+              page: page,
+              publishing: this.publishing.public,
+            }
+          }
+        )
+          //
+          // {params: {page: page, publishing: 0}})
           .then((response) => {
             if ((response.status !== 200)) {
               console.error(`Error:${response.statusText}, ${this.getIndex.name}`)
             } else {
               this.posts = response.data;
+              console.log("-------this.posts");
+              console.log(this.posts);
             }
           }).catch(err => alert(err));
       })
@@ -86,12 +125,18 @@ export default {
      */
     generatePagination() {
       return new Promise((resolve, reject) => {
-        this.$axios.get('api/post_count', {params: {publishing: 0,}})//0=公開設定
+        this.$axios.get('api/post_count',
+          {
+            params: {
+              publishing: this.publishing.public,
+            }
+          }
+        )
           .then((response) => {
             if ((response.status !== 200)) {
               console.error(`Error:${response.statusText}, ${this.generatePagination.name}`)
             } else {
-              this.totalCount = response.data; // 公開済記事数 ex: 41
+              this.totalCount = response.data.count; // 公開済記事数 ex: 41
               this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
             }
           }).catch(err => alert(err));
