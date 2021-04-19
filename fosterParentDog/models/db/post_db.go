@@ -9,13 +9,13 @@ import (
 //*******************************************************************
 // 公開済みレコードの数を取得する ex:return -> 41
 //*******************************************************************
-func (db *Database) CountPost(publishParam string) int {
+func (db *Database) CountPost(publishing string) int {
 	var postNum int
 
 	//SELECT count(id) FROM "post"  WHERE (publishing = '0')
 	err := db.connection.Table("posts").
 		Select("count(id)").
-		Where("publishing = ?", publishParam).
+		Where("publishing = ?", publishing).
 		Count(&postNum).
 		Error
 	if err != nil {
@@ -28,13 +28,13 @@ func (db *Database) CountPost(publishParam string) int {
 //*******************************************************************
 // 公開済み投稿を1ページ表示分取得する
 //*******************************************************************
-func (db *Database) FindIndex(page string, publishParam string) []entity.Post {
+func (db *Database) FindIndex(page string, publishing string) []entity.Post {
 	var model []entity.Post
 	pageNum, _ := strconv.Atoi(page)
 	numberPerPage := 20 // 1ページあたりの表示件数
 
 	err := db.connection.Order("id desc").
-		Where("publishing = ?", publishParam).
+		Where("publishing = ?", publishing).
 		Limit(numberPerPage).
 		Offset((pageNum - 1) * numberPerPage).
 		Find(&model).

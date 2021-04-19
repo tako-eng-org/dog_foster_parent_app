@@ -21,8 +21,8 @@ const (
 // 公開/非公開いずれかの投稿数を取得する
 //*******************************************************************
 func (cont *Controller) CountPost(c *gin.Context) {
-	publishParam := c.DefaultQuery("publishing", public)
-	count := cont.DbConn.CountPost(publishParam)
+	publishing := c.DefaultQuery("publishing", public)
+	count := cont.DbConn.CountPost(publishing)
 	response := struct {
 		Count int `json:"count"`
 	}{
@@ -37,8 +37,8 @@ func (cont *Controller) CountPost(c *gin.Context) {
 //*******************************************************************
 func (cont *Controller) IndexList(c *gin.Context) {
 	page := c.DefaultQuery("page", "1") //デフォルト ?page=1
-	publishParam := c.DefaultQuery("publishing", public)
-	model := cont.DbConn.FindIndex(page, publishParam)
+	publishing := c.DefaultQuery("publishing", public)
+	model := cont.DbConn.FindIndex(page, publishing)
 	serializer := serializers.PostsSerializer{C: c, Posts: model}
 	c.JSON(http.StatusOK, serializer.Response())
 }
