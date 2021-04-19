@@ -28,12 +28,13 @@ func (db *Database) CountPost(publishParam string) int {
 //*******************************************************************
 // 公開済み投稿を1ページ表示分取得する
 //*******************************************************************
-func (db *Database) FindIndex(page string) []entity.Post {
+func (db *Database) FindIndex(page string, publishParam string) []entity.Post {
 	var model []entity.Post
-	pageNum, _ := strconv.Atoi(page) // 数値に変換する
-	numberPerPage := 20              // 1ページあたりの表示件数
+	pageNum, _ := strconv.Atoi(page)
+	numberPerPage := 20 // 1ページあたりの表示件数
 
 	err := db.connection.Order("id desc").
+		Where("publishing = ?", publishParam).
 		Limit(numberPerPage).
 		Offset((pageNum - 1) * numberPerPage).
 		Find(&model).

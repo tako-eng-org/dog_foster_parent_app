@@ -8,7 +8,7 @@ import (
 //*******************************************************************
 // [第1引数]の投稿IDで、譲渡可能都道府県を取得する
 //*******************************************************************
-func (db *Database) FindPostPrefectureList(postId string) []entity.PostPrefecture {
+func (db *Database) FindPostPrefectures(postId string) []entity.PostPrefecture {
 	var model []entity.PostPrefecture
 
 	//select post_prefecture.id, post_prefecture.post_prefecture_id from post_prefecture where post_id = 44;

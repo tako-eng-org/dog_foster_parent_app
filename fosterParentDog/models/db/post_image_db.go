@@ -8,7 +8,7 @@ import (
 //*******************************************************************
 // [第1引数]の投稿IDで、投稿画像テーブルから投稿画像パスを取得する
 //*******************************************************************
-func (db *Database) FindPostImagePathList(postId string) []entity.PostImage {
+func (db *Database) FindPostImages(postId string) []entity.PostImage {
 	var model []entity.PostImage
 
 	//SELECT post.id as post_id,

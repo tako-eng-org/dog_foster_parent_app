@@ -9,20 +9,36 @@ import (
 )
 
 //*******************************************************************
+// パラメータ定義
+//*******************************************************************
+//公開設定
+const (
+	private = "0"
+	public  = "1"
+)
+
+//*******************************************************************
 // 公開/非公開いずれかの投稿数を取得する
 //*******************************************************************
 func (cont *Controller) CountPost(c *gin.Context) {
-	publishParam := c.DefaultQuery("publishing", "0") // デフォルト ?publishing=0(公開)
+	publishParam := c.DefaultQuery("publishing", public)
 	count := cont.DbConn.CountPost(publishParam)
-	c.JSON(http.StatusOK, count)
+	response := struct {
+		Count int `json:"count"`
+	}{
+		count,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 //*******************************************************************
 // 投稿を1ページ表示件数分取得する
 //*******************************************************************
 func (cont *Controller) IndexList(c *gin.Context) {
-	page := c.DefaultQuery("page", "1") // デフォルト ?page=1
-	model := cont.DbConn.FindIndex(page)
+	page := c.DefaultQuery("page", "1") //デフォルト ?page=1
+	publishParam := c.DefaultQuery("publishing", public)
+	model := cont.DbConn.FindIndex(page, publishParam)
 	serializer := serializers.PostsSerializer{C: c, Posts: model}
 	c.JSON(http.StatusOK, serializer.Response())
 }
@@ -36,10 +52,10 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 	postModel := cont.DbConn.FindPost(postId)
 	postSerializer := serializers.PostSerializer{C: c, Post: postModel}
 
-	postImageModel := cont.DbConn.FindPostImagePathList(postId)
+	postImageModel := cont.DbConn.FindPostImages(postId)
 	postImageSerializer := serializers.PostImagesSerializer{C: c, PostImages: postImageModel}
 
-	postPrefectureListModel := cont.DbConn.FindPostPrefectureList(postId)
+	postPrefectureListModel := cont.DbConn.FindPostPrefectures(postId)
 	postPrefectureListSerializer := serializers.PostPrefecturesSerializer{C: c, PostPrefectures: postPrefectureListModel}
 
 	postUserModel := cont.DbConn.FindPostUser(postId)
