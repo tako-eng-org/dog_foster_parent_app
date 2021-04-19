@@ -2,7 +2,7 @@
   <div class='col-xs-12'>
     <img class='float-left'
          style='padding:0;margin:0 15px 0 0;'
-         v-bind:src="imagepath"
+         v-bind:src="imagePath"
          width="180"
          height="180">
   </div>
@@ -11,7 +11,7 @@
 <script>
 export default {
   props: {
-    imagepath: String, //画像URL
+    imagePath: String, //画像URL
   },
 }
 </script>
