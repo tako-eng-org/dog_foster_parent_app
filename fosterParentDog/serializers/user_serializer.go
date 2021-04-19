@@ -15,7 +15,7 @@ type UserResponse struct {
 	ID             uint   `json:"id"`
 	CreatedAt      string `json:"created_at"`
 	UpdatedAt      string `json:"updated_at"`
-	Name           string `json:"post_id"`         //ユーザー名
+	Name           string `json:"name"`            //ユーザー名
 	Email          string `json:"e-mail"`          //メールアドレス
 	TwitterAccount string `json:"twitter_account"` //twitterアカウント
 	Nickname       string `json:"nickname"`        //ニックネーム

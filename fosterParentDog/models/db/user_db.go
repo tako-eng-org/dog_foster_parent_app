@@ -20,7 +20,7 @@ func (db *Database) FindPostUser(postId string) entity.User {
 	*/
 	err := db.connection.Table("posts A").
 		Select("B.*").
-		Joins("inner join public.users B on A.user_id = B.id").
+		Joins("inner join users B on A.user_id = B.id").
 		Where("A.id = ?", postId).
 		Scan(&model).
 		Error
