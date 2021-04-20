@@ -12,18 +12,18 @@
           </NuxtLink>
         </div>
       </div>
-      <ViewOrTextBox :title="'犬種'"
-                     :name="post.breed"
+      <TextOrTextBox :title="CON.BREED_TITLE"
+                     :detail="post.breed"
                      :isView="true"/>
-      <LabelOrDropdown :title="'性別'"
-                       :mapName="gender_map"
+      <LabelOrDropdown :title="CON.GENDER_TITLE"
+                       :mapName="CON.GENDER"
                        :itemValue="post.gender"
                        :isView="true"/>
-      <ViewOrTextBox :title="'自己紹介'"
-                     :name="post.introduction"
+      <TextOrTextBox :title="CON.INTRODUCTION_TITLE"
+                     :detail="post.introduction"
                      :isView="true"/>
-      <ViewOnly :title="'投稿日時'"
-                :name="post.created_at"
+      <ReadOnly :title="CON.CREATED_AT_TITLE"
+                :detail="post.created_at"
                 :isView="true"/>
       <br>
     </div>
@@ -45,18 +45,18 @@
 
 <script>
 import Pagenation from "../components/Pagenation";
-import ViewOrTextBox from "~/components/post/TextOrTextBox";
+import TextOrTextBox from "~/components/post/TextOrTextBox";
 import LabelOrDropdown from "~/components/post/LabelOrDropdown";
-import ViewOnly from "~/components/post/ReadOnly";
+import ReadOnly from "~/components/post/ReadOnly";
 import ImageTop from "~/components/post/Image";
 import CON from "~/components/const/const";
 
 export default {
   components: {
     Pagenation,
-    ViewOrTextBox,
+    TextOrTextBox,
     LabelOrDropdown,
-    ViewOnly,
+    ReadOnly,
     ImageTop,
     CON,
   },
@@ -64,13 +64,11 @@ export default {
 
   mounted() {
     this.getIndex(this.currentPage).then(this.generatePagination());
-    console.log("--------this.gender_map");
-    console.log(this.gender_map);
   },
 
   data() {
     return {
-      gender_map: CON.data().GENDER,
+      CON: CON.data(), //const.vue読み込み。 //TODO コンストファイルをいい感じにする
 
       posts: [], // 投稿記事
 
@@ -81,10 +79,6 @@ export default {
       totalCount: Number, //取得したレコードの総件数
       totalPages: Number, //算出後の総ページ数
 
-      publishing: {
-        private: 0,
-        public: 1,
-      }
     }
   },
   computed: {},
@@ -99,7 +93,7 @@ export default {
           {
             params: {
               page: page,
-              publishing: this.publishing.public,
+              publishing: this.CON.PUBLISHING.public,
             }
           }
         )
@@ -110,8 +104,6 @@ export default {
               console.error(`Error:${response.statusText}, ${this.getIndex.name}`)
             } else {
               this.posts = response.data;
-              console.log("-------this.posts");
-              console.log(this.posts);
             }
           }).catch(err => alert(err));
       })
@@ -128,7 +120,7 @@ export default {
         this.$axios.get('api/post_count',
           {
             params: {
-              publishing: this.publishing.public,
+              publishing: this.CON.PUBLISHING.public,
             }
           }
         )
@@ -136,7 +128,7 @@ export default {
             if ((response.status !== 200)) {
               console.error(`Error:${response.statusText}, ${this.generatePagination.name}`)
             } else {
-              this.totalCount = response.data.count; // 公開済記事数 ex: 41
+              this.totalCount = response.data.count; // 公開/非公開記事数 ex: 41
               this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
             }
           }).catch(err => alert(err));

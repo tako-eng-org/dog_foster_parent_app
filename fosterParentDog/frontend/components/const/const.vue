@@ -5,7 +5,17 @@
 export default {
   data() {
     return {
+      DOG_NAME_TITLE: "犬の名前",
+      BREED_TITLE: "犬種",
+      OLD_TITLE: "年齢",
+      INTRODUCTION_TITLE: "自己紹介",
+      APPEAL_POINT_TITLE: "アピールポイント",
+      OTHER_MESSAGE_TITLE: "その他特記事項",
+      CREATED_AT_TITLE: "投稿日時",
+      UPDATED_AT_TITLE: "更新日時",
+      //TODO 項目名追加する(今後、パスワード項目など必要になったら)
 
+      GENDER_TITLE: "性別",
       GENDER: [
         {
           value: 0,
@@ -21,6 +31,7 @@ export default {
         }
       ],
 
+      PREFECTURE_TITLE: "譲渡可能都道府県",
       PREFECTURE: [
         {
           value: 1,
@@ -212,6 +223,7 @@ export default {
         }
       ],
 
+      SENIOR_PERSON_TITLE: "高齢者への譲渡",
       SENIOR_PERSON: [
         {
           value: 0,
@@ -227,6 +239,7 @@ export default {
         }
       ],
 
+      SINGLE_PERSON_TITLE: "単身者への譲渡",
       SINGLE_PERSON: [
         {
           value: 0,
@@ -242,6 +255,7 @@ export default {
         }
       ],
 
+      SPAY_TITLE: "去勢/避妊手術",
       SPAY: [
         {
           value: 0,
@@ -257,6 +271,7 @@ export default {
         }
       ],
 
+      TRANSFER_STATUS_TITLE: "譲渡ステータス",
       TRANSFER_STATUS: [
         {
           value: 0,
@@ -276,23 +291,26 @@ export default {
         }
       ],
 
+      PUBLISHING: {
+        private: 0,
+        public: 1,
+      },
 
+      methods: {
+        // TODO getLabel関数を共通化する（しかし、使用時はimport必須にする）
+        getLabel(mapName, i) {
+          return mapName.find(map => map.value === i).label
+        }
+
+        // pluginsに書いていた時（グローバル定数で使っていた時）
+        // let getLabel = (mapName, i) => {
+        //   return mapName.find(map => map.value === i).label
+        // }
+        //
+        // export default ({}, inject) => {
+        //   inject('getLabel', getLabel);
+      },
     }
-  },
-
-  methods: {
-    // TODO getLabel関数を共通化する（しかし、使用時はimport必須にする）
-    getLabel(mapName, i) {
-      return mapName.find(map => map.value === i).label
-    }
-
-    // pluginsに書いていた時（グローバル定数で使っていた時）
-    // let getLabel = (mapName, i) => {
-    //   return mapName.find(map => map.value === i).label
-    // }
-    //
-    // export default ({}, inject) => {
-    //   inject('getLabel', getLabel);
-  },
+  }
 }
 </script>

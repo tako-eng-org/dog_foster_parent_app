@@ -7,42 +7,42 @@
           <p>投稿No : {{ post.postBase.id }}</p>
         </div>
       </div>
-      <ViewOrTextBox :title="'犬の名前'"
+      <TextOrTextBox :title="CON.DOG_NAME_TITLE"
                      :detail="post.postBase.breed"
                      :isView="true"/>
-      <ViewOrTextBox :title="'犬種'"
+      <TextOrTextBox :title="CON.BREED_TITLE"
                      :detail="post.postBase.breed"
                      :isView="true"/>
-      <LabelOrDropdown :title="'性別'"
-                       :detail="gender_map"
+      <LabelOrDropdown :title="CON.GENDER_TITLE"
+                       :detail="CON.GENDER"
                        :itemValue="post.postBase.gender"
                        :isView="true"/>
-      <LabelOrDropdown :title="'去勢/避妊手術'"
-                       :mapName="spay_map"
+      <LabelOrDropdown :title="CON.SPAY_TITLE"
+                       :mapName="CON.SPAY"
                        :itemValue="post.postBase.spay"
                        :isView="true"/>
-      <ViewOrTextBox :title="'年齢'"
+      <TextOrTextBox :title="CON.OLD_TITLE"
                      :detail="post.postBase.old"
                      :isView="true"/>
-      <LabelOrDropdown :title="'単身者への譲渡'"
-                       :mapName="single_person_map"
+      <LabelOrDropdown :title="CON.SINGLE_PERSON_TITLE"
+                       :mapName="CON.SINGLE_PERSON"
                        :itemValue="post.postBase.single_person"
                        :isView="true"/>
-      <LabelOrDropdown :title="'高齢者への譲渡'"
-                       :mapName="senior_person_map"
+      <LabelOrDropdown :title="CON.SENIOR_PERSON_TITLE"
+                       :mapName="CON.SENIOR_PERSON"
                        :itemValue="post.postBase.senior_person"
                        :isView="true"/>
-      <LabelOrDropdown :title="'譲渡ステータス'"
-                       :mapName="transfer_status_map"
+      <LabelOrDropdown :title="CON.TRANSFER_STATUS_TITLE"
+                       :mapName="CON.TRANSFER_STATUS"
                        :itemValue="post.postBase.transfer_status"
                        :isView="true"/>
-      <ViewOrTextBox :title="'自己紹介'"
+      <TextOrTextBox :title="CON.INTRODUCTION_TITLE"
                      :detail="post.postBase.introduction"
                      :isView="true"/>
-      <ViewOnly :title="'投稿日時'"
+      <ReadOnly :title="CON.CREATED_AT_TITLE"
                 :detail="post.postBase.created_at"
                 :isView="true"/>
-      <ViewOrTextBox :title="'アピールポイント'"
+      <TextOrTextBox :title="'アピールポイント'"
                      :detail="post.postBase.appeal_point"
                      :isView="true"/>
 
@@ -52,7 +52,7 @@
 
       <ImageList :imagePathList="post.postPrefectureList"
                  :isView="true"/>
-      <ViewOrTextBox :title="'その他特記事項'"
+      <TextOrTextBox :title="'その他特記事項'"
                      :detail="post.postBase.other_message"
                      :isView="true"/>
     </div>
@@ -66,25 +66,27 @@
 </template>
 
 <script>
-import ViewOrTextBox from "~/components/post/TextOrTextBox";
+import CON from "~/components/const/const"
+import TextOrTextBox from "~/components/post/TextOrTextBox";
+import LabelOrDropdown from "~/components/post/LabelOrDropdown";
+import ReadOnly from "~/components/post/ReadOnly";
 import ImageTop from "~/components/post/Image"
 import ImageList from "~/components/post/ImageList";
-import UserProfile from "~/components/post/UserProfile";
-import LabelOrDropdown from "~/components/post/LabelOrDropdown";
-import ViewOnly from "~/components/post/ReadOnly";
 import PostPrefecture from "~/components/post/PostPrefecture"
-import CON from "~/components/const/const"
+import UserProfile from "~/components/post/UserProfile";
 
 export default {
   components: {
-    ViewOrTextBox,
-    ImageList,
-    UserProfile,
-    ImageTop,
-    LabelOrDropdown,
-    ViewOnly,
-    PostPrefecture,
     CON,
+
+    TextOrTextBox,
+    LabelOrDropdown,
+    ReadOnly,
+
+    ImageTop,
+    ImageList,
+    PostPrefecture,
+    UserProfile,
   },
 
   mounted: function () {
@@ -93,21 +95,14 @@ export default {
 
   data: function () {
     return {
+      CON: CON.data(), //const.vue読み込み。 //TODO コンストファイルをいい感じにする
+
       post: {
         postBase: {}, //基礎投稿
         imagePathList: {}, //画像パスリスト
         postPrefectureList: {}, //譲渡可能都道府県リスト
         user: {}, //ユーザー情報
       },
-
-      // components/const/const.vueから定数読み出し
-      gender_map: CON.data().GENDER,
-      prefecture_map: CON.data().PREFECTURE,
-      senior_person_map: CON.data().SENIOR_PERSON,
-      single_person_map: CON.data().SINGLE_PERSON,
-      spay_map: CON.data().SPAY,
-      transfer_status_map: CON.data().TRANSFER_STATUS,
-
     }
   },
   computed: {},
