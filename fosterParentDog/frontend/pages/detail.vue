@@ -39,9 +39,9 @@
       <TextOrTextBox :title="CON.INTRODUCTION_TITLE"
                      :detail="post.postBase.introduction"
                      :isView="true"/>
-      <ReadOnly :title="CON.CREATED_AT_TITLE"
-                :detail="post.postBase.created_at"
-                :isView="true"/>
+      <TextOrTextBox :title="CON.CREATED_AT_TITLE"
+                     :detail="post.postBase.created_at"
+                     :isView="true"/>
       <TextOrTextBox :title="'アピールポイント'"
                      :detail="post.postBase.appeal_point"
                      :isView="true"/>
@@ -69,7 +69,6 @@
 import CON from "~/components/const/const"
 import TextOrTextBox from "~/components/post/TextOrTextBox";
 import LabelOrDropdown from "~/components/post/LabelOrDropdown";
-import ReadOnly from "~/components/post/ReadOnly";
 import ImageTop from "~/components/post/Image"
 import ImageList from "~/components/post/ImageList";
 import PostPrefecture from "~/components/post/PostPrefecture"
@@ -81,7 +80,6 @@ export default {
 
     TextOrTextBox,
     LabelOrDropdown,
-    ReadOnly,
 
     ImageTop,
     ImageList,

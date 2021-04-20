@@ -22,9 +22,9 @@
       <TextOrTextBox :title="CON.INTRODUCTION_TITLE"
                      :detail="post.introduction"
                      :isView="true"/>
-      <ReadOnly :title="CON.CREATED_AT_TITLE"
-                :detail="post.created_at"
-                :isView="true"/>
+      <TextOrTextBox :title="CON.CREATED_AT_TITLE"
+                     :detail="post.created_at"
+                     :isView="true"/>
       <br>
     </div>
 
@@ -47,7 +47,6 @@
 import Pagenation from "../components/Pagenation";
 import TextOrTextBox from "~/components/post/TextOrTextBox";
 import LabelOrDropdown from "~/components/post/LabelOrDropdown";
-import ReadOnly from "~/components/post/ReadOnly";
 import ImageTop from "~/components/post/Image";
 import CON from "~/components/const/const";
 
@@ -56,7 +55,6 @@ export default {
     Pagenation,
     TextOrTextBox,
     LabelOrDropdown,
-    ReadOnly,
     ImageTop,
     CON,
   },
