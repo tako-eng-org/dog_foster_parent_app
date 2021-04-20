@@ -36,7 +36,7 @@ func (cont *Controller) CountPost(c *gin.Context) {
 // 投稿を1ページ表示件数分取得する
 //*******************************************************************
 func (cont *Controller) IndexList(c *gin.Context) {
-	page := c.DefaultQuery("page", "1") //デフォルト ?page=1
+	page := c.DefaultQuery("page", "1")
 	publishing := c.DefaultQuery("publishing", public)
 	model := cont.DbConn.FindIndex(page, publishing)
 	serializer := serializers.PostsSerializer{C: c, Posts: model}
@@ -82,22 +82,20 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 func (cont *Controller) Create(c *gin.Context) {
 	// TODO バリデーション（投稿編集画面作成時に実装予定）
 	var post = entity.Post{
-		Publishing:       strToInt(c.PostForm("publishing")),
-		DogName:          c.PostForm("dog_name"),
-		Breed:            c.PostForm("breed"),
-		Gender:           strToInt(c.PostForm("gender")),
-		Spay:             strToInt(c.PostForm("spay")),
-		Old:              c.PostForm("old"),
-		SinglePerson:     strToInt(c.PostForm("single_person")),
-		SeniorPerson:     strToInt(c.PostForm("senior_person")),
-		TransferStatus:   strToInt(c.PostForm("transfer_status")),
-		Introduction:     c.PostForm("introduction"),
-		AppealPoint:      c.PostForm("appeal_point"),
-		PostPrefectureId: strToInt(c.PostForm("transferable_prefecture")),
-		OtherMessage:     c.PostForm("other_message"),
-		UserId:           strToInt64(c.PostForm("user_id")),
-		TopImagePath:     c.PostForm("top_image_path"),
-		PostImageId:      strToInt64(c.PostForm("post_image_id")),
+		Publishing:     strToInt(c.PostForm("publishing")),
+		DogName:        c.PostForm("dog_name"),
+		Breed:          c.PostForm("breed"),
+		Gender:         strToInt(c.PostForm("gender")),
+		Spay:           strToInt(c.PostForm("spay")),
+		Old:            c.PostForm("old"),
+		SinglePerson:   strToInt(c.PostForm("single_person")),
+		SeniorPerson:   strToInt(c.PostForm("senior_person")),
+		TransferStatus: strToInt(c.PostForm("transfer_status")),
+		Introduction:   c.PostForm("introduction"),
+		AppealPoint:    c.PostForm("appeal_point"),
+		OtherMessage:   c.PostForm("other_message"),
+		UserId:         strToUint64(c.PostForm("user_id")),
+		TopImagePath:   c.PostForm("top_image_path"),
 	}
 	cont.DbConn.InsertPost(&post)
 	c.JSON(http.StatusCreated, post.ID)

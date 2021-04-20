@@ -20,7 +20,7 @@ func strToInt(i string) int {
 	return r
 }
 
-func strToInt64(i string) uint64 {
+func strToUint64(i string) uint64 {
 	var r, err = strconv.ParseUint(i, 10, 64)
 	if err != nil {
 		log.Fatal(err)

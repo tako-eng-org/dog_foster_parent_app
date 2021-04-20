@@ -31,7 +31,7 @@ func serve() {
 	// 公開済み投稿数を取得する  ex: localhost:8000/fosterparent/post_count?publishing=1
 	router.GET("/post_count", controller.CountPost)
 
-	// 投稿を1ページ表示分取得する ex: localhost:8000/fosterparent/index?page=1
+	// 投稿を1ページ表示分取得する ex: localhost:8000/fosterparent/index?page=1&publishing=1
 	router.GET("/index", controller.IndexList)
 
 	// ************************************************
