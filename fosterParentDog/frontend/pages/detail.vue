@@ -7,36 +7,36 @@
           <p>投稿No : {{ post.postBase.id }}</p>
         </div>
       </div>
-      <TextOrTextBox :title="CON.DOG_NAME_TITLE"
+      <TextOrTextBox :title="'犬の名前'"
                      :detail="post.postBase.breed"
                      :isView="true"/>
-      <TextOrTextBox :title="CON.BREED_TITLE"
+      <TextOrTextBox :title="'犬種'"
                      :detail="post.postBase.breed"
                      :isView="true"/>
-      <LabelOrDropdown :title="CON.GENDER_TITLE"
+      <LabelOrDropdown :title="'性別'"
                        :detail="CON.GENDER"
                        :itemValue="post.postBase.gender"
                        :isView="true"/>
-      <LabelOrDropdown :title="CON.SPAY_TITLE"
+      <LabelOrDropdown :title="'去勢/避妊手術"
                        :mapName="CON.SPAY"
                        :itemValue="post.postBase.spay"
                        :isView="true"/>
-      <TextOrTextBox :title="CON.OLD_TITLE"
+      <TextOrTextBox :title="'年齢'"
                      :detail="post.postBase.old"
                      :isView="true"/>
-      <LabelOrDropdown :title="CON.SINGLE_PERSON_TITLE"
+      <LabelOrDropdown :title="'単身者への譲渡'"
                        :mapName="CON.SINGLE_PERSON"
                        :itemValue="post.postBase.single_person"
                        :isView="true"/>
-      <LabelOrDropdown :title="CON.SENIOR_PERSON_TITLE"
+      <LabelOrDropdown :title="'高齢者への譲渡'"
                        :mapName="CON.SENIOR_PERSON"
                        :itemValue="post.postBase.senior_person"
                        :isView="true"/>
-      <LabelOrDropdown :title="CON.TRANSFER_STATUS_TITLE"
+      <LabelOrDropdown :title="'譲渡ステータス'"
                        :mapName="CON.TRANSFER_STATUS"
                        :itemValue="post.postBase.transfer_status"
                        :isView="true"/>
-      <TextOrTextBox :title="CON.INTRODUCTION_TITLE"
+      <TextOrTextBox :title="'自己紹介'"
                      :detail="post.postBase.introduction"
                      :isView="true"/>
       <TextOrTextBox :title="CON.CREATED_AT_TITLE"

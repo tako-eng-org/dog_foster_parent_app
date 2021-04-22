@@ -12,17 +12,17 @@
           </NuxtLink>
         </div>
       </div>
-      <TextOrTextBox :title="CON.BREED_TITLE"
+      <TextOrTextBox :title="'犬種'"
                      :detail="post.breed"
                      :isView="true"/>
-      <LabelOrDropdown :title="CON.GENDER_TITLE"
+      <LabelOrDropdown :title="'性別'"
                        :mapName="CON.GENDER"
                        :itemValue="post.gender"
                        :isView="true"/>
-      <TextOrTextBox :title="CON.INTRODUCTION_TITLE"
+      <TextOrTextBox :title="'自己紹介'"
                      :detail="post.introduction"
                      :isView="true"/>
-      <TextOrTextBox :title="CON.CREATED_AT_TITLE"
+      <TextOrTextBox :title="'投稿日時'"
                      :detail="post.created_at"
                      :isView="true"/>
       <br>
