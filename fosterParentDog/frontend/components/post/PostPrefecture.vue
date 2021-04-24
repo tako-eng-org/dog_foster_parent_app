@@ -1,28 +1,41 @@
 <template>
   <div class="post-prefecture">
     <div class="row">
-      <p>{{ title }}</p>
-      <div v-for="postPrefecture in postPrefectureList" v-bind:key="postPrefecture.id">
-        <p>{{ getLabel(itemMap, postPrefecture.post_prefecture_id) }} </p>
-        <!--        <p>{{ $getLabel($PREFECTURE, postPrefecture.post_prefecture_id) }} </p>-->
+      <p>譲渡可能都道府県</p>
+      <div v-if="readonly">
+        <div v-for="postPrefecture in postPrefectureList" v-bind:key="postPrefecture.id">
+          <!--        <p>{{postPrefecture.label}}</p>-->
+          <p>{{ getLabel(PREFECTURE_LIST, postPrefecture.post_prefecture_id) }} </p>
+          <!--        <p>{{ $getLabel($PREFECTURE, postPrefecture.post_prefecture_id) }} </p>-->
+        </div>
       </div>
+      <div v-else>
+        <select v-model="selected">
+          <option v-for="prefecture in PREFECTURE_LIST" v-bind:value="prefecture.value">
+            {{ prefecture.label }}
+          </option>
+        </select>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  props: {
-    title: String,
-    postPrefectureList: Object,
-    itemMap: Object,
-  },
+import PREFECTURE_LIST from "~/consts/prefectureList";
+import getLabel from "~/consts/getLabel";
 
-  methods: {
-    // TODO getLabel関数を共通化する
-    getLabel(mapName, i) { // 第1引数：mapの変数名, 第2引数:数値
-      return mapName.find(map => map.value === i).label //指定したmapのvalueに紐づくlavelを返す
-    },
+export default {
+  data() {
+    return {
+      PREFECTURE_LIST,
+      getLabel,
+    }
+  },
+  props: {
+    postPrefectureList: Object,
+    selected: "",
+    readonly: true,
   },
 }
 </script>

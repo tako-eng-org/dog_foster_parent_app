@@ -7,19 +7,14 @@
 </template>
 
 <script>
-import ImageOne from "~/components/post/Image";
+import ImageOne from "~/components/post/ImageOne";
 
 export default {
-  data() {
-    return {
-      isView: true,
-    }
+  components: {
+    ImageOne,
   },
   props: {
     imagePathList: Object,
-  },
-  components: {
-    ImageOne,
   },
 }
 </script>

@@ -3,7 +3,7 @@
     <h1>里親募集 掲示板</h1>
     <!--  投稿記事 一覧表示  -->
     <div class="container" v-for="post in posts" v-bind:key="post.id">
-      <ImageTop :imagePath="post.top_image_path"/>
+      <ImageOne :imagePath="post.top_image_path"/>
       <div class="goDetail">
         <div class="row">
           <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
@@ -12,19 +12,17 @@
           </NuxtLink>
         </div>
       </div>
-      <TextOrTextBox :title="'犬種'"
-                     :detail="post.breed"
-                     :isView="true"/>
-      <LabelOrDropdown :title="'性別'"
-                       :mapName="CON.GENDER"
-                       :itemValue="post.gender"
-                       :isView="true"/>
-      <TextOrTextBox :title="'自己紹介'"
-                     :detail="post.introduction"
-                     :isView="true"/>
-      <TextOrTextBox :title="'投稿日時'"
-                     :detail="post.created_at"
-                     :isView="true"/>
+      <TextBox :title="'犬種'"
+               :detail="post.breed"
+               :readonly="true"/>
+      <Gender :itemValue="post.gender"
+              :readonly="true"/>
+      <TextBox :title="'自己紹介'"
+               :detail="post.introduction"
+               :readonly="true"/>
+      <TextBox :title="'投稿日時'"
+               :detail="post.created_at"
+               :readonly="true"/>
       <br>
     </div>
 
@@ -44,21 +42,20 @@
 </template>
 
 <script>
-import Pagenation from "../components/Pagenation";
-import TextOrTextBox from "~/components/post/TextOrTextBox";
-import LabelOrDropdown from "~/components/post/LabelOrDropdown";
-import ImageTop from "~/components/post/Image";
-import CON from "~/components/const/const";
+import Pagenation from "~/components/Pagenation";
+import TextBox from "~/components/post/TextBox";
+import ImageOne from "~/components/post/ImageOne";
+import Gender from "~/components/post/Gender";
+import PUBLISHING_LIST from "~/consts/publishingList";
 
 export default {
   components: {
     Pagenation,
-    TextOrTextBox,
-    LabelOrDropdown,
-    ImageTop,
-    CON,
-  },
+    TextBox,
+    ImageOne,
 
+    Gender,
+  },
 
   mounted() {
     this.getIndex(this.currentPage).then(this.generatePagination());
@@ -66,8 +63,6 @@ export default {
 
   data() {
     return {
-      CON: CON.data(), //const.vue読み込み。 //TODO コンストファイルをいい感じにする
-
       posts: [], // 投稿記事
 
       //ページネーション設定
@@ -77,6 +72,7 @@ export default {
       totalCount: Number, //取得したレコードの総件数
       totalPages: Number, //算出後の総ページ数
 
+      PUBLISHING_LIST,
     }
   },
   computed: {},
@@ -91,7 +87,7 @@ export default {
           {
             params: {
               page: page,
-              publishing: this.CON.PUBLISHING.public,
+              publishing: PUBLISHING_LIST.public,
             }
           }
         )
@@ -103,7 +99,7 @@ export default {
             } else {
               this.posts = response.data;
             }
-          }).catch(err => alert(err));
+          }).catch(err => console.error(err));
       })
     },
 
@@ -118,7 +114,7 @@ export default {
         this.$axios.get('api/post_count',
           {
             params: {
-              publishing: this.CON.PUBLISHING.public,
+              publishing: PUBLISHING_LIST.public,
             }
           }
         )
@@ -129,7 +125,7 @@ export default {
               this.totalCount = response.data.count; // 公開/非公開記事数 ex: 41
               this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
             }
-          }).catch(err => alert(err));
+          }).catch(err => console.error(err));
       })
     },
   },
