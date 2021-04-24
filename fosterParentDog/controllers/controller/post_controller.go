@@ -58,7 +58,7 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 	postPrefectureListModel := cont.DbConn.FindPostPrefectures(postId)
 	postPrefectureListSerializer := serializers.PostPrefecturesSerializer{C: c, PostPrefectures: postPrefectureListModel}
 
-	postUserModel := cont.DbConn.FindPostUser(postId)
+	postUserModel := cont.DbConn.FindUser(postModel.UserId)
 	postUserSerializer := serializers.UserSerializer{C: c, User: postUserModel}
 
 	response := struct {

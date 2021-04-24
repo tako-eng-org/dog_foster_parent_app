@@ -8,22 +8,10 @@ import (
 //*******************************************************************
 // [第1引数]の投稿IDで、ユーザー情報を取得する
 //*******************************************************************
-func (db *Database) FindPostUser(postId string) entity.User {
+func (db *Database) FindUser(userId uint64) entity.User {
 	var model entity.User
 
-	/*
-		select B.*
-		from post A
-		inner join public.user B
-		on A.user_id = B.id
-		where A.id = 44;
-	*/
-	err := db.connection.Table("posts A").
-		Select("B.*").
-		Joins("inner join users B on A.user_id = B.id").
-		Where("A.id = ?", postId).
-		Scan(&model).
-		Error
+	err := db.connection.First(&model, userId).Error
 	if err != nil {
 		log.Fatal(err)
 	}
