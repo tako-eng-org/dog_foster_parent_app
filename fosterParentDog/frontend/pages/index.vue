@@ -46,7 +46,7 @@ import Pagenation from "~/components/Pagenation";
 import TextBox from "~/components/post/TextBox";
 import ImageOne from "~/components/post/ImageOne";
 import Gender from "~/components/post/Gender";
-import PUBLISHING_LIST from "~/consts/publishingList";
+import {publishingList} from "~/consts/publishingList";
 
 export default {
   components: {
@@ -71,8 +71,6 @@ export default {
       perPage: 20, //1ページの表示件数
       totalCount: Number, //取得したレコードの総件数
       totalPages: Number, //算出後の総ページ数
-
-      PUBLISHING_LIST,
     }
   },
   computed: {},
@@ -87,12 +85,10 @@ export default {
           {
             params: {
               page: page,
-              publishing: PUBLISHING_LIST.public,
+              publishing: publishingList.public,
             }
           }
         )
-          //
-          // {params: {page: page, publishing: 0}})
           .then((response) => {
             if ((response.status !== 200)) {
               console.error(`Error:${response.statusText}, ${this.getIndex.name}`)
@@ -114,7 +110,7 @@ export default {
         this.$axios.get('/api/post_count',
           {
             params: {
-              publishing: PUBLISHING_LIST.public,
+              publishing: publishingList.public,
             }
           }
         )
