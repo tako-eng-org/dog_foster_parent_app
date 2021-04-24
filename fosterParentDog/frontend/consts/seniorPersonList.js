@@ -6,3 +6,7 @@ const SENIOR_PERSON_LIST = {
 export const seniorPersonList = () => {
   return SENIOR_PERSON_LIST;
 }
+
+export const seniorPersonValue = (i) => {
+  return SENIOR_PERSON_LIST[i]
+}

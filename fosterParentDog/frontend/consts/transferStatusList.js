@@ -8,3 +8,6 @@ const TRANSFER_STATUS_LIST = {
 export const transferStatusList = () => {
   return TRANSFER_STATUS_LIST;
 }
+export const transferStatusValue = (i) => {
+  return TRANSFER_STATUS_LIST[i]
+}

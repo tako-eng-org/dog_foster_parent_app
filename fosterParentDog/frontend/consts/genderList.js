@@ -7,3 +7,7 @@ const GENDER_LIST = {
 export const genderList = () => {
   return GENDER_LIST;
 }
+
+export const genderValue = (i) => {
+  return GENDER_LIST[i]
+}

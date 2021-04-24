@@ -7,3 +7,7 @@ const SINGLE_PERSON_LIST = {
 export const singlePersonList = () => {
   return SINGLE_PERSON_LIST;
 }
+
+export const singlePersonValue = (i) => {
+  return SINGLE_PERSON_LIST[i]
+}

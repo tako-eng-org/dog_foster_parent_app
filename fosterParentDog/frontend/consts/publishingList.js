@@ -3,4 +3,6 @@ const PUBLISHING_LIST = {
   public: 1,
 }
 
-export default PUBLISHING_LIST;
+export const publishingList = () => {
+  return PUBLISHING_LIST;
+}

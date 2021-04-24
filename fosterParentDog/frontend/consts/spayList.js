@@ -7,3 +7,7 @@ const SPAY_LIST = {
 export const spayList = () => {
   return SPAY_LIST;
 }
+
+export const spayValue = (i) => {
+  return SPAY_LIST[i]
+}

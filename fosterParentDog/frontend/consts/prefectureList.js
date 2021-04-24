@@ -51,3 +51,7 @@ const PREFECTURE_LIST = {
 export const prefectureList = () => {
   return PREFECTURE_LIST;
 }
+
+export const prefectureValue = (i) => {
+  return PREFECTURE_LIST[i]
+}
