@@ -83,7 +83,7 @@ export default {
      */
     getIndex(page) {
       return new Promise((resolve, reject) => {
-        this.$axios.get('api/index',
+        this.$axios.get('/api/index',
           {
             params: {
               page: page,
@@ -111,7 +111,7 @@ export default {
      */
     generatePagination() {
       return new Promise((resolve, reject) => {
-        this.$axios.get('api/post_count',
+        this.$axios.get('/api/post_count',
           {
             params: {
               publishing: PUBLISHING_LIST.public,

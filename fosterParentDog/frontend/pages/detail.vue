@@ -97,7 +97,7 @@ export default {
      * @param {int} postID
      */
     getDetail(currentPostId) {
-      this.$axios.get('api/post', {
+      this.$axios.get('/api/post', {
           params: {
             postId: currentPostId,
           }
