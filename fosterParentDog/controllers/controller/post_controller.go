@@ -77,6 +77,20 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 }
 
 //*******************************************************************
+// debug
+//*******************************************************************
+//func (cont *Controller) FindPostUserTest(c *gin.Context) {
+//	postId := c.Query("postId")
+//	postModel := cont.DbConn.FindPostUserByPostId(postId)
+//	response := struct {
+//		UserId int `json:"user_id"`
+//	}{
+//		postModel,
+//	}
+//	c.JSON(http.StatusOK, response)
+//}
+
+//*******************************************************************
 // 投稿記事テーブルへ記事を1件登録する
 //*******************************************************************
 func (cont *Controller) Create(c *gin.Context) {

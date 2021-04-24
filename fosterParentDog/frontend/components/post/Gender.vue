@@ -3,7 +3,7 @@
     <div class="row">
       <div v-if="readonly">
         <!--    TODO getLabelいらなくなる（連想配列）    -->
-        <p>性別 : {{ getLabel(GENDER_LIST, itemValue) }}</p>
+        <p>性別 : {{ GENDER_LIST.itemValue }}</p>
       </div>
       <div v-else>
         <select v-model="selected">
@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import GENDER_LIST from "~/consts/genderList";
-import getLabel from "~/consts/getLabel";
+import {genderList} from "~/consts/genderList";
+// import getLabel from "~/consts/getLabel";
 
 export default {
   data() {
     return {
-      GENDER_LIST,
-      getLabel,
+      GENDER_LIST: genderList,
+      // getLabel,
     }
   },
   props: {

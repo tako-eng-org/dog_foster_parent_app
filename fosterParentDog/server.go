@@ -47,6 +47,15 @@ func serve() {
 	router.POST("/add_record", controller.Create)
 
 	// ************************************************
+	// debug
+	// ************************************************
+	//router.GET("/testuser", controller.FindPostUserTest)
+	// 適当なエラーで返す用
+	//router.GET("/bar", func(c *gin.Context) {
+	//	c.JSON(http.StatusConflict, gin.H{"message": "テストメッセージです"})
+	//})
+
+	// ************************************************
 	// 異常系
 	// ************************************************
 	router.NoRoute(func(c *gin.Context) {

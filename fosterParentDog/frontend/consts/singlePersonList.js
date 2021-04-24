@@ -1,16 +1,9 @@
-const SINGLE_PERSON_LIST = [
-  {
-    value: 0,
-    label: "不可"
-  },
-  {
-    value: 1,
-    label: "可"
-  },
-  {
-    value: 2,
-    label: "応相談"
-  }
-]
+const SINGLE_PERSON_LIST = {
+  0: "不可",
+  1: "可",
+  2: "応相談",
+}
 
-export default SINGLE_PERSON_LIST;
+export const singlePersonList = () => {
+  return SINGLE_PERSON_LIST;
+}

@@ -1,16 +1,8 @@
-const SENIOR_PERSON_LIST = [
-  {
-    value: 0,
-    label: "不可"
-  },
-  {
-    value: 1,
-    label: "可"
-  },
-  {
-    value: 2,
-    label: "応相談"
-  }
-]
-
-export default SENIOR_PERSON_LIST;
+const SENIOR_PERSON_LIST = {
+  0: "不可",
+  1: "可",
+  2: "応相談",
+}
+export const seniorPersonList = () => {
+  return SENIOR_PERSON_LIST;
+}

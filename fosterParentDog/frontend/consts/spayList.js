@@ -1,16 +1,9 @@
-const SPAY_LIST = [
-  {
-    value: 0,
-    label: "手術済"
-  },
-  {
-    value: 1,
-    label: "手術未"
-  },
-  {
-    value: 2,
-    label: "手術予定"
-  }
-]
+const SPAY_LIST = {
+  0: "手術済",
+  1: "手術未",
+  2: "手術予定",
+}
 
-export default SPAY_LIST;
+export const spayList = () => {
+  return SPAY_LIST;
+}
