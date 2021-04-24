@@ -2,11 +2,11 @@
   <div class="transfer-status">
     <div class="row">
       <div v-if="readonly">
-        <p>譲渡ステータス: {{ getLabel(TRANSFER_STATUS_LIST, itemValue) }}</p>
+        <p>譲渡ステータス: {{ transferStatusValue(itemValue) }}</p>
       </div>
       <div v-else>
         <select v-model="selected">
-          <option v-for="transferStatus in TRANSFER_STATUS_LIST" v-bind:value="transferStatus.value">
+          <option v-for="transferStatus in transferStatusList" v-bind:value="transferStatus.value">
             譲渡ステータス {{ transferStatus.label }}
           </option>
         </select>
@@ -16,14 +16,12 @@
 </template>
 
 <script>
-import TRANSFER_STATUS_LIST from "~/consts/transferStatusList";
-import getLabel from "~/consts/getLabel";
+import {transferStatusList, transferStatusValue} from "~/consts/transferStatusList";
 
 export default {
   data() {
     return {
-      TRANSFER_STATUS_LIST,
-      getLabel,
+      transferStatusList,
     }
   },
   props: {
@@ -31,5 +29,8 @@ export default {
     selected: "",
     readonly: true,
   },
+  methods: {
+    transferStatusValue,
+  }
 }
 </script>

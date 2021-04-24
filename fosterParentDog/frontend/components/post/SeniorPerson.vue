@@ -2,11 +2,11 @@
   <div class="senior-person">
     <div class="row">
       <div v-if="readonly">
-        <p>高齢者への譲渡: {{ getLabel(SENIOR_PERSON_LIST, itemValue) }}</p>
+        <p>高齢者への譲渡: {{ seniorPersonValue(itemValue) }}</p>
       </div>
       <div v-else>
         <select v-model="selected">
-          <option v-for="seniorPerson in SENIOR_PERSON_LIST" v-bind:value="seniorPerson.value">
+          <option v-for="seniorPerson in seniorPersonList" v-bind:value="seniorPerson.value">
             高齢者への譲渡 {{ seniorPerson.label }}
           </option>
         </select>
@@ -16,14 +16,12 @@
 </template>
 
 <script>
-import SENIOR_PERSON_LIST from "~/consts/seniorPersonList";
-import getLabel from "~/consts/getLabel";
+import {seniorPersonList, seniorPersonValue} from "~/consts/seniorPersonList";
 
 export default {
   data() {
     return {
-      SENIOR_PERSON_LIST,
-      getLabel,
+      seniorPersonList,
     }
   },
   props: {
@@ -31,5 +29,8 @@ export default {
     selected: "",
     readonly: true,
   },
+  methods: {
+    seniorPersonValue,
+  }
 }
 </script>

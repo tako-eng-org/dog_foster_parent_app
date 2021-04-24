@@ -2,11 +2,11 @@
   <div class="single-person">
     <div class="row">
       <div v-if="readonly">
-        <p>単身者への譲渡: {{ getLabel(SINGLE_PERSON_LIST, itemValue) }}</p>
+        <p>単身者への譲渡: {{ singlePersonValue(itemValue) }}</p>
       </div>
       <div v-else>
         <select v-model="selected">
-          <option v-for="singlePerson in SINGLE_PERSON_LIST" v-bind:value="singlePerson.value">
+          <option v-for="singlePerson in singlePersonList" v-bind:value="singlePerson.value">
             単身者への譲渡 {{ singlePerson.label }}
           </option>
         </select>
@@ -16,14 +16,12 @@
 </template>
 
 <script>
-import SINGLE_PERSON_LIST from "~/consts/singlePersonList";
-import getLabel from "~/consts/getLabel";
+import {singlePersonList, singlePersonValue} from "~/consts/singlePersonList";
 
 export default {
   data() {
     return {
-      SINGLE_PERSON_LIST,
-      getLabel,
+      singlePersonList,
     }
   },
   props: {
@@ -31,5 +29,8 @@ export default {
     selected: "",
     readonly: true,
   },
+  methods: {
+    singlePersonValue,
+  }
 }
 </script>

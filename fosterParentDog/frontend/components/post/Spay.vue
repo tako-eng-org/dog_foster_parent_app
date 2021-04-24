@@ -2,11 +2,11 @@
   <div class="spay">
     <div class="row">
       <div v-if="readonly">
-        <p>去勢/避妊手術: {{ getLabel(SPAY_LIST, itemValue) }}</p>
+        <p>去勢/避妊手術: {{ spayValue(itemValue) }}</p>
       </div>
       <div v-else>
         <select v-model="selected">
-          <option v-for="spay in SPAY_LIST" v-bind:value="spay.value">
+          <option v-for="spay in spayList" v-bind:value="spay.value">
             去勢/避妊手術 {{ spay.label }}
           </option>
         </select>
@@ -16,14 +16,12 @@
 </template>
 
 <script>
-import SPAY_LIST from "~/consts/spayList";
-import getLabel from "~/consts/getLabel";
+import {spayList, spayValue} from "~/consts/spayList";
 
 export default {
   data() {
     return {
-      SPAY_LIST,
-      getLabel,
+      spayList,
     }
   },
   props: {
@@ -31,5 +29,8 @@ export default {
     selected: "",
     readonly: true,
   },
+  methods: {
+    spayValue,
+  }
 }
 </script>

@@ -1,13 +1,13 @@
 <template>
   <div class="gender">
     <div class="row">
+      <!--   TODO v-ifでなくreadonlyによる表示/入力(水平展開)   -->
       <div v-if="readonly">
-        <!--    TODO getLabelいらなくなる（連想配列）    -->
-        <p>性別 : {{ GENDER_LIST.itemValue }}</p>
+        <p>性別 : {{ genderValue(itemValue) }}</p>
       </div>
       <div v-else>
         <select v-model="selected">
-          <option v-for="gender in GENDER_LIST" v-bind:value="gender.value">
+          <option v-for="gender in genderList" v-bind:value="gender.value">
             {{ gender.label }}
           </option>
         </select>
@@ -17,14 +17,12 @@
 </template>
 
 <script>
-import {genderList} from "~/consts/genderList";
-// import getLabel from "~/consts/getLabel";
+import {genderList, genderValue} from "~/consts/genderList";
 
 export default {
   data() {
     return {
-      GENDER_LIST: genderList,
-      // getLabel,
+      genderList,
     }
   },
   props: {
@@ -32,5 +30,8 @@ export default {
     selected: "",
     readonly: true,
   },
+  methods: {
+    genderValue,
+  }
 }
 </script>
