@@ -1,68 +1,102 @@
 package controller
 
 import (
-	"fmt"
-	db "fpdapp/models/db"
-	entity "fpdapp/models/entity"
+	"fpdapp/models/entity"
 	"fpdapp/serializers"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 //*******************************************************************
-// 公開済み投稿数を取得する
+// パラメータ定義
 //*******************************************************************
-func CountPublishedPostNum(c *gin.Context) {
-	c.JSON(200, db.CountPublishedPostNum()) // URLへのアクセスに対してJSONを返す
-}
+//公開設定
+const (
+	private = "0"
+	public  = "1"
+)
 
 //*******************************************************************
-// 投稿を1ページ表示(20件)分取得する
+// 公開/非公開いずれかの投稿数を取得する
 //*******************************************************************
-func Index(c *gin.Context) {
-	page := c.DefaultQuery("page", "1")               // ?page=1(デフォルト)
-	postModel, _ := db.FindIndexRecords(page)         //ORMを叩いてデータとerrを取得する
-	c.Set("my_post_model", postModel)                 //回避 (*Context).MustGet: panic("Key \"" + key + "\" does not exist")
-	posts := serializers.PostSerializer{c, postModel} //結果をコンテキストとスライス[]に格納する
-	c.JSON(http.StatusOK, posts.Response())           //コンテキストに入ったデータを整形してリターン
-}
-
-//*******************************************************************
-// 投稿テーブルへ登録する
-//*******************************************************************
-func Create(c *gin.Context) {
-	userId, _ := strconv.ParseUint(c.PostForm("user_id"), 10, 64)
-	postImageId, _ := strconv.ParseUint(c.PostForm("post_image_id"), 10, 64)
-
-	// テーブルに登録するためのレコード情報
-	var record = entity.Post{
-		Publishing:             strToInt(c.PostForm("publishing")),
-		DogName:                c.PostForm("dog_name"),
-		Breed:                  c.PostForm("breed"),
-		Gender:                 strToInt(c.PostForm("gender")),
-		Spay:                   strToInt(c.PostForm("spay")),
-		Old:                    c.PostForm("old"),
-		SinglePerson:           strToInt(c.PostForm("single_person")),
-		SeniorPerson:           strToInt(c.PostForm("senior_person")),
-		TransferStatus:         strToInt(c.PostForm("transter_status")),
-		Introduction:           c.PostForm("introduction"),
-		AppealPoint:            c.PostForm("appeal_point"),
-		TransferablePrefecture: strToInt(c.PostForm("transferable_prefecture")),
-		OtherMessage:           c.PostForm("other_message"),
-		UserId:                 userId,
-		TopImagePath:           c.PostForm("top_image_path"),
-		PostImageId:            postImageId,
+func (cont *Controller) CountPost(c *gin.Context) {
+	publishing := c.DefaultQuery("publishing", public)
+	count := cont.DbConn.CountPost(publishing)
+	response := struct {
+		Count int `json:"count"`
+	}{
+		count,
 	}
-	db.InsertRecord(&record)
+
+	c.JSON(http.StatusOK, response)
 }
 
-// 文字列を数値に変換する
-func strToInt(arg string) int {
-	ret, err := strconv.Atoi(arg)
-	if err != nil {
-		fmt.Printf("This function was error: %q\n", err)
+//*******************************************************************
+// 投稿を1ページ表示件数分取得する
+//*******************************************************************
+func (cont *Controller) IndexList(c *gin.Context) {
+	page := c.DefaultQuery("page", "1")
+	publishing := c.DefaultQuery("publishing", public)
+	model := cont.DbConn.FindIndex(page, publishing)
+	serializer := serializers.PostsSerializer{C: c, Posts: model}
+	c.JSON(http.StatusOK, serializer.Response())
+}
+
+//*******************************************************************
+// 投稿を対象idの1件取得する
+//*******************************************************************
+func (cont *Controller) FetchPost(c *gin.Context) {
+	postId := c.Query("postId")
+
+	postModel := cont.DbConn.FindPost(postId)
+	postSerializer := serializers.PostSerializer{C: c, Post: postModel}
+
+	postImageModel := cont.DbConn.FindPostImages(postId)
+	postImageSerializer := serializers.PostImagesSerializer{C: c, PostImages: postImageModel}
+
+	postPrefectureListModel := cont.DbConn.FindPostPrefectures(postId)
+	postPrefectureListSerializer := serializers.PostPrefecturesSerializer{C: c, PostPrefectures: postPrefectureListModel}
+
+	postUserModel := cont.DbConn.FindUser(postModel.UserId)
+	postUserSerializer := serializers.UserSerializer{C: c, User: postUserModel}
+
+	response := struct {
+		Post            serializers.PostResponse             `json:"post"`
+		PostImages      []serializers.PostImageResponse      `json:"post_images"`
+		PostPrefectures []serializers.PostPrefectureResponse `json:"post_prefectures"`
+		User            serializers.UserResponse             `json:"user"`
+	}{
+		postSerializer.Response(),
+		postImageSerializer.Response(),
+		postPrefectureListSerializer.Response(),
+		postUserSerializer.Response(),
 	}
-	return ret
+
+	c.JSON(http.StatusOK, response)
+}
+
+//*******************************************************************
+// 投稿記事テーブルへ記事を1件登録する
+//*******************************************************************
+func (cont *Controller) Create(c *gin.Context) {
+	// TODO バリデーション（投稿編集画面作成時に実装予定）
+	var post = entity.Post{
+		Publishing:     strToInt(c.PostForm("publishing")),
+		DogName:        c.PostForm("dog_name"),
+		Breed:          c.PostForm("breed"),
+		Gender:         strToInt(c.PostForm("gender")),
+		Spay:           strToInt(c.PostForm("spay")),
+		Old:            c.PostForm("old"),
+		SinglePerson:   strToInt(c.PostForm("single_person")),
+		SeniorPerson:   strToInt(c.PostForm("senior_person")),
+		TransferStatus: strToInt(c.PostForm("transfer_status")),
+		Introduction:   c.PostForm("introduction"),
+		AppealPoint:    c.PostForm("appeal_point"),
+		OtherMessage:   c.PostForm("other_message"),
+		UserId:         strToUint64(c.PostForm("user_id")),
+		TopImagePath:   c.PostForm("top_image_path"),
+	}
+	cont.DbConn.InsertPost(&post)
+	c.JSON(http.StatusCreated, post.ID)
 }

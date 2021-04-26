@@ -1,64 +1,69 @@
 <template>
   <div class="top">
-    <div class="container">
-      <h1>里親募集 掲示板</h1>
-    </div>
-    <!-- レコード表示 -->
-    <div class="container" v-for="record in records" v-bind:key="record.id">
-      <div class='col-xs-12'>
-        <img class='float-left'
-             style='padding:0;margin:0 15px 0 0;'
-             v-bind:src="record.top_image_path"
-             width="130"
-             height="130">
+    <h1>里親募集 掲示板</h1>
+    <!--  投稿記事 一覧表示  -->
+    <div class="container" v-for="post in posts" v-bind:key="post.id">
+      <ImageOne :imagePath="post.top_image_path"/>
+      <div class="goDetail">
+        <div class="row">
+          <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
+          <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
+            #{{ post.id }} {{ post.dog_name }}
+          </NuxtLink>
+        </div>
       </div>
-      <div class="row">
-        <NuxtLink to="/detail">
-          #{{ record.id }} {{ record.dog_name }}
-        </NuxtLink>
-      </div>
-      <div class="row"><p>犬種 : {{ record.breed }}</p></div>
-      <div class="row"><p>性別 : {{ record.gender }}</p></div>
-      <div class="row"><p>自己紹介 : {{ record.introduction }}</p></div>
-      <div class="row"><p>投稿日時 : {{ record.created_at }}</p></div>
+      <TextBox :title="'犬種'"
+               :detail="post.breed"
+               :readonly="true"/>
+      <Gender :itemValue="post.gender"
+              :readonly="true"/>
+      <TextBox :title="'自己紹介'"
+               :detail="post.introduction"
+               :readonly="true"/>
+      <TextBox :title="'投稿日時'"
+               :detail="post.created_at"
+               :readonly="true"/>
       <br>
     </div>
 
     <!--  ページ数表示  -->
     <div class="container">
-      <pagenation
+      <Pagenation
         :showPages="showPages"
         :currentPage="currentPage"
         :totalCount="totalCount"
         :perPage="perPage"
         :totalPages="totalPages"
-        @currentPage="doFetchIndexRecords"
-      ></pagenation>
+        @currentPage="getIndex"
+      ></Pagenation>
     </div>
 
-    <!--  テンプレート終わり  -->
   </div>
 </template>
 
 <script>
-import pagenation from "../components/pagenation";
-
-const axios = require('axios');
-process.env.DEBUG = 'nuxt:*' // nuxt.jsについてログ出力する
+import Pagenation from "~/components/Pagenation";
+import TextBox from "~/components/post/TextBox";
+import ImageOne from "~/components/post/ImageOne";
+import Gender from "~/components/post/Gender";
+import {publishingList} from "~/consts/publishingList";
 
 export default {
   components: {
-    pagenation,
+    Pagenation,
+    TextBox,
+    ImageOne,
+
+    Gender,
   },
 
   mounted() {
-    this.doFetchIndexRecords(this.currentPage).then(this.doSetPagenation());
+    this.getIndex(this.currentPage).then(this.generatePagination());
   },
 
   data() {
     return {
-      records: [], // 投稿記事
-      // show: true,
+      posts: [], // 投稿記事
 
       //ページネーション設定
       currentPage: 1, //現在のページ（初期は1）
@@ -68,45 +73,55 @@ export default {
       totalPages: Number, //算出後の総ページ数
     }
   },
-
-  computed: {
-    // 表示対象の情報を返却する
-    computedRecords() {
-      return this.records
-    },
-  },
-
+  computed: {},
   methods: {
-    // 1ページに表示する分、レコードを取得する
-    doFetchIndexRecords(page) {
+    /**
+     * 指定したページの投稿一覧を取得する
+     * @param {int} pageNum
+     */
+    getIndex(page) {
       return new Promise((resolve, reject) => {
-        axios.get('/fosterparent/api/index', {
-          params: {
-            page: page,
+        this.$axios.get('/api/index',
+          {
+            params: {
+              page: page,
+              publishing: publishingList.public,
+            }
           }
-        }).then((response) => {
-          if ((response.status != 200)) {
-            throw new Error('レスポンスエラー')
-          } else {
-            this.records = response.data;
-          }
-        })
+        )
+          .then((response) => {
+            if ((response.status !== 200)) {
+              console.error(`Error:${response.statusText}, ${this.getIndex.name}`)
+            } else {
+              this.posts = response.data;
+            }
+          }).catch(err => console.error(err));
       })
     },
 
-    // ページネーションのため
-    // ・公開済記事総数を取得し、設定する。
-    // ・総ページ数を算出し、設定する。
-    doSetPagenation() {
+    /**
+     * ページネーションのため
+     * ・公開済記事総数を取得し、設定する。
+     * ・総ページ数を算出し、設定する。
+     * @param {int} postID
+     */
+    generatePagination() {
       return new Promise((resolve, reject) => {
-        axios.get('/fosterparent/api/pageCount').then((response) => {
-          if ((response.status != 200)) {
-            throw new Error('レスポンスエラー')
-          } else {
-            this.totalCount = response.data; // 公開済記事数 ex: 41
-            this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
+        this.$axios.get('/api/post_count',
+          {
+            params: {
+              publishing: publishingList.public,
+            }
           }
-        })
+        )
+          .then((response) => {
+            if ((response.status !== 200)) {
+              console.error(`Error:${response.statusText}, ${this.generatePagination.name}`)
+            } else {
+              this.totalCount = response.data.count; // 公開/非公開記事数 ex: 41
+              this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
+            }
+          }).catch(err => console.error(err));
       })
     },
   },
@@ -114,7 +129,7 @@ export default {
 </script>
 
 <!-- cssはassetsから自動で読み込む-->
-<style>
+<style scoped>
 .top {
   overflow: hidden;
   width: 100%;

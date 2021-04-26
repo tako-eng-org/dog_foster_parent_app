@@ -2,10 +2,10 @@ package entity
 
 import "github.com/jinzhu/gorm"
 
-//譲渡可能都道府県テーブル用
-//投稿記事に紐づく譲渡可能都道府県を保存するテーブルである。
+//投稿記事_譲渡可能都道府県テーブル用
+//投稿記事に紐づく譲渡可能都道府県を格納する
 type PostPrefecture struct {
-	gorm.Model        //ID, CreatedAt, UpdatedAt, DeletedAtを自動で定義する
-	PostId       uint `gorm:"primary_key"` //Post.Id
-	PrefectureId uint `gorm:"primary_key"` //Prefecture.Id
+	gorm.Model            //ID, CreatedAt, UpdatedAt, DeletedAtを自動で定義する
+	PostId           uint `gorm:"type:int;	not null"` //投稿記事ID
+	PostPrefectureId int  `gorm:"type:int;	not null"` //譲渡可能都道府県ID
 }
