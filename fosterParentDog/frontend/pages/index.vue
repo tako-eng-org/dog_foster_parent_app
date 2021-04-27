@@ -2,7 +2,7 @@
   <div class="top">
     <h1>里親募集 掲示板</h1>
     <!--  投稿記事 一覧表示  -->
-    <div class="container" v-for="post in posts" v-bind:key="post.id">
+    <div class="container" v-for="post in posts" :key="post.id">
       <ImageOne :imagePath="post.top_image_path"/>
       <div class="goDetail">
         <div class="row">

@@ -1,6 +1,6 @@
 <template>
   <div class="image-list">
-    <div class="container" v-for="imagePath in imagePathList" v-bind:key="imagePath.post_id">
+    <div class="container" v-for="imagePath in imagePathList" :key="imagePath.post_id">
       <ImageOne :imagePath="imagePath.image_path"/>
     </div>
   </div>
