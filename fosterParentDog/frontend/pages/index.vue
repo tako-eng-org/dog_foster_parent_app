@@ -12,17 +12,10 @@
           </NuxtLink>
         </div>
       </div>
-      <TextBox :title="'犬種'"
-               :detail="post.breed"
-               :readonly="true"/>
-      <Gender :itemValue="post.gender"
-              :readonly="true"/>
-      <TextBox :title="'自己紹介'"
-               :detail="post.introduction"
-               :readonly="true"/>
-      <TextBox :title="'投稿日時'"
-               :detail="post.created_at"
-               :readonly="true"/>
+      <TextBox :title="'犬種'" :value="post.breed"/>
+      <Gender :value="post.gender"/>
+      <TextBox :title="'自己紹介'" :value="post.introduction"/>
+      <TextBox :title="'投稿日時'" :value="post.created_at"/>
       <br>
     </div>
 

@@ -1,45 +1,25 @@
 <template>
   <div class="detail">
-    <div class="container" v-bind:key="post.postBase.id">
+    <div class="container" :key="post.postBase.id">
       <ImageOne :imagePath="post.postBase.top_image_path"/>
       <div class="post_id">
         <div class="row">
           <p>投稿No : {{ post.postBase.id }}</p>
         </div>
       </div>
-      <TextBox :title="'犬の名前'"
-               :detail="post.postBase.breed"
-               :readonly="true"/>
-      <TextBox :title="'犬種'"
-               :detail="post.postBase.breed"
-               :readonly="true"/>
-      <Gender :itemValue="post.postBase.gender"
-              :readonly="true"/>
-      <Spay :itemValue="post.postBase.spay"
-            :readonly="true"/>
-      <TextBox :title="'年齢'"
-               :detail="post.postBase.old"
-               :readonly="true"/>
-      <SinglePerson :itemValue="post.postBase.single_person"
-                    :readonly="true"/>
-      <SeniorPerson :itemValue="post.postBase.senior_person"
-                    :readonly="true"/>
-      <TransferStatus :itemValue="post.postBase.transfer_status"
-                      :readonly="true"/>
-      <TextBox :title="'自己紹介'"
-               :detail="post.postBase.introduction"
-               :readonly="true"/>
-      <TextBox :title="'投稿日時'"
-               :detail="post.postBase.created_at"
-               :readonly="true"/>
-      <TextBox :title="'アピールポイント'"
-               :detail="post.postBase.appeal_point"
-               :readonly="true"/>
-      <PostPrefecture :postPrefectureList="post.postPrefectureList"
-                      :readonly="true"/>
-      <TextBox :title="'その他特記事項'"
-               :detail="post.postBase.other_message"
-               :readonly="true"/>
+      <TextBox :title="'犬の名前'" :value="post.postBase.dog_name"/>
+      <TextBox :title="'犬種'" :value="post.postBase.breed"/>
+      <Gender :value="post.postBase.gender"/>
+      <Spay :value="post.postBase.spay"/>
+      <TextBox :title="'年齢'" :value="post.postBase.old"/>
+      <SinglePerson :value="post.postBase.single_person"/>
+      <SeniorPerson :value="post.postBase.senior_person"/>
+      <TransferStatus :value="post.postBase.transfer_status"/>
+      <TextBox :title="'自己紹介'" :value="post.postBase.introduction"/>
+      <TextBox :title="'投稿日時'" :value="post.postBase.created_at"/>
+      <TextBox :title="'アピールポイント'" :value="post.postBase.appeal_point"/>
+      <PostPrefecture :value="post.postPrefectureList"/>
+      <TextBox :title="'その他特記事項'" :value="post.postBase.other_message"/>
     </div>
 
     <!--  画像リスト表示  -->

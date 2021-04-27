@@ -1,16 +1,17 @@
 <template>
   <div class="transfer-status">
-    <div class="row">
-      <div v-if="readonly">
-        <p>譲渡ステータス: {{ transferStatusValue(itemValue) }}</p>
-      </div>
-      <div v-else>
-        <select v-model="selected">
-          <option v-for="transferStatus in transferStatusList" v-bind:value="transferStatus.value">
-            譲渡ステータス {{ transferStatus.label }}
+    <div v-if="readonly">
+      譲渡ステータス: {{ transferStatusValue(value) }}
+    </div>
+    <div v-else>
+      <form class="form-inline">
+        <label for="transfer-status">譲渡ステータス</label>
+        <select id="transfer-status" v-model="inputValue" class="form-control">
+          <option v-for="(transferStatus, index) in transferStatusList()" :value="index">
+            {{ transferStatus }}
           </option>
         </select>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -21,16 +22,40 @@ import {transferStatusList, transferStatusValue} from "~/consts/transferStatusLi
 export default {
   data() {
     return {
-      transferStatusList,
+      ioMode: { // read/write時の表示切り替え
+        'form-control-plaintext': this.readonly,
+        readonly: this.readonly,
+      },
     }
   },
+
   props: {
-    itemValue: Number,
-    selected: "",
-    readonly: true,
+    value: { //子コンポーネントから親コンポーネントへバインディングする設定
+      type: String,
+      required: true
+    },
+
+    readonly: {
+      type: Boolean,
+      default: true,
+      required: false,
+    },
   },
+
   methods: {
+    transferStatusList,
     transferStatusValue,
-  }
+  },
+
+  computed: {
+    inputValue: { //子コンポーネントから親コンポーネントへバインディングする設定
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit('input', value);
+      }
+    },
+  },
 }
 </script>
