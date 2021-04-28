@@ -34,7 +34,6 @@ type PostResponse struct {
 	OtherMessage   string `json:"other_message"`   //健康状態や譲渡条件などの特記事項
 	UserId         uint64 `json:"user_id"`         //ユーザーID
 	TopImagePath   string `json:"top_image_path"`  //top投稿画像パス
-	PostImageId    uint64 `json:"post_image_id"`   //投稿画像ID
 }
 
 func (ps *PostSerializer) Response() PostResponse {
@@ -56,7 +55,6 @@ func (ps *PostSerializer) Response() PostResponse {
 		OtherMessage:   ps.Post.OtherMessage,
 		UserId:         ps.Post.UserId,
 		TopImagePath:   ps.Post.TopImagePath,
-		PostImageId:    ps.Post.PostImageId,
 	}
 	return response
 }

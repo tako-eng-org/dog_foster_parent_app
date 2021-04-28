@@ -22,5 +22,4 @@ type Post struct {
 	OtherMessage   string `gorm:"type:varchar(4000);			"`      //健康状態や譲渡条件などの特記事項
 	UserId         uint64 `gorm:"type:int;					"`              //ユーザーID
 	TopImagePath   string `gorm:"type:varchar(150);	not null"` //top投稿画像パス
-	PostImageId    uint64 `gorm:"type:int;					"`              //投稿画像ID
 }
