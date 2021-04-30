@@ -1,12 +1,12 @@
 <template>
   <div class="form-inline">
-    <label for="text-box">{{ title }}:</label>
-    <input id="text-box"
-           type="text"
-           class="form-control"
-           v-model="inputValue"
-           :class="ioMode"
-    >
+    <label>{{ title }}:
+      <input type="text"
+             class="form-control"
+             v-model="inputValue"
+             :class="ioMode"
+      >
+    </label>
   </div>
 </template>
 

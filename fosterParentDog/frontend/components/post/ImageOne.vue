@@ -11,7 +11,10 @@
 <script>
 export default {
   props: {
-    imagePath: String, //画像URL
+    imagePath: {
+      // type: String, //画像URL
+      required: true
+    },
   },
 }
 </script>

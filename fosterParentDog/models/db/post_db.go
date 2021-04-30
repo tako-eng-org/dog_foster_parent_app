@@ -67,3 +67,10 @@ func (db *Database) FindPost(postId string) entity.Post {
 func (db *Database) InsertPost(registerRecord *entity.Post) {
 	db.connection.Create(&registerRecord) // insert
 }
+
+//*******************************************************************
+// レコードを登録する
+//*******************************************************************
+func (db *Database) InsertPostTest(registerRecord *entity.Post) {
+	db.connection.Create(&registerRecord) // insert
+}

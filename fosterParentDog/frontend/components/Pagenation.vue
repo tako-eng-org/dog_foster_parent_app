@@ -77,14 +77,29 @@ export default {
   data() {
     return {
       currentPageNum: Number, //現在のページ
+      newestPageNum: 1, //最新ページ
     };
   },
 
   props: {
-    showPages: Number, //ページネーションを何件表示するか
-    currentPage: Number, //現在のページ
-    newestPageNum: 1, //最新ページ
-    totalPages: Number, //総ページ数
+    showPages: {  //ページネーションを何件表示するか
+      type: Number,
+      default: 10,
+    },
+    currentPage: { //現在のページ
+      type: Number,
+      default: 1,
+    },
+    totalCount: {
+      type: Number,
+    },
+    perPage: {
+      type: Number,
+      default: 20,
+    },
+    totalPages: { //総ページ数
+      type: Number,
+    },
   },
 
   mounted() {

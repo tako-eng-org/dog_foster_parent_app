@@ -1,16 +1,17 @@
 <template>
   <div class="single-person">
-      <div v-if="readonly">
-        単身者への譲渡: {{ singlePersonValue(value) }}
-      </div>
+    <div v-if="readonly">
+      単身者への譲渡: {{ singlePersonValue(value) }}
+    </div>
     <div v-else>
       <form class="form-inline">
-        <label for="select">単身者への譲渡</label>
-        <select id="select" v-model="inputValue" class="form-control">
-          <option v-for="(singlePerson, index) in singlePersonList()" :value="index">
-            {{ singlePerson }}
-          </option>
-        </select>
+        <label>単身者への譲渡
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(singlePerson, index) in singlePersonList()" :value="index">
+              {{ singlePerson }}
+            </option>
+          </select>
+        </label>
       </form>
     </div>
   </div>
@@ -31,7 +32,7 @@ export default {
 
   props: {
     value: { //子コンポーネントから親コンポーネントへバインディングする設定
-      type: String,
+      // type: String,
       required: true
     },
 

@@ -5,12 +5,13 @@
     </div>
     <div v-else>
       <form class="form-inline">
-        <label for="senior-person">高齢者への譲渡</label>
-        <select id="senior-person" v-model="inputValue" class="form-control">
-          <option v-for="(seniorPerson, index) in seniorPersonList()" :value="index">
-            {{ seniorPerson }}
-          </option>
-        </select>
+        <label>高齢者への譲渡
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(seniorPerson, index) in seniorPersonList()" :value="index">
+              {{ seniorPerson }}
+            </option>
+          </select>
+        </label>
       </form>
     </div>
   </div>
@@ -31,7 +32,7 @@ export default {
 
   props: {
     value: { //子コンポーネントから親コンポーネントへバインディングする設定
-      type: String,
+      // type: String,
       required: true
     },
 

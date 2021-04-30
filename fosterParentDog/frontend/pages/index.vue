@@ -12,10 +12,11 @@
           </NuxtLink>
         </div>
       </div>
-      <TextBox :title="'犬種'" :value="post.breed"/>
-      <Gender :value="post.gender"/>
-      <TextBox :title="'自己紹介'" :value="post.introduction"/>
-      <TextBox :title="'投稿日時'" :value="post.created_at"/>
+      <!--   FIXME: readonly="true"にしても、テキストボックスがオープンになってしまう   -->
+      <TextBox :title="'犬種'" v-model="post.breed"/>
+      <Gender v-model="post.gender"/>
+      <TextBox :title="'自己紹介'" v-model="post.introduction"/>
+      <TextBox :title="'投稿日時'" v-model="post.created_at"/>
       <br>
     </div>
 

@@ -39,7 +39,7 @@ export default {
 
   props: {
     value: { //子コンポーネントから親コンポーネントへバインディングする設定
-      type: String,
+      // type: String,
       default: [],
       required: true
     },

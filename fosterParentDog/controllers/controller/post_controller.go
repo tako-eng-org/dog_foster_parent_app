@@ -100,3 +100,96 @@ func (cont *Controller) Create(c *gin.Context) {
 	cont.DbConn.InsertPost(&post)
 	c.JSON(http.StatusCreated, post.ID)
 }
+
+//*******************************************************************
+// TODO: debug_投稿の新規作成
+//*******************************************************************
+//type PostBase struct {
+//	//ID             uint   `json:"id"`
+//	//CreatedAt      string `json:"created_at"`
+//	//UpdatedAt      string `json:"updated_at"`
+//	Publishing     int    `json:"publishing"`      //公開設定
+//	DogName        string `json:"dog_name"`        //犬の名前
+//	Breed          string `json:"breed"`           //犬種
+//	Gender         int    `json:"gender"`          //性別
+//	Spay           int    `json:"spay"`            //去勢/避妊手術
+//	Old            string `json:"old"`             //年齢
+//	SinglePerson   int    `json:"single_person"`   //単身者への譲渡
+//	SeniorPerson   int    `json:"senior_person"`   //高齢者への譲渡
+//	TransferStatus int    `json:"transfer_status"` //譲渡ステータス
+//	Introduction   string `json:"introduction"`    //犬の自己紹介
+//	AppealPoint    string `json:"appeal_point"`    //性格アピールポイント
+//	OtherMessage   string `json:"other_message"`   //健康状態や譲渡条件などの特記事項
+//	UserId         uint64 `json:"user_id"`         //ユーザーID
+//	TopImagePath   string `json:"top_image_path"`  //top投稿画像パス
+//}
+//type PostImage struct {
+//	//PostID      uint   `json:"post_id"`
+//	//PostImageID uint   `json:"post_image_id"`
+//	ImagePath string `json:"image_path"`
+//}
+//type PostPrefecture struct {
+//	//PostId           uint `json:"post_id"`
+//	PostPrefectureId int `json:"post_prefecture_id"`
+//}
+//
+//type StTest struct {
+//	PostBase        `json:"postBase"`
+//	PostImage          `json:"imagePathList"`
+//	PostPrefecture  `json:"postPrefectureList"`
+//}
+
+type St struct {
+	Post           serializers.PostResponse           `json:"postBase"`
+	PostImage      serializers.PostImageResponse      `json:"imagePathList"`
+	PostPrefecture serializers.PostPrefectureResponse `json:"postPrefectureList"`
+}
+
+func (cont *Controller) CreateTest(c *gin.Context) {
+	fmt.Println("-----------CreateTest")
+	fmt.Println(c)
+	//var postTest entity.Post
+	var postStruct St
+	c.BindJSON(&postStruct)
+
+	fmt.Println("------BindJSONした後のPost")
+	fmt.Printf("%+v", &postStruct)
+
+	c.JSON(http.StatusCreated, "----status----")
+	//cont.DbConn.InsertPostTest(&postTest)
+
+}
+
+//*******************************************************************
+// TODO: debug_S3にファイルをアップロードする
+//*******************************************************************
+//func (cont *Controller) postImageTest(c *gin.Context) {
+//	// sessionの作成
+//	sess := session.Must(session.NewSessionWithOptions(session.Options{
+//		Profile:           "di",
+//		SharedConfigState: session.SharedConfigEnable,
+//	}))
+//
+//	// ファイルを開く
+//	targetFilePath := "./sample.txt"
+//	file, err := os.Open(targetFilePath)
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//	defer file.Close()
+//
+//	bucketName := "bbsapp-img"
+//	objectKey := "xxx-key" // TODO: オブジェクトキーって何
+//
+//	// Uploaderを作成し、ローカルファイルをアップロード
+//	uploader := s3manager.NewUploader(sess)
+//	_, err = uploader.Upload(&s3manager.UploadInput{
+//		Bucket: aws.String(bucketName),
+//		Key:    aws.String(objectKey),
+//		Body:   file,
+//	})
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//	log.Println("done")
+//}

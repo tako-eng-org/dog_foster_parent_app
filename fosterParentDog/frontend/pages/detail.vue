@@ -60,7 +60,7 @@ export default {
     this.getDetail(this.$route.query.postId);
   },
 
-  data: function () {
+  data() {
     return {
       post: {
         postBase: {}, //基礎投稿

@@ -1,16 +1,19 @@
 <template>
   <div class="gender">
     <div v-if="readonly">
+      <!--   TODO: indexなどで表示時は、数値1で受け取り文字列を表示する。（props:Number）-->
+      <!--   が、入力時は、文字列で渡ってくる(props:String)のため、型チェックはしないほうが良いか？   -->
       性別: {{ genderValue(value) }}
     </div>
     <div v-else>
       <form class="form-inline">
-        <label for="gender">性別</label>
-        <select id="gender" v-model="inputValue" class="form-control">
-          <option v-for="(gender, index) in genderList()" :value="index">
-            {{ gender }}
-          </option>
-        </select>
+        <label>性別
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(gender, index) in genderList()" :value="index">
+              {{ gender }}
+            </option>
+          </select>
+        </label>
       </form>
       inputValue: {{ inputValue }}
     </div>
@@ -41,7 +44,7 @@ export default {
 
   props: {
     value: { //子コンポーネントから親コンポーネントへバインディングする設定
-      type: String,
+      // type: String,
       required: true
     },
 

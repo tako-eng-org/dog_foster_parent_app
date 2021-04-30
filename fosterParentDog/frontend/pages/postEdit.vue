@@ -52,21 +52,12 @@
 
       <!--   TODO サブ画像をアップロードする(任意,9枚まで)uploadOne使うか？   -->
 
+      <!--  投稿ボタン  -->
+      <button type="submit" class="btn btn-primary" @click="postDetail">投稿する</button>
+
+      <!--  下書きに保存ボタン  -->
+      <!--          <button type="submit" class="btn btn-primary" @click="postDetail">下書きに保存</button>-->
     </div>
-
-    <!--  投稿ボタン  -->
-    <button type="submit"
-            class="btn btn-primary"
-            @click="postDetail">
-      投稿する
-    </button>
-
-    <!--  下書きに保存ボタン  -->
-    <button type="submit"
-            class="btn btn-primary"
-            @click="postDetail">
-      下書きに保存
-    </button>
 
   </div>
 </template>
@@ -102,33 +93,11 @@ export default {
 
     CustomInput,
   },
-
-  mounted: function () {
-    // this.getDetail(this.$route.query.postId);
+  mounted() {
   },
-
-  data: function () {
+  data() {
     return {
       topImageBase64: null,
-
-      // TODO 変数名をキャメルケースへ変更すること
-      postData: {
-        publishing: 1,
-        dog_name: "test_dog_name",
-        breed: "test_breed",
-        gender: 0,
-        spay: 0,
-        old: "test_old",
-        single_person: 0,
-        senior_person: 0,
-        transfer_status: 0,
-        introduction: "test_introduction",
-        appeal_point: "test_appeal_point",
-        other_message: "test_other_message",
-        user_id: 1,
-        top_image_path: "test_top_image_path",
-        post_image_id: 1,
-      },
 
       post: {
         postBase: { //基礎投稿
@@ -151,8 +120,6 @@ export default {
         },
 
         imagePathList: { //画像パスリスト
-          // post_id: null,
-          // post_image_id: null,
           image_path: [],
         },
 
@@ -160,9 +127,9 @@ export default {
           post_prefecture_id: [],
         },
 
-        user: { //ユーザー情報
-          user_id: 1,//debug
-        },
+        // user: { //ユーザー情報
+        //   user_id: 1,//debug
+        // },
       },
     }
   },
@@ -173,47 +140,66 @@ export default {
      */
     testMethod() {
       console.log("-------testMethod");
-      console.log(this.postData);
+      // console.log(this.postData);
     },
 
     /**
      * 投稿記事を追加する
      */
     postDetail() {
-      let params = new URLSearchParams();
-      // id
-      // created_at
-      // updated_at
-      params.append('publishing', this.post.postBase.publishing);
-      params.append('dog_name', this.post.postBase.dog_name);
-      params.append('breed', this.post.postBase.breed);
-      params.append('gender', this.post.postBase.gender);
-      params.append('spay', this.post.postBase.spay);
-      params.append('old', this.post.postBase.old);
-      params.append('single_person', this.post.postBase.single_person);
-      params.append('senior_person', this.post.postBase.senior_person);
-      params.append('transfer_status', this.post.postBase.transfer_status);
-      params.append('introduction', this.post.postBase.introduction);
-      params.append('appeal_point', this.post.postBase.appeal_point);
-      params.append('other_message', this.post.postBase.other_message);
-      params.append('top_image_path', this.post.postBase.top_image_path);
+      let postJson = {
+        postBase: { //投稿基礎情報
+          publishing: this.post.postBase.publishing,
+          dog_name: this.post.postBase.dog_name,
+          breed: this.post.postBase.breed,
+          gender: this.post.postBase.gender,
+          spay: this.post.postBase.spay,
+          old: this.post.postBase.old,
+          single_person: this.post.postBase.single_person,
+          senior_person: this.post.postBase.senior_person,
+          transfer_status: this.post.postBase.introduction,
+          introduction: this.post.postBase.introduction,
+          appeal_point: this.post.postBase.appeal_point,
+          other_message: this.post.postBase.other_message,
+          user_id: null, //ログインユーザーのIDが入る
+          top_image_path: this.post.postBase.top_image_path,
+        },
 
-      // imagePathList
+        imagePathList: { //画像パスリスト
+          image_path: [
+            "12345",
+            "6789",
+          ],
+        },
 
-      // postPrefectureList
-      params.append('post_prefecture_id', this.post.postPrefectureList.post_prefecture_id);
+        postPrefectureList: { //譲渡可能都道府県
+          post_prefecture_id: [
+            1,
+            2,
+            3,
+          ],
+        },
 
-      // user
-      // params.append('user_id', this.user.user_id);
+        // user: { //投稿者情報
+        //   user_id: 2,
+        // },
+      }
 
-      this.$axios.post('/api/posttest', params)
+      console.log("--------postJSON");
+      console.log(postJson);
+      console.log("--------postDetail");
+      // return new Promise((resolve, reject) => {
+      // this.$axios.defaults.timeout = 100000;
+      this.$axios.post('/api/post_test', postJson)
         .then((response) => {
-          if ((response.status !== 200)) {
+          if ((response.status !== 201)) {
+            console.error("error---------------------");
             console.error(`Error:${response.statusText}, ${this.postDetail.name}`)
           } else {
-            console.log("create----------debug")
+            console.log("aaaaaaaaaaaaaaaaaaaaaaaaa");
           }
         }).catch(err => console.error(err));
+      // })
     },
   },
 }
