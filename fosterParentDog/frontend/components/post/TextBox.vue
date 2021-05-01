@@ -2,9 +2,9 @@
   <div class="form-inline">
     <label>{{ title }}:
       <input type="text"
-             class="form-control"
              v-model="inputValue"
-             :class="ioMode"
+             :class="className"
+             :readonly="readonly"
       >
     </label>
   </div>
@@ -14,10 +14,7 @@
 export default {
   data() {
     return {
-      ioMode: { // read/write時の表示切り替え
-        'form-control-plaintext': this.readonly,
-        readonly: this.readonly,
-      },
+      className: this.readonly ? 'form-control-plaintext' : 'form-control'
     }
   },
 
