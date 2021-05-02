@@ -18,15 +18,6 @@
       inputValue: {{ inputValue }}
     </div>
   </div>
-
-  <!--  FIXME: 表示モードでも、非アクティブでプルダウンが表示されてしまう  -->
-  <!--    性別 :-->
-  <!--      <select v-model="selected" :class="ioMode">-->
-  <!--        <option v-for="gender in genderList()"-->
-  <!--                :value="gender.value">-->
-  <!--          {{ gender }}-->
-  <!--        </option>-->
-  <!--      </select>-->
 </template>
 
 <script>
