@@ -63,8 +63,8 @@ export default {
       currentPage: 1, //現在のページ（初期は1）
       showPages: 5, //ページネーションを何ページ表示するか（奇数でないとずれる）
       perPage: 20, //1ページの表示件数
-      totalCount: Number, //取得したレコードの総件数
-      totalPages: Number, //算出後の総ページ数
+      totalCount: 0, //取得したレコードの総件数
+      totalPages: 0, //算出後の総ページ数
     }
   },
   computed: {},
