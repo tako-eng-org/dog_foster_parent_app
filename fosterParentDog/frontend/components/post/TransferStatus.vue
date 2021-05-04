@@ -13,6 +13,8 @@
           </select>
         </label>
       </form>
+      inputValue: {{ inputValue }}<br>
+      type: {{ typeof (inputValue) }}
     </div>
   </div>
 </template>
@@ -54,7 +56,7 @@ export default {
         return this.value;
       },
       set(value) {
-        this.$emit('input', value);
+        this.$emit('input', Number(value));
       }
     },
   },

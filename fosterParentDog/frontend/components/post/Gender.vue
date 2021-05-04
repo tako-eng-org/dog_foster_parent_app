@@ -15,7 +15,8 @@
           </select>
         </label>
       </form>
-      inputValue: {{ inputValue }}
+      inputValue: {{ inputValue }}<br>
+      type: {{ typeof (inputValue) }}
     </div>
   </div>
 </template>
@@ -57,7 +58,8 @@ export default {
         return this.value;
       },
       set(value) {
-        this.$emit('input', value);
+        // FIXME: 連想配列のkey。Numberに変換しないと、String型で返してしまいレコード登録できない（バックエンドのstruct型と一致せずJSON変換できない）
+        this.$emit('input', Number(value));
       }
     },
   },

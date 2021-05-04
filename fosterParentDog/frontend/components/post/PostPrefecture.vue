@@ -9,7 +9,7 @@
     <div v-else>
       <div class="form-check">
         <div v-for="(prefecture, index) in prefectureList()" :key="index">
-          <input type="checkbox" id="check" :value="index" v-model="inputValue">
+          <input type="checkbox" id="check" :value="Number(index)" v-model="inputValue">
           <label for="check">{{ prefecture }}</label>
         </div>
         <p>value: {{ value }}</p>
