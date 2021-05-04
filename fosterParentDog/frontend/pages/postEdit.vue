@@ -6,57 +6,61 @@
       <button type="submit" class="btn btn-primary" @click="testMethod">console</button>
       <!--   **********debug**********   -->
 
-      <TextBox :title="'犬の名前'" v-model="post.postBase.dog_name" :readonly="false"/>
-      <p class="text-primary">debug_犬の名前:{{ post.postBase.dog_name }}</p>
+      <TextBox :title="'犬の名前'" v-model="post.dogName" :readonly="false"/>
+      <p class="text-primary">debug_犬の名前:{{ post.dogName }}</p>
 
-      <TextBox :title="'犬種'" v-model="post.postBase.breed" :readonly="false"/>
-      <p class="text-primary">debug_犬種:{{ post.postBase.breed }}</p>
+      <TextBox :title="'犬種'" v-model="post.breed" :readonly="false"/>
+      <p class="text-primary">debug_犬種:{{ post.breed }}</p>
 
-      <Gender v-model="post.postBase.gender" :readonly="false"/>
-      <p class="text-primary">debug_性別:{{ post.postBase.gender }}</p>
+      <Gender v-model="post.gender" :readonly="false"/>
+      <p class="text-primary">debug_性別:{{ post.gender }}</p>
 
-      <Spay v-model="post.postBase.spay" :readonly="false"/>
-      <p class="text-primary">debug_去勢手術:{{ post.postBase.spay }}</p>
+      <Spay v-model="post.spay" :readonly="false"/>
+      <p class="text-primary">debug_去勢手術:{{ post.spay }}</p>
 
-      <TextBox :title="'年齢'" v-model="post.postBase.old" :readonly="false"/>
-      <p class="text-primary">debug_年齢:{{ post.postBase.old }}</p>
+      <TextBox :title="'年齢'" v-model="post.old" :readonly="false"/>
+      <p class="text-primary">debug_年齢:{{ post.old }}</p>
 
-      <SinglePerson v-model="post.postBase.single_person" :readonly="false"/>
-      <p class="text-primary">debug_単身者への譲渡:{{ post.postBase.single_person }}</p>
+      <SinglePerson v-model="post.singlePerson" :readonly="false"/>
+      <p class="text-primary">debug_単身者への譲渡:{{ post.singlePerson }}</p>
 
-      <SeniorPerson v-model="post.postBase.senior_person" :readonly="false"/>
-      <p class="text-primary">debug_高齢者への譲渡:{{ post.postBase.senior_person }}</p>
+      <SeniorPerson v-model="post.seniorPerson" :readonly="false"/>
+      <p class="text-primary">debug_高齢者への譲渡:{{ post.seniorPerson }}</p>
 
-      <TransferStatus v-model="post.postBase.transfer_status" :readonly="false"/>
-      <p class="text-primary">debug_譲渡ステータス:{{ post.postBase.transfer_status }}</p>
+      <TransferStatus v-model="post.transferStatus" :readonly="false"/>
+      <p class="text-primary">debug_譲渡ステータス:{{ post.transferStatus }}</p>
 
-      <TextBox :title="'自己紹介'" v-model="post.postBase.introduction" :readonly="false"/>
-      <p class="text-primary">debug_自己紹介:{{ post.postBase.introduction }}</p>
+      <TextBox :title="'自己紹介'" v-model="post.introduction" :readonly="false"/>
+      <p class="text-primary">debug_自己紹介:{{ post.introduction }}</p>
 
-      <TextBox :title="'アピールポイント'" v-model="post.postBase.appeal_point" :readonly="false"/>
-      <p class="text-primary">debug_アピールポイント:{{ post.postBase.appeal_point }}</p>
+      <TextBox :title="'アピールポイント'" v-model="post.appealPoint" :readonly="false"/>
+      <p class="text-primary">debug_アピールポイント:{{ post.appealPoint }}</p>
 
       <!--   TODO: 譲渡可能都道府県のCreate実装   -->
-      <PostPrefecture v-model="post.postPrefectureList.post_prefecture_id" :readonly="false"/>
-      <p class="text-primary">debug_譲渡可能都道府県:{{ post.postPrefectureList.post_prefecture_id }}</p>
+      <!--      <PostPrefecture v-model="post.postPrefectureList.post_prefecture_id" :readonly="false"/>-->
+      <!--      <p class="text-primary">debug_譲渡可能都道府県:{{ post.postPrefectureList.post_prefecture_id }}</p>-->
+      <PostPrefecture v-model="post.postPrefectureIdList" :readonly="false"/>
+      <p class="text-primary">debug_譲渡可能都道府県:{{ post.postPrefectureIdList }}</p>
 
-      <TextBox :title="'その他特記事項'" v-model="post.postBase.other_message" :readonly="false"/>
-      <p class="text-primary">debug_その他特記事項:{{ post.postBase.other_message }}</p>
+      <TextBox :title="'その他特記事項'" v-model="post.otherMessage" :readonly="false"/>
+      <p class="text-primary">debug_その他特記事項:{{ post.otherMessage }}</p>
 
       <hr>
       <!--   TODO トップ画像をアップロードする   -->
       <p>トップ画像をアップロードしてください(サムネイルや目立つ箇所に表示されます)</p>
-      <UploadOne v-model="topImageBase64"/>
-      <p class="text-primary">debug_picture is: {{ topImageBase64 }}</p>
-      <!--      <img :src="topImage"/>-->
+      <UploadOne v-model="post.topImagePath"/>
+      <p class="text-primary">debug_picture is: {{ post.topImagePath }}</p>
 
       <!--   TODO サブ画像をアップロードする(任意,9枚まで)uploadOne使うか？   -->
 
       <!--  投稿ボタン  -->
-      <button type="submit" class="btn btn-primary" @click="postDetail">投稿する</button>
+      <button type="submit" class="btn btn-primary" @click="postCreate">投稿する</button>
+
+      <!--  debug_画像ボタン  -->
+      <button type="submit" class="btn btn-primary" @click="imageCreate">画像投稿デバッグ用</button>
 
       <!--  下書きに保存ボタン  -->
-      <!--          <button type="submit" class="btn btn-primary" @click="postDetail">下書きに保存</button>-->
+      <!--          <button type="submit" class="btn btn-primary" @click="postCreate">下書きに保存</button>-->
     </div>
 
   </div>
@@ -75,8 +79,6 @@ import Spay from "~/components/post/Spay";
 import TransferStatus from "~/components/post/TransferStatus";
 import UploadOne from "~/components/post/UploadOne";
 
-import CustomInput from "~/components/post/CustomInput";
-
 export default {
   components: {
     TextBox,
@@ -91,41 +93,33 @@ export default {
     TransferStatus,
     UploadOne,
 
-    CustomInput,
   },
   mounted() {
   },
   data() {
     return {
-      topImageBase64: null,
-
       post: {
-        postBase: { //基礎投稿
-          // id: 投稿時に自動付与するため、新規作成では無し
-          // created_at:
-          // updated_at:
-          publishing: 1,
-          dog_name: "test_dog_name",
-          breed: "test_breed",
-          gender: 0,
-          spay: 0,
-          old: "test_old",
-          single_person: 0,
-          senior_person: 0,
-          transfer_status: 0,
-          introduction: "test_introduction",
-          appeal_point: "test_appeal_point",
-          other_message: "test_other_message",
-          top_image_path: "test_top_image_path",
-        },
+        //基礎投稿
+        // id: 投稿時に自動付与するため、新規作成では無し
+        // created_at:
+        // updated_at:
+        publishing: 1,
+        dogName: "test_dog_name",
+        breed: "test_breed",
+        gender: 0,
+        spay: 0,
+        old: "test_old",
+        singlePerson: 0,
+        seniorPerson: 0,
+        transferStatus: 0,
+        introduction: "test_introduction",
+        appealPoint: "test_appeal_point",
+        otherMessage: "test_other_message",
+        topImagePath: "test_top_image_path",
 
-        imagePathList: { //画像パスリスト
-          image_path: [],
-        },
+        imagePathList: [], //画像パスリスト
 
-        postPrefectureList: { //譲渡可能都道府県リスト
-          post_prefecture_id: [],
-        },
+        postPrefectureIdList: [], //譲渡可能都道府県リスト
 
         // user: { //ユーザー情報
         //   user_id: 1,//debug
@@ -146,60 +140,62 @@ export default {
     /**
      * 投稿記事を追加する
      */
-    postDetail() {
+    postCreate() {
       let postJson = {
-        postBase: { //投稿基礎情報
-          publishing: this.post.postBase.publishing,
-          dog_name: this.post.postBase.dog_name,
-          breed: this.post.postBase.breed,
-          gender: this.post.postBase.gender,
-          spay: this.post.postBase.spay,
-          old: this.post.postBase.old,
-          single_person: this.post.postBase.single_person,
-          senior_person: this.post.postBase.senior_person,
-          transfer_status: this.post.postBase.introduction,
-          introduction: this.post.postBase.introduction,
-          appeal_point: this.post.postBase.appeal_point,
-          other_message: this.post.postBase.other_message,
-          user_id: null, //ログインユーザーのIDが入る
-          top_image_path: this.post.postBase.top_image_path,
-        },
-
-        imagePathList: { //画像パスリスト
-          image_path: [
-            "12345",
-            "6789",
-          ],
-        },
-
-        postPrefectureList: { //譲渡可能都道府県
-          post_prefecture_id: [
-            1,
-            2,
-            3,
-          ],
-        },
-
-        // user: { //投稿者情報
-        //   user_id: 2,
-        // },
+        publishing: this.post.publishing,
+        dog_name: this.post.dogName,
+        breed: this.post.breed,
+        gender: this.post.gender,
+        spay: this.post.spay,
+        old: this.post.old,
+        single_person: this.post.singlePerson,
+        senior_person: this.post.seniorPerson,
+        transfer_status: this.post.transferStatus,
+        introduction: this.post.introduction,
+        appeal_point: this.post.appealPoint,
+        other_message: this.post.otherMessage,
+        user_id: 1, // TODO: ログインユーザーのIDが入る(入れないとindex表示時にnullエラーになりdog_app再起動が必要になるためdebug用として1を入れている)
+        top_image_path: this.post.topImagePath,
+        image_path_list: [
+          "12345",
+          "6789",
+        ],
+        post_prefecture_id_list: this.post.postPrefectureIdList
       }
-
-      console.log("--------postJSON");
-      console.log(postJson);
-      console.log("--------postDetail");
-      // return new Promise((resolve, reject) => {
-      // this.$axios.defaults.timeout = 100000;
-      this.$axios.post('/api/post_test', postJson)
+      // console.log("--------postJSON");
+      // console.log(postJson);
+      // console.log("--------postCreate");
+      this.$axios.post('/api/post_create', postJson)
         .then((response) => {
           if ((response.status !== 201)) {
-            console.error("error---------------------");
-            console.error(`Error:${response.statusText}, ${this.postDetail.name}`)
+            console.error("error-201以外");
+            console.error(`投稿エラー:${response.status}:${response.statusText}, ${this.postCreate.name}`)
           } else {
-            console.log("aaaaaaaaaaaaaaaaaaaaaaaaa");
+            console.log(`投稿完了:${response.status}:${response.statusText}, ${this.postCreate.name}`);
           }
         }).catch(err => console.error(err.response));
     },
+
+    /**
+     * top画像を投稿する（debug用）
+     */
+    imageCreate() {
+      let postJson = {
+        top_image_path: this.post.topImagePath,
+      }
+      console.log("--------postJSON");
+      console.log(postJson);
+      this.$axios.post('/api/image_create', postJson)
+        .then((response) => {
+          if ((response.status !== 201)) {
+            console.error("error-201以外");
+            console.error(`画像エラー:${response.status}:${response.statusText}, ${this.imageCreate.name}`)
+          } else {
+            console.log(`画像完了:${response.status}:${response.statusText}, ${this.imageCreate.name}`);
+          }
+        }).catch(err => console.error(err.response));
+    },
+
   },
 }
 </script>
