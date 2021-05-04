@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"fpdapp/models/entity"
 	"log"
 	"strconv"
@@ -64,13 +65,29 @@ func (db *Database) FindPost(postId string) entity.Post {
 //*******************************************************************
 // レコードを登録する
 //*******************************************************************
-func (db *Database) InsertPost(registerRecord *entity.Post) {
-	db.connection.Create(&registerRecord) // insert
+func (db *Database) InsertPost(registerStruct *entity.Post) uint {
+	db.connection.Create(&registerStruct) // insert
+	id := &registerStruct.ID              //登録後レコードのprimaryKey(ここではpost.ID)を取得
+	idUint := *id
+	fmt.Println("*-*-*-*-*-*-*-*-InsertPost")
+	fmt.Println(idUint)
+	return idUint
 }
 
-//*******************************************************************
-// レコードを登録する
-//*******************************************************************
-func (db *Database) InsertPostTest(registerRecord *entity.Post) {
-	db.connection.Create(&registerRecord) // insert
+func (db *Database) InsertPostImage(registerStruct *entity.PostImage) uint {
+	db.connection.Create(&registerStruct) // insert
+	id := &registerStruct.ID              //登録後レコードのprimaryKey(ここではpost.ID)を取得
+	idUint := *id
+	fmt.Println("*-*-*-*-*-*-*-*-InsertPostImage")
+	fmt.Println(idUint)
+	return idUint
+}
+
+func (db *Database) InsertPostPrefecture(registerStruct *entity.PostPrefecture) uint {
+	db.connection.Create(&registerStruct) // insert
+	id := &registerStruct.ID              //登録後レコードのprimaryKey(ここではpost.ID)を取得
+	idUint := *id
+	fmt.Println("*-*-*-*-*-*-*-*-InsertPostPrefecture")
+	fmt.Println(idUint)
+	return idUint
 }
