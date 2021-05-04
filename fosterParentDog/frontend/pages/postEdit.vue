@@ -198,8 +198,7 @@ export default {
           } else {
             console.log("aaaaaaaaaaaaaaaaaaaaaaaaa");
           }
-        }).catch(err => console.error(err));
-      // })
+        }).catch(err => console.error(err.response));
     },
   },
 }

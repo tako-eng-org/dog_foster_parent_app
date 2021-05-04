@@ -89,7 +89,7 @@ export default {
             } else {
               this.posts = response.data;
             }
-          }).catch(err => console.error(err));
+          }).catch(err => console.error(err.response));
       })
     },
 
@@ -115,7 +115,7 @@ export default {
               this.totalCount = response.data.count; // 公開/非公開記事数 ex: 41
               this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
             }
-          }).catch(err => console.error(err));
+          }).catch(err => console.error(err.response));
       })
     },
   },

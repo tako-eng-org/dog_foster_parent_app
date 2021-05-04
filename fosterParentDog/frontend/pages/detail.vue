@@ -94,7 +94,7 @@ export default {
               user: response.data.user,
             }
           }
-        }).catch(err => console.error(err));
+        }).catch(err => console.error(err.response));
     },
   },
 }
