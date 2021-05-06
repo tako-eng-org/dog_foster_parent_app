@@ -45,7 +45,7 @@ func Open() *Database {
 	// 詳細なログを表示
 	conn.LogMode(true)
 
-	// 登録するテーブル名を複数形で扱う（デフォルトは複数形）
+	// 登録するテーブル名を複数形で扱う
 	conn.SingularTable(false)
 
 	// マイグレーション（テーブルが無い時は自動生成）
