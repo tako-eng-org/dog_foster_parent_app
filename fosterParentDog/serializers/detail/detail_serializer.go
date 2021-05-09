@@ -89,17 +89,3 @@ func (r *Serializer) Response() Response {
 	}
 	return response
 }
-
-//type ListSerializer struct {
-//	C     *gin.Context
-//	Posts []entity.Post
-//}
-//
-//func (ps *ListSerializer) Response() []Response {
-//	var response []Response
-//	for _, post := range ps.Posts {
-//		serializer := Serializer{ps.C, post}
-//		response = append(response, serializer.Response())
-//	}
-//	return response
-//}

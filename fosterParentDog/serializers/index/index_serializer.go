@@ -30,9 +30,9 @@ type PostPrefectureResponse struct {
 	PostPrefectureId int  `json:"post_prefecture_id"`
 }
 type UserResponse struct {
-	Nickname string `json:"nickname"` //ニックネーム
-	Profile  string `json:"profile"`  //自己紹介文
-	WebUrl   string `json:"web_url"`  //websiteやSNSなどのURL
+	Nickname string `json:"nickname"`
+	Profile  string `json:"profile"`
+	WebUrl   string `json:"web_url"`
 }
 
 type Serializer struct {
@@ -79,17 +79,3 @@ func (r *Serializer) Response() Response {
 	}
 	return response
 }
-
-//type ListSerializer struct {
-//	C     *gin.Context
-//	Posts []entity.Post
-//}
-//
-//func (ps *ListSerializer) Response() []Response {
-//	var response []Response
-//	for _, post := range ps.Posts {
-//		serializer := Serializer{ps.C, post}
-//		response = append(response, serializer.Response())
-//	}
-//	return response
-//}
