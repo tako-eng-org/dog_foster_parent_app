@@ -5,7 +5,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"fpdapp/models/entity"
-	"fpdapp/serializers"
+	"fpdapp/serializers/detail"
+	"fpdapp/serializers/index"
+	"fpdapp/validators/post_edit"
+	"log"
 	"net/http"
 	"reflect"
 
@@ -54,9 +57,16 @@ func (cont *Controller) CountPost(c *gin.Context) {
 func (cont *Controller) IndexList(c *gin.Context) {
 	page := c.DefaultQuery("page", "1")
 	publishing := c.DefaultQuery("publishing", public)
-	model := cont.DbConn.FindIndex(page, publishing)
-	serializer := serializers.PostsSerializer{C: c, Posts: model}
-	c.JSON(http.StatusOK, serializer.Response())
+
+	posts := cont.DbConn.FindIndex(page, publishing)
+	var response []index.Response
+	// レスポンスの形でリスト化
+	for _, post := range posts {
+		resp := index.Serializer{Post: post}
+		response = append(response, resp.Response())
+	}
+	c.JSON(http.StatusOK, response)
+
 }
 
 //*******************************************************************
@@ -65,31 +75,10 @@ func (cont *Controller) IndexList(c *gin.Context) {
 func (cont *Controller) FetchPost(c *gin.Context) {
 	postId := c.Query("postId")
 
-	postModel := cont.DbConn.FindPost(postId)
-	postSerializer := serializers.PostSerializer{C: c, Post: postModel}
+	postModel := cont.DbConn.FindPostTest(postId)
+	detailSerializer := detail.Serializer{C: c, Post: postModel}
 
-	postImageModel := cont.DbConn.FindPostImages(postId)
-	postImageSerializer := serializers.PostImagesSerializer{C: c, PostImages: postImageModel}
-
-	postPrefectureListModel := cont.DbConn.FindPostPrefectures(postId)
-	postPrefectureListSerializer := serializers.PostPrefecturesSerializer{C: c, PostPrefectures: postPrefectureListModel}
-
-	postUserModel := cont.DbConn.FindUser(postModel.UserId)
-	postUserSerializer := serializers.UserSerializer{C: c, User: postUserModel}
-
-	response := struct {
-		Post            serializers.PostResponse             `json:"post"`
-		PostImages      []serializers.PostImageResponse      `json:"post_images"`
-		PostPrefectures []serializers.PostPrefectureResponse `json:"post_prefectures"`
-		User            serializers.UserResponse             `json:"user"`
-	}{
-		postSerializer.Response(),
-		postImageSerializer.Response(),
-		postPrefectureListSerializer.Response(),
-		postUserSerializer.Response(),
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, detailSerializer.Response())
 }
 
 //*******************************************************************
