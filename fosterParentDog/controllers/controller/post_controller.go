@@ -1,8 +1,7 @@
 package controller
 
 import (
-	"bytes"
-	"encoding/base64"
+	"errors"
 	"fmt"
 	"fpdapp/models/entity"
 	"fpdapp/serializers/detail"
@@ -10,14 +9,14 @@ import (
 	"fpdapp/validators/post_edit"
 	"log"
 	"net/http"
-	"reflect"
+	"os"
+	"path/filepath"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 //*******************************************************************
@@ -27,13 +26,6 @@ import (
 const (
 	private = "0"
 	public  = "1"
-)
-
-// TODO: バリデーション定数？（valudatorで実装する可能性あり）
-const (
-	dogNameMaxChar   int = 30
-	breedMaxChar     int = 100
-	genderParamRange int = 1
 )
 
 //*******************************************************************
@@ -47,7 +39,6 @@ func (cont *Controller) CountPost(c *gin.Context) {
 	}{
 		count,
 	}
-
 	c.JSON(http.StatusOK, response)
 }
 
@@ -66,7 +57,6 @@ func (cont *Controller) IndexList(c *gin.Context) {
 		response = append(response, resp.Response())
 	}
 	c.JSON(http.StatusOK, response)
-
 }
 
 //*******************************************************************
@@ -76,7 +66,7 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 	postId := c.Query("postId")
 
 	postModel := cont.DbConn.FindPostTest(postId)
-	detailSerializer := detail.Serializer{C: c, Post: postModel}
+	detailSerializer := detail.Serializer{Post: postModel}
 
 	c.JSON(http.StatusOK, detailSerializer.Response())
 }
@@ -84,209 +74,139 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 //*******************************************************************
 // 投稿記事テーブルへ記事を1件登録する
 //*******************************************************************
-//func (cont *Controller) Create(c *gin.Context) {
-//	// TODO バリデーション（投稿編集画面作成時に実装予定）
-//	var post = entity.Post{
-//		Publishing:     strToInt(c.PostForm("publishing")),
-//		DogName:        c.PostForm("dog_name"),
-//		Breed:          c.PostForm("breed"),
-//		Gender:         strToInt(c.PostForm("gender")),
-//		Spay:           strToInt(c.PostForm("spay")),
-//		Old:            c.PostForm("old"),
-//		SinglePerson:   strToInt(c.PostForm("single_person")),
-//		SeniorPerson:   strToInt(c.PostForm("senior_person")),
-//		TransferStatus: strToInt(c.PostForm("transfer_status")),
-//		Introduction:   c.PostForm("introduction"),
-//		AppealPoint:    c.PostForm("appeal_point"),
-//		OtherMessage:   c.PostForm("other_message"),
-//		UserId:         strToUint64(c.PostForm("user_id")),
-//		TopImagePath:   c.PostForm("top_image_path"),
-//	}
-//	cont.DbConn.InsertPost(&post)
-//	c.JSON(http.StatusCreated, post.ID)
-//}
-//
-//*******************************************************************
-// TODO: debug_投稿の新規作成
-//*******************************************************************
-type Post struct {
-	//ID             uint   `json:"id"`
-	//CreatedAt      string `json:"created_at"`
-	//UpdatedAt      string `json:"updated_at"`
-	Publishing     int    `json:"publishing"`      //公開設定
-	DogName        string `json:"dog_name"`        //犬の名前
-	Breed          string `json:"breed"`           //犬種
-	Gender         int    `json:"gender"`          //性別
-	Spay           int    `json:"spay"`            //去勢/避妊手術
-	Old            string `json:"old"`             //年齢
-	SinglePerson   int    `json:"single_person"`   //単身者への譲渡
-	SeniorPerson   int    `json:"senior_person"`   //高齢者への譲渡
-	TransferStatus int    `json:"transfer_status"` //譲渡ステータス
-	Introduction   string `json:"introduction"`    //犬の自己紹介
-	AppealPoint    string `json:"appeal_point"`    //性格アピールポイント
-	OtherMessage   string `json:"other_message"`   //健康状態や譲渡条件などの特記事項
-	UserId         uint64 `json:"user_id"`         //ユーザーID
-	TopImagePath   string `json:"top_image_path"`  //top投稿画像パス
-
-	ImagePathList []string `json:"image_path_list"`
-
-	PostPrefectureIdList []int `json:"post_prefecture_id_list"`
-}
-
 func (cont *Controller) Create(c *gin.Context) {
-	fmt.Println("-----------CreateTest")
-	var postRequest Post
-	if err := c.ShouldBindJSON(&postRequest); err != nil {
+	// JSONを構造体に置き換える（不要なjsonデータを受け取った場合、カットする）
+	var request post_edit.Request
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println("------BindJSONした後のPost")
-	fmt.Printf("%+v\n", &postRequest)
 
-	// postsテーブルへ登録する
-	var post = entity.Post{
-		Publishing:     postRequest.Publishing,
-		DogName:        postRequest.DogName,
-		Breed:          postRequest.Breed,
-		Gender:         postRequest.Gender,
-		Spay:           postRequest.Spay,
-		Old:            postRequest.Old,
-		SinglePerson:   postRequest.SinglePerson,
-		SeniorPerson:   postRequest.SeniorPerson,
-		TransferStatus: postRequest.TransferStatus,
-		Introduction:   postRequest.Introduction,
-		AppealPoint:    postRequest.AppealPoint,
-		OtherMessage:   postRequest.OtherMessage,
-		UserId:         postRequest.UserId,
-		TopImagePath:   postRequest.TopImagePath,
-	}
-	currentPostId := cont.DbConn.InsertPost(&post)
-
-	// post_imagesテーブルへ、パスの数分登録する
-	for i := 0; i < len(postRequest.ImagePathList); i++ {
-		var postImagePath = entity.PostImage{
-			PostId:    currentPostId,
-			ImagePath: postRequest.ImagePathList[i],
-		}
-		_ = cont.DbConn.InsertPostImage(&postImagePath)
-	}
-
-	// post_prefecturesテーブルへ、都道府県IDの数分登録する
-	for i := 0; i < len(postRequest.PostPrefectureIdList); i++ {
-		var postPrefecture = entity.PostPrefecture{
-			PostId:           currentPostId,
-			PostPrefectureId: postRequest.PostPrefectureIdList[i],
-		}
-		_ = cont.DbConn.InsertPostPrefecture(&postPrefecture)
-	}
-
-	c.JSON(http.StatusCreated, &post.ID)
+	req := post_edit.Validator{Post: request}
+	// 構造体をPost型にバインドしてinsertする
+	createdPostId := cont.DbConn.InsertPost(req.Request())
+	c.JSON(http.StatusCreated, createdPostId)
 }
 
 //*******************************************************************
-// TODO: debug_S3にファイルをアップロードする
+// クライアントから送信されたファイルをローカルに仮保存し、awsS3にアップロードし、
+// S3の{オブジェクトURL}と{オブジェクトキー}をレスポンスとして返す。
 //*******************************************************************
-type Image struct {
-	TopImagePath string `json:"top_image_path"` //top投稿画像パス
-}
-
-func (cont *Controller) ImageCreate(c *gin.Context) {
-	fmt.Println("-----------ImageCreate")
-	var ImageRequest Image
-	if err := c.ShouldBindJSON(&ImageRequest); err != nil {
-		c.JSON(http.StatusTeapot, gin.H{"error": err.Error()})
+func (cont *Controller) ImageUpload(c *gin.Context) {
+	userId := c.PostForm("user_id")              //投稿者のuserID
+	file, err := c.FormFile("image")             //アップロード対象ファイル
+	position := strToInt(c.PostForm("position")) //画像の順番
+	if err != nil {
+		c.String(http.StatusBadRequest, "Bad request")
 		return
 	}
-	fmt.Println("------BindJSONした後のPost")
-	fmt.Printf("%+v\n", &ImageRequest.TopImagePath)
+	tmpDirName := "/app/images/"                   //S3にアップロードするファイルを仮置きするディレクトリ
+	saveFileFullPath := tmpDirName + file.Filename // ex: /app/images/wan-chan.png
 
-	topImagePathBase64Pointer := &ImageRequest.TopImagePath
-	topImagePathBase64 := *topImagePathBase64Pointer
-
-	fmt.Println("------string変換した後のtopImagePathBase64")
-	_, er := fmt.Println(topImagePathBase64)
-	if er != nil {
-		fmt.Println(er.Error())
+	// 仮置き用ディレクトリがなければ作成する
+	if _, err := os.Stat(tmpDirName); os.IsNotExist(err) {
+		os.Mkdir(tmpDirName, 0777)
 	}
 
-	err := UploadToS3(topImagePathBase64, "png")
+	// 受信したファイルを仮置き用ディレクトリへ保存する
+	if err := c.SaveUploadedFile(file, saveFileFullPath); err != nil {
+		fmt.Println(err.Error())
+	}
+
+	// 仮置きしたファイルをS3へアップロードする
+	objectUrl, objectKey, err := UploadToS3(saveFileFullPath, userId)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	c.JSON(http.StatusCreated, "hogehoge")
+
+	// postImagesテーブルへオブジェクトキーを登録する（idは空）
+	targetStruct := entity.PostImage{
+		// FIXME: positionが0にならず、1になる
+		Position: position,
+		// TODO: post-postimage-imagesテーブル定義を確定後、処理を追加する
+		//ImagePath: objectKey,
+	}
+	registeredPostImage := cont.DbConn.InsertPostImage(&targetStruct)
+
+	// S3のオブジェクトURLとオブジェクトキーをjsonでレスポンスする
+	response := struct {
+		ObjectUrl string `json:"object_url"`
+		ObjectKey string `json:"object_key"`
+		Position  int    `json:"position"`
+	}{
+		objectUrl,
+		objectKey,
+		registeredPostImage.Position,
+	}
+
+	// {ObjectUrl:https://bbsapp-img.s3.us-east-2.amazonaws.com/images/1_b3dbd289-25c7-4f15-ad9d-46fd1f16f2ff.png ObjectKey:images/1_b3dbd289-25c7-4f15-ad9d-46fd1f16f2ff.png Position:1}
+	c.JSON(http.StatusCreated, response)
+
+	// 仮置きディレクトリに入っているファイルを削除する
+	// TODO: 期待通り削除はできるけどエラーでる remove /app/images/image_01.png: no such file or directory
+	if err := os.Remove(saveFileFullPath); err != nil {
+		fmt.Println(err)
+	}
 }
 
-type S3Service struct {
-}
-
-//func (s S3Service) UploadToS3(imageBase64 string, fileExtension string) error {
-func UploadToS3(imageBase64 string, fileExtension string) error {
+func UploadToS3(localFileFullPath string, userId string) (string, string, error) {
 	// sessionの作成
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		Profile:           "di",
+		Profile:           "default",
 		SharedConfigState: session.SharedConfigEnable,
 	}))
+	// TODO: どちらを採用するか決める
+	//sess := session.Must(session.NewSession(&aws.Config{
+	//	Region:      aws.String("us-east-2"),
+	//	Credentials: credentials.NewSharedCredentials("/root/.aws/credentials", "default"),
+	//}))
+
+	// ローカルに保存したファイルの存在確認とポインタ取得
+	file, err := os.Open(localFileFullPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	// 仮置きファイルの拡張子から、指定するcontent-Typeを判定する
+	extension := filepath.Ext(localFileFullPath)
+	var contentType string
+	switch extension {
+	case ".jpg":
+		contentType = "image/jpeg"
+	case ".jpeg":
+		contentType = "image/jpeg"
+	case ".gif":
+		contentType = "image/gif"
+	case ".png":
+		contentType = "image/png"
+	default:
+		return "", "", errors.New("this extension is invalid")
+	}
+
+	// オブジェクトキーの元になるuuidを作成する
+	u, err := uuid.NewRandom()
+	if err != nil {
+		log.Fatal(err)
+	}
+	uu := u.String()
 
 	bucketName := "bbsapp-img"
+	// ex: awsS3の {バケット}/images/123_2c2ddd5f-6571-4c8c-8f5e-b04a11250092.png
+	objectKey := "images/" + userId + "_" + uu + extension
+
+	// Uploaderを作成し、ローカルファイルをS3へアップロードする
 	uploader := s3manager.NewUploader(sess)
-
-	fmt.Println("*0*0*0*0*0*0*0*0*0*0")
-	fmt.Println(imageBase64)
-	fmt.Println(reflect.TypeOf(imageBase64))
-	data, err := base64.StdEncoding.DecodeString(imageBase64)
-	if err != nil {
-		fmt.Println("debug------error0")
-		fmt.Println(err.Error())
-	}
-	wb := new(bytes.Buffer)
-	wb.Write(data)
-
-	res, err := uploader.Upload(&s3manager.UploadInput{
+	out, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket:      aws.String(bucketName),
-		Key:         aws.String("foobar" + "." + fileExtension),
-		Body:        wb,
-		ContentType: aws.String("image/" + fileExtension),
+		Key:         aws.String(objectKey),
+		ContentType: aws.String(contentType),
+		Body:        file,
 	})
 	if err != nil {
-		fmt.Println(res)
-		if err, ok := err.(awserr.Error); ok && err.Code() == request.CanceledErrorCode {
-			fmt.Println("debug------error1")
-			//return RaiseError(400, "Upload TimeOut", nil)
-		} else {
-			fmt.Println("debug------error2")
-			//return RaiseError(400, "Upload Failed", nil)
-		}
+		log.Fatal(err)
 	}
-	return nil
-}
+	objectUrl := out.Location
 
-//func (cont *Controller) ImageCreate(c *gin.Context) {
-//	// sessionの作成
-//	sess := session.Must(session.NewSessionWithOptions(session.Options{
-//		Profile:           "di",
-//		SharedConfigState: session.SharedConfigEnable,
-//	}))
-//
-//	// ファイルを開く
-//	targetFilePath := "./sample.txt"
-//	file, err := os.Open(targetFilePath)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer file.Close()
-//
-//	bucketName := "bbsapp-img" //
-//	objectKey := "xxx-key"     // TODO: オブジェクトキーって何
-//
-//	// Uploaderを作成し、ローカルファイルをアップロード
-//	uploader := s3manager.NewUploader(sess)
-//	_, err = uploader.Upload(&s3manager.UploadInput{
-//		Bucket: aws.String(bucketName),
-//		Key:    aws.String(objectKey),
-//		Body:   file,
-//	})
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	log.Println("done")
-//}
+	return objectUrl, objectKey, err
+}
