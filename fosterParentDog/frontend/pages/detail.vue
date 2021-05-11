@@ -1,30 +1,31 @@
 <template>
   <div class="detail">
-    <div class="container" :key="post.postBase.id">
-      <ImageOne :imagePath="post.postBase.top_image_path"/>
-      <div class="post_id">
-        <div class="row">
-          <p>投稿No : {{ post.postBase.id }}</p>
-        </div>
+    <div class="container">
+      <!--   FIXME: 画像表示について動作しません。後日改修予定   -->
+      <!--   トップ画像表示   -->
+      <!--            <ImageOne :imagePath="getTopImagePath(post.post_images)"/>-->
+      <div class="post_id row">
+        <p>投稿No : {{ post.id }}</p>
       </div>
-      <TextBox :title="'犬の名前'" :value="post.postBase.dog_name"/>
-      <TextBox :title="'犬種'" :value="post.postBase.breed"/>
-      <Gender :value="post.postBase.gender"/>
-      <Spay :value="post.postBase.spay"/>
-      <TextBox :title="'年齢'" :value="post.postBase.old"/>
-      <SinglePerson :value="post.postBase.single_person"/>
-      <SeniorPerson :value="post.postBase.senior_person"/>
-      <TransferStatus :value="post.postBase.transfer_status"/>
-      <TextBox :title="'自己紹介'" :value="post.postBase.introduction"/>
-      <TextBox :title="'投稿日時'" :value="post.postBase.created_at"/>
-      <TextBox :title="'アピールポイント'" :value="post.postBase.appeal_point"/>
-      <PostPrefecture :value="post.postPrefectureList"/>
-      <TextBox :title="'その他特記事項'" :value="post.postBase.other_message"/>
+      <TextBox :title="'犬の名前'" :value="post.dog_name"/>
+      <TextBox :title="'犬種'" :value="post.breed"/>
+      <Gender :value="post.gender"/>
+      <Spay :value="post.spay"/>
+      <TextBox :title="'年齢'" :value="post.old"/>
+      <SinglePerson :value="post.single_person"/>
+      <SeniorPerson :value="post.senior_person"/>
+      <TransferStatus :value="post.transfer_status"/>
+      <TextBox :title="'自己紹介'" :value="post.introduction"/>
+      <TextBox :title="'投稿日時'" :value="post.created_at"/>
+      <TextBox :title="'アピールポイント'" :value="post.appeal_point"/>
+      <PostPrefecture :value="post.post_prefectures"/>
+      <TextBox :title="'その他特記事項'" :value="post.other_message"/>
     </div>
 
-    <!--  画像リスト表示  -->
-    <ImageList :imagePathList="post.imagePathList"/>
+    <!--  トップ画像以外の画像を複数表示  -->
+    <!--    <ImageList :imagePathList="post.postimages"/>-->
 
+    <hr>
     <!--  ユーザープロフィール表示  -->
     <UserProfile :user="post.user"/>
   </div>
@@ -62,37 +63,39 @@ export default {
 
   data() {
     return {
-      post: {
-        postBase: {}, //基礎投稿
-        imagePathList: {}, //画像パスリスト
-        postPrefectureList: {}, //譲渡可能都道府県リスト
-        user: {}, //ユーザー情報
-      },
+      post: {},
     }
   },
   computed: {},
   methods: {
+    /**
+     * トップ画像（1投稿のpositionが最小値(原則0)のimagePath）を取得する
+     * @param {object} post
+     */
+    // FIXME: この関数は動作しません。map取れない Cannot read property 'map' of undefined
+    // getTopImagePath(postImageObj) {
+    // let min = Math.min(postImageObj.map(x => x.position));
+    // let ImagePathByMinPosition = (postObj.post_images || []).filter(e => (e.position === min))[0].image_path
+    // return ImagePathByMinPosition
+    // },
+
     /**
      * 投稿IDに紐づいた投稿記事を取得する
      * @param {int} postID
      */
     getDetail(currentPostId) {
       this.$axios.get('/api/post', {
-          params: {
-            postId: currentPostId,
-          }
+        params: {
+          postId: currentPostId,
+        }
         }
       )
         .then((response) => {
           if ((response.status !== 200)) {
             console.error(`Error:${response.statusText}, ${this.getDetail.name}`)
           } else {
-            this.post = {
-              postBase: response.data.post,
-              imagePathList: response.data.post_images,
-              postPrefectureList: response.data.post_prefectures,
-              user: response.data.user,
-            }
+            this.post = response.data;
+            console.log(this.post);
           }
         }).catch(err => console.error(err.response));
     },
