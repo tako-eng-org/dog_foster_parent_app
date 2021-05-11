@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"fpdapp/models/entity"
 	"log"
 	"strconv"
@@ -30,21 +29,26 @@ func (db *Database) CountPost(publishing string) int {
 // 公開済み投稿を1ページ表示分取得する
 //*******************************************************************
 func (db *Database) FindIndex(page string, publishing string) []entity.Post {
-	var model []entity.Post
 	pageNum, _ := strconv.Atoi(page)
 	numberPerPage := 20 // 1ページあたりの表示件数
 
-	err := db.connection.Order("id desc").
+	var result []entity.Post
+
+	err := db.connection.
+		Order("id desc").
 		Where("publishing = ?", publishing).
+		Preload("PostImages").
+		Preload("PostPrefectures").
+		Preload("User").
 		Limit(numberPerPage).
 		Offset((pageNum - 1) * numberPerPage).
-		Find(&model).
+		Find(&result).
 		Error
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return model
+	return result
 }
 
 //*******************************************************************
@@ -54,7 +58,12 @@ func (db *Database) FindPost(postId string) entity.Post {
 	var model entity.Post
 
 	//SELECT * FROM "posts"  WHERE "posts"."deleted_at" IS NULL AND (("posts"."id" = '2')) ORDER BY "posts"."id" ASC LIMIT 1
-	err := db.connection.First(&model, postId).Error
+	err := db.connection.
+		Preload("PostImages").
+		Preload("PostPrefectures").
+		Preload("User").
+		First(&model, postId).
+		Error
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,28 +75,23 @@ func (db *Database) FindPost(postId string) entity.Post {
 // レコードを登録する
 //*******************************************************************
 func (db *Database) InsertPost(registerStruct *entity.Post) uint {
-	db.connection.Create(&registerStruct) // insert
-	id := &registerStruct.ID              //登録後レコードのprimaryKey(ここではpost.ID)を取得
-	idUint := *id
-	fmt.Println("*-*-*-*-*-*-*-*-InsertPost")
-	fmt.Println(idUint)
-	return idUint
+	err := db.connection.
+		Create(&registerStruct). // preload不要
+		Error
+	if err != nil {
+		log.Fatal(err)
+	}
+	return registerStruct.ID //登録後レコードのID(post.ID)
 }
 
-func (db *Database) InsertPostImage(registerStruct *entity.PostImage) uint {
-	db.connection.Create(&registerStruct) // insert
-	id := &registerStruct.ID              //登録後レコードのprimaryKey(ここではpost.ID)を取得
-	idUint := *id
-	fmt.Println("*-*-*-*-*-*-*-*-InsertPostImage")
-	fmt.Println(idUint)
-	return idUint
-}
-
-func (db *Database) InsertPostPrefecture(registerStruct *entity.PostPrefecture) uint {
-	db.connection.Create(&registerStruct) // insert
-	id := &registerStruct.ID              //登録後レコードのprimaryKey(ここではpost.ID)を取得
-	idUint := *id
-	fmt.Println("*-*-*-*-*-*-*-*-InsertPostPrefecture")
-	fmt.Println(idUint)
-	return idUint
+//*******************************************************************
+// 画像情報を登録する
+//*******************************************************************
+// TODO: この関数は機能するが、画像テーブルの定義を見直し後に改修する必要がある。
+func (db *Database) InsertPostImage(targetStruct *entity.PostImage) *entity.PostImage {
+	err := db.connection.Create(&targetStruct).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+	return targetStruct
 }
