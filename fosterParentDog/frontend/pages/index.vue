@@ -3,16 +3,13 @@
     <h1>里親募集 掲示板</h1>
     <!--  投稿記事 一覧表示  -->
     <div class="container" v-for="post in posts" :key="post.id">
-      <ImageOne :imagePath="post.top_image_path"/>
-      <div class="goDetail">
-        <div class="row">
-          <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
-          <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
-            #{{ post.id }} {{ post.dog_name }}
-          </NuxtLink>
-        </div>
+      <ImageOne :imagePath="getIndexImagePath(post)"/>
+      <div class="goDetail row">
+        <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
+        <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
+          #{{ post.id }} {{ post.dog_name }}
+        </NuxtLink>
       </div>
-      <!--   FIXME: readonly="true"にしても、テキストボックスがオープンになってしまう   -->
       <TextBox :title="'犬種'" v-model="post.breed"/>
       <Gender v-model="post.gender"/>
       <TextBox :title="'自己紹介'" v-model="post.introduction"/>
@@ -55,8 +52,10 @@ export default {
     this.getIndex(this.currentPage).then(this.generatePagination());
   },
 
+
   data() {
     return {
+      // TODO: 初期値を書いた方が良いか確認すること
       posts: [], // 投稿記事
 
       //ページネーション設定
@@ -69,6 +68,15 @@ export default {
   },
   computed: {},
   methods: {
+    /**
+     * 1投稿のpositionが最小値(原則0)のimagePathを取得する
+     * @param {object} post
+     */
+    getIndexImagePath(post) {
+      let min = Math.min(...post.post_images.map(x => x.position));
+      let ImagePathByMinPosition = post.post_images.filter(e => (e.position === min))[0].image_path;
+      return ImagePathByMinPosition
+    },
     /**
      * 指定したページの投稿一覧を取得する
      * @param {int} pageNum
@@ -122,7 +130,7 @@ export default {
 }
 </script>
 
-<!-- cssはassetsから自動で読み込む-->
+<!-- cssは原則、assetsから自動で読み込む-->
 <style scoped>
 .top {
   overflow: hidden;
