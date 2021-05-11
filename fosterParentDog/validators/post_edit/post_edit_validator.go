@@ -31,7 +31,7 @@ type PostImageRequest struct {
 	//PostId      uint   `json:"post_id"`
 	//PostImageId uint   `json:"post_image_id"`
 	Position  int    `json:"position"`
-	ImagePath string `json:"image_path"`
+	ObjectKey string `json:"object_key"`
 }
 
 type PostPrefectureRequest struct {

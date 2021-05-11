@@ -83,7 +83,7 @@ func (cont *Controller) Create(c *gin.Context) {
 	}
 
 	req := post_edit.Validator{Post: request}
-	// reqestをバリデータを通しPost型構造体にして、テーブルへ登録する
+	// requestをバリデータを通しPost型構造体にして、テーブルへ登録する
 	createdPostId := cont.DbConn.InsertPost(req.Request())
 	c.JSON(http.StatusCreated, createdPostId)
 }
@@ -124,7 +124,7 @@ func (cont *Controller) ImageUpload(c *gin.Context) {
 	targetStruct := entity.PostImage{
 		// FIXME: positionが0にならず、1になる
 		Position: position,
-		//ImagePath: objectKey, 以前の処理.改修時に削除すること
+		//ObjectKey: objectKey, 以前の処理.改修時に削除すること
 	}
 	registeredPostImage := cont.DbConn.InsertPostImage(&targetStruct)
 

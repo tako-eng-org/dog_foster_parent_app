@@ -45,7 +45,7 @@
       <!--      <div class="upload-top-image">-->
       <!--        <input type="file" id="top-image" ref="input">-->
       <!--        <button type="submit" @click="ImageUpload(0)">トップ画像をアップロードする</button>-->
-      <!--        <ImageOne :imagePath="getTopImagePath()"/>-->
+      <!--        <ImageOne :objectUrl="getTopObjectUrl()"/>-->
       <!--      </div>-->
 
       <!--  投稿ボタン  -->
@@ -126,15 +126,15 @@ export default {
   computed: {},
   methods: {
     /**
-     * 1投稿のpositionが最小値(原則0)のimagePathを取得する
+     * 1投稿のpositionが最小値(原則0)のobjectKeyを取得する
      * @param {object} post
      */
-    getTopImagePath() {
+    getTopObjectUrl() {
       let min = Math.min(...this.post.postImages.map(x => x.position));
-      let ImagePathByMinPosition = this.post.postImages.filter(e => (e.position === min))[0].image_path;
-      console.log("ImagePathByMinPosition-------");
-      console.log(ImagePathByMinPosition);
-      return ImagePathByMinPosition
+      let objectKeyByMinPosition = this.post.postImages.filter(e => (e.position === min))[0].object_key;
+      console.log("objectKeyByMinPosition-------");
+      console.log(objectKeyByMinPosition);
+      return objectKeyByMinPosition
     },
 
     /**
@@ -155,8 +155,8 @@ export default {
         appeal_point: this.post.appealPoint,
         other_message: this.post.otherMessage,
         user_id: this.user_id,
-        top_image_path: this.topObjectKey,
-        image_path_list: [
+        top_object_key: this.topObjectKey,
+        object_key_list: [
           "12345",
           "6789",
         ],

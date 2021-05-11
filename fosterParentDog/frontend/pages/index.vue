@@ -3,7 +3,7 @@
     <h1>里親募集 掲示板</h1>
     <!--  投稿記事 一覧表示  -->
     <div class="container" v-for="post in posts" :key="post.id">
-      <ImageOne :imagePath="getIndexImagePath(post)"/>
+      <ImageOne :objectUrl="getIndexImagePath(post)"/>
       <div class="goDetail row">
         <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
         <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
@@ -71,12 +71,12 @@ export default {
   computed: {},
   methods: {
     /**
-     * 1投稿のpositionが最小値(原則0)のimagePathを取得する
+     * 1投稿のpositionが最小値(原則0)のobjectUrlを取得する
      * @param {object} post
      */
     getIndexImagePath(post) {
       let min = Math.min(...post.post_images.map(x => x.position));
-      let objectKeyByMinPosition = post.post_images.filter(e => (e.position === min))[0].image_path;
+      let objectKeyByMinPosition = post.post_images.filter(e => (e.position === min))[0].objectKey;
       return this.objectUrlBase + objectKeyByMinPosition
     },
     /**

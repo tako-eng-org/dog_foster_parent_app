@@ -3,7 +3,7 @@
     <div class="container">
       <!--   FIXME: 画像表示について動作しません。後日改修予定   -->
       <!--   トップ画像表示   -->
-      <!--            <ImageOne :imagePath="getTopImagePath(post.post_images)"/>-->
+      <!--            <ImageOne :objectUrl="getTopObjectUrl(post.post_images)"/>-->
       <div class="post_id row">
         <p>投稿No : {{ post.id }}</p>
       </div>
@@ -23,7 +23,7 @@
     </div>
 
     <!--  トップ画像以外の画像を複数表示  -->
-    <!--    <ImageList :imagePathList="post.postimages"/>-->
+    <!--    <ImageList :objectUrlList="post.postimages"/>-->
 
     <hr>
     <!--  ユーザープロフィール表示  -->
@@ -69,13 +69,13 @@ export default {
   computed: {},
   methods: {
     /**
-     * トップ画像（1投稿のpositionが最小値(原則0)のimagePath）を取得する
+     * トップ画像（1投稿のpositionが最小値(原則0)のobjectUrl）を取得する
      * @param {object} post
      */
     // FIXME: この関数は動作しません。map取れない Cannot read property 'map' of undefined
-    // getTopImagePath(postImageObj) {
+    // getTopObjectUrl(postImageObj) {
     // let min = Math.min(postImageObj.map(x => x.position));
-    // let ImagePathByMinPosition = (postObj.post_images || []).filter(e => (e.position === min))[0].image_path
+    // let ImagePathByMinPosition = (postObj.post_images || []).filter(e => (e.position === min))[0].objectKey
     // return ImagePathByMinPosition
     // },
 
