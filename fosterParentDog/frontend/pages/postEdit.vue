@@ -106,7 +106,7 @@ export default {
         introduction: "test_introduction",
         appealPoint: "test_appeal_point",
         otherMessage: "test_other_message",
-        user_id: 1, // TODO: ログインユーザーのIDが入る(入れないとindex表示時にnullエラーになりdog_app再起動が必要になるためdebug用として1を入れている)
+        userId: 1, // TODO: ログインユーザーのIDが入る(入れないとindex表示時にnullエラーになりdog_app再起動が必要になるためdebug用として1を入れている)
         postImages: [ //画像パスリスト
           { //debug用のサンプル
             position: 0,
@@ -148,7 +148,7 @@ export default {
         introduction: this.post.introduction,
         appeal_point: this.post.appealPoint,
         other_message: this.post.otherMessage,
-        user_id: this.user_id,
+        user_id: this.userId,
         object_key_list: [
           "12345",
           "6789",
@@ -174,7 +174,7 @@ export default {
       let file = this.$refs.input;
       let formData = new FormData();
       formData.append('image', file.files[0]);
-      formData.append('user_id', this.post.user_id);
+      formData.append('user_id', this.post.userId);
       formData.append('position', position);
       console.log(...formData.entries()); //debug用
       return new Promise((resolve, reject) => {
