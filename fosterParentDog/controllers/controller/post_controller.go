@@ -65,7 +65,7 @@ func (cont *Controller) IndexList(c *gin.Context) {
 func (cont *Controller) FetchPost(c *gin.Context) {
 	postId := c.Query("postId")
 
-	postModel := cont.DbConn.FindPostTest(postId)
+	postModel := cont.DbConn.FindPost(postId)
 	detailSerializer := detail.Serializer{Post: postModel}
 
 	c.JSON(http.StatusOK, detailSerializer.Response())
