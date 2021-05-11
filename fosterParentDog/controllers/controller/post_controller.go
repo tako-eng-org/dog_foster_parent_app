@@ -74,6 +74,7 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 //*******************************************************************
 // 投稿記事テーブルへ記事を1件登録する
 //*******************************************************************
+// TODO: Upsertに改修（優先度低）
 func (cont *Controller) Create(c *gin.Context) {
 	// 受けたjsonを構造体に置き換える（Request構造体により、不要なjsonデータはカットする）
 	var request post_edit.Request
