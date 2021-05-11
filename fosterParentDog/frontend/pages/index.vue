@@ -73,6 +73,7 @@ export default {
      * 1投稿のpositionが最小値(原則0)のobjectUrlを取得する
      * @param {object} post
      */
+    // FIXME: 動作しません。imagesテーブル定義をしてから処理変更予定
     getIndexImagePath(post) {
       let min = Math.min(...post.post_images.map(x => x.position));
       let objectKeyByMinPosition = post.post_images.filter(e => (e.position === min))[0].objectKey;
