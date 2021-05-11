@@ -68,7 +68,6 @@ import SeniorPerson from "~/components/post/SeniorPerson";
 import SinglePerson from "~/components/post/SinglePerson";
 import Spay from "~/components/post/Spay";
 import TransferStatus from "~/components/post/TransferStatus";
-import UploadOne from "~/components/post/UploadOne";
 
 export default {
   components: {
@@ -82,7 +81,6 @@ export default {
     SinglePerson,
     Spay,
     TransferStatus,
-    UploadOne,
 
   },
   mounted() {
