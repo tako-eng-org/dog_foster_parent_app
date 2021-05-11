@@ -27,11 +27,15 @@ type Request struct {
 	PostPrefectures []PostPrefectureRequest `json:"post_prefectures"`
 }
 type PostImageRequest struct {
-	// TODO: 要実装/Updateの際は必要になるのでコメントにしています
+	// TODO: 要実装/Updateの際は必要になるのでコメントにしている
 	//PostId      uint   `json:"post_id"`
-	//PostImageId uint   `json:"post_image_id"`
-	Position  int    `json:"position"`
-	ObjectKey string `json:"object_key"`
+	Position int            `json:"position"`
+	ImageId  uint           `json:"image_id"`
+	Images   []ImageRequest `json:"images"`
+}
+type ImageRequest struct {
+	ObjectKey string
+	UserId    uint
 }
 
 type PostPrefectureRequest struct {
@@ -49,7 +53,7 @@ func (r *Validator) Request() *entity.Post {
 	for _, p := range r.Post.PostImages {
 		postImageRequestList = append(postImageRequestList, entity.PostImage{
 			Position: p.Position,
-			// TODO: 画像投稿
+			// TODO: requestへ画像投稿にまつわる情報を追加する
 		})
 	}
 
