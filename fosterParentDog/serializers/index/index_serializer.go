@@ -47,7 +47,7 @@ func (r *Serializer) Response() Response {
 			PostId:      p.PostId,
 			PostImageId: p.ID,
 			Position:    p.Position,
-			ImagePath:   p.ImagePath,
+			// TODO: オブジェクトキー追加（posts-postimages-imagesテーブルとの連携処理追加後に実装）
 		})
 	}
 
