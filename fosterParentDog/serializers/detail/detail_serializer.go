@@ -56,7 +56,7 @@ func (r *Serializer) Response() Response {
 			PostId:      p.PostId,
 			PostImageId: p.ID,
 			Position:    p.Position,
-			ImagePath:   p.ImagePath,
+			// TODO: 画像情報追加
 		})
 	}
 
