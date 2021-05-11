@@ -6,16 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PostSerializer struct {
-	C    *gin.Context
-	Post entity.Post
-}
-
-type PostsSerializer struct {
-	C     *gin.Context
-	Posts []entity.Post
-}
-
 type PostResponse struct {
 	ID             uint   `json:"id"`
 	CreatedAt      string `json:"created_at"`
@@ -32,8 +22,17 @@ type PostResponse struct {
 	Introduction   string `json:"introduction"`    //犬の自己紹介
 	AppealPoint    string `json:"appeal_point"`    //性格アピールポイント
 	OtherMessage   string `json:"other_message"`   //健康状態や譲渡条件などの特記事項
-	UserId         uint64 `json:"user_id"`         //ユーザーID
-	TopImagePath   string `json:"top_image_path"`  //top投稿画像パス
+	UserId         uint   `json:"user_id"`         //ユーザーID
+}
+
+type PostSerializer struct {
+	C    *gin.Context
+	Post entity.Post
+}
+
+type PostsSerializer struct {
+	C     *gin.Context
+	Posts []entity.Post
 }
 
 func (ps *PostSerializer) Response() PostResponse {
@@ -54,7 +53,7 @@ func (ps *PostSerializer) Response() PostResponse {
 		AppealPoint:    ps.Post.AppealPoint,
 		OtherMessage:   ps.Post.OtherMessage,
 		UserId:         ps.Post.UserId,
-		TopImagePath:   ps.Post.TopImagePath,
+		//TopImagePath:   ps.Post.TopImagePath,
 	}
 	return response
 }
