@@ -13,7 +13,7 @@ type PostValidator struct {
 	Introduction         string      `json:"introduction"`    //犬の自己紹介
 	AppealPoint          string      `json:"appeal_point"`    //性格アピールポイント
 	OtherMessage         string      `json:"other_message"`   //健康状態や譲渡条件などの特記事項
-	UserId               uint64      `json:"user_id"`         //ユーザーID
+	UserId               uint        `json:"user_id"`         //ユーザーID
 	ImagePathList        []ImagePath `json:"image_path_list"`
 	PostPrefectureIdList []int       `json:"post_prefecture_id_list"`
 }
