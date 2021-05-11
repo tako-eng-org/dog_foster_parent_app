@@ -54,6 +54,7 @@ func Open() *Database {
 		&entity.Post{},
 		&entity.PostImage{},
 		&entity.PostPrefecture{},
+		&entity.Image{},
 	)
 
 	fmt.Println("db connected: ", &conn)
