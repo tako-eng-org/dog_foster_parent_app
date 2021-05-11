@@ -95,7 +95,6 @@ export default {
             console.error(`Error:${response.statusText}, ${this.getDetail.name}`)
           } else {
             this.post = response.data;
-            console.log(this.post);
           }
         }).catch(err => console.error(err.response));
     },

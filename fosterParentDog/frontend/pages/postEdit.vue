@@ -93,9 +93,7 @@ export default {
 
       post: {
         //基礎投稿
-        // id: 投稿時に自動付与するため、新規作成では無し。update実装時に更新予定
-        // created_at:
-        // updated_at:
+        // TODO: Upload機能。id,created_at、updated_atも
         publishing: 1,
         dogName: "test_dog_name",
         breed: "test_breed",
@@ -110,17 +108,14 @@ export default {
         otherMessage: "test_other_message",
         user_id: 1, // TODO: ログインユーザーのIDが入る(入れないとindex表示時にnullエラーになりdog_app再起動が必要になるためdebug用として1を入れている)
         postImages: [ //画像パスリスト
-          {
+          { //debug用のサンプル
             position: 0,
             objectKey: "images/1_767121c4-4b8b-4874-9690-008e0fcd3fae.png",
             objectUrl: "https://bbsapp-img.s3.us-east-2.amazonaws.com/images/000002.png",
           },
         ],
-        postPrefectureIdList: [], //譲渡可能都道府県リスト
+        postPrefectureIdList: [],
       },
-
-      topObjectUrl: "", //https://bbsapp-img.s3.us-east-2.amazonaws.com/images/1_8a217b9f-b0de-441f-b68d-861a7cd5f4be.png
-      topObjectKey: "", //images/1_8a217b9f-b0de-441f-b68d-861a7cd5f4be.png
     }
   },
   computed: {},
@@ -129,11 +124,10 @@ export default {
      * 1投稿のpositionが最小値(原則0)のobjectKeyを取得する
      * @param {object} post
      */
+    // TODO: この関数は使用していません。imagesテーブル定義後に改修予定。
     getTopObjectUrl() {
       let min = Math.min(...this.post.postImages.map(x => x.position));
       let objectKeyByMinPosition = this.post.postImages.filter(e => (e.position === min))[0].object_key;
-      console.log("objectKeyByMinPosition-------");
-      console.log(objectKeyByMinPosition);
       return objectKeyByMinPosition
     },
 
@@ -155,16 +149,12 @@ export default {
         appeal_point: this.post.appealPoint,
         other_message: this.post.otherMessage,
         user_id: this.user_id,
-        top_object_key: this.topObjectKey,
         object_key_list: [
           "12345",
           "6789",
         ],
         post_prefecture_id_list: this.post.postPrefectureIdList
       }
-      // console.log("--------postJSON");
-      // console.log(postJson);
-      // console.log("--------postCreate");
       this.$axios.post('/api/post_create', postJson)
         .then((response) => {
           if ((response.status !== 201)) {
@@ -186,7 +176,7 @@ export default {
       formData.append('image', file.files[0]);
       formData.append('user_id', this.post.user_id);
       formData.append('position', position);
-      console.log(...formData.entries());
+      console.log(...formData.entries()); //debug用
       return new Promise((resolve, reject) => {
         this.$axios.post('/api/image_upload', formData, {
             headers: {
@@ -199,33 +189,25 @@ export default {
               console.error(`画像アップロードエラー:${response.status} ${response.statusText}`)
             } else {
               console.log(`画像アップロード完了:${response.status} ${response.statusText}`);
-              // this.topObjectUrl = response.data.object_url;
-              // this.topObjectKey = response.data.object_key;
-              // console.log(this.topObjectUrl);
-              // console.log(this.topObjectKey);
               let imageArr = {
                 position: response.data.position,
                 objectKey: response.data.object_key,
                 objectUrl: response.data.object_url,
               };
-              console.log("imageArr is --------");
-              console.log(imageArr);
               this.post.postImages.push(imageArr);
-              console.log("this.post.postImages are --------");
-              console.log(this.post.postImages);
             }
           })
           .catch(function (error) {
             if (error.response) {
-              // 要求がなされたとサーバがステータスコードで応答した// 2XXの範囲外
+              // 要求したサーバがステータスコードで応答した// 2XXの範囲外
               console.log(error.response.data);
               console.log(error.response.status);
               console.log(error.response.headers);
             } else if (error.request) {
-              // 要求がなされたが、応答が受信されなかった
+              // 要求したが、応答を受信しなかった
               console.log(error.request);
             } else {
-              // トリガーしたリクエストの設定に何かしらのエラーがある
+              // トリガーしたリクエストの設定になんらかのエラーがある
               console.log('Error', error.message);
             }
             console.log(error.config);

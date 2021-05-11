@@ -51,7 +51,7 @@ func (cont *Controller) IndexList(c *gin.Context) {
 
 	posts := cont.DbConn.FindIndex(page, publishing)
 	var response []index.Response
-	// シリアライザを通しresponseのフィールドに整形して、リスト化する
+	// Post構造体で取得したデータをシリアライザを通しresponseのフィールドに整形して、リスト化する
 	for _, post := range posts {
 		resp := index.Serializer{Post: post}
 		response = append(response, resp.Response())
@@ -75,7 +75,7 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 // 投稿記事テーブルへ記事を1件登録する
 //*******************************************************************
 func (cont *Controller) Create(c *gin.Context) {
-	// JSONを構造体に置き換える（不要なjsonデータを受け取った場合、カットする）
+	// 受けたjsonを構造体に置き換える（Request構造体により、不要なjsonデータはカットする）
 	var request post_edit.Request
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

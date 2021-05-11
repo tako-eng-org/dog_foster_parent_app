@@ -52,7 +52,6 @@ export default {
     this.getIndex(this.currentPage).then(this.generatePagination());
   },
 
-
   data() {
     return {
       objectUrlBase: "https://bbsapp-img.s3.us-east-2.amazonaws.com/",
