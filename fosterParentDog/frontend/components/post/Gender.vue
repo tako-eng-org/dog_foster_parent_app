@@ -1,8 +1,7 @@
 <template>
   <div class="gender">
     <div v-if="readonly">
-      <!--   TODO: indexなどで表示時は、数値1で受け取り文字列を表示する。（props:Number）-->
-      <!--   が、入力時は、文字列で渡ってくる(props:String)のため、型チェックはしないほうが良いか？   -->
+      <!--   TODO: indexなどで表示時は、数値1で受け取り文字列を表示する（props:Number）。入力時は文字列(props:String)のため、型チェックはしないほうが良いか   -->
       性別: {{ genderValue(value) }}
     </div>
     <div v-else>
@@ -36,7 +35,6 @@ export default {
 
   props: {
     value: { //子コンポーネントから親コンポーネントへバインディングする設定
-      // type: String,
       required: true
     },
 
@@ -58,7 +56,7 @@ export default {
         return this.value;
       },
       set(value) {
-        // FIXME: 連想配列のkey。Numberに変換しないと、String型で返してしまいレコード登録できない（バックエンドのstruct型と一致せずJSON変換できない）
+        // 連想配列のkeyとなる。Numberに変換しないとString型で返してしまいレコード登録できない（アプリ側のstruct型と一致せずJSON変換できない）。
         this.$emit('input', Number(value));
       }
     },

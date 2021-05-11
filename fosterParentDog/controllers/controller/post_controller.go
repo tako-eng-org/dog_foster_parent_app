@@ -51,7 +51,7 @@ func (cont *Controller) IndexList(c *gin.Context) {
 
 	posts := cont.DbConn.FindIndex(page, publishing)
 	var response []index.Response
-	// レスポンスの形でリスト化
+	// シリアライザを通しresponseのフィールドに整形して、リスト化する
 	for _, post := range posts {
 		resp := index.Serializer{Post: post}
 		response = append(response, resp.Response())
@@ -83,7 +83,7 @@ func (cont *Controller) Create(c *gin.Context) {
 	}
 
 	req := post_edit.Validator{Post: request}
-	// 構造体をPost型にバインドしてinsertする
+	// reqestをバリデータを通しPost型構造体にして、テーブルへ登録する
 	createdPostId := cont.DbConn.InsertPost(req.Request())
 	c.JSON(http.StatusCreated, createdPostId)
 }
@@ -120,11 +120,11 @@ func (cont *Controller) ImageUpload(c *gin.Context) {
 	}
 
 	// postImagesテーブルへオブジェクトキーを登録する（idは空）
+	// TODO: post-postimage-imagesテーブル定義を確定後、処理を変更する
 	targetStruct := entity.PostImage{
 		// FIXME: positionが0にならず、1になる
 		Position: position,
-		// TODO: post-postimage-imagesテーブル定義を確定後、処理を追加する
-		//ImagePath: objectKey,
+		//ImagePath: objectKey, 以前の処理.改修時に削除すること
 	}
 	registeredPostImage := cont.DbConn.InsertPostImage(&targetStruct)
 
@@ -139,11 +139,11 @@ func (cont *Controller) ImageUpload(c *gin.Context) {
 		registeredPostImage.Position,
 	}
 
-	// {ObjectUrl:https://bbsapp-img.s3.us-east-2.amazonaws.com/images/1_b3dbd289-25c7-4f15-ad9d-46fd1f16f2ff.png ObjectKey:images/1_b3dbd289-25c7-4f15-ad9d-46fd1f16f2ff.png Position:1}
+	// ex: {ObjectUrl:https://bbsapp-img.s3.us-east-2.amazonaws.com/images/1_b3dbd289-25c7-4f15-ad9d-46fd1f16f2ff.png ObjectKey:images/1_b3dbd289-25c7-4f15-ad9d-46fd1f16f2ff.png Position:1}
 	c.JSON(http.StatusCreated, response)
 
 	// 仮置きディレクトリに入っているファイルを削除する
-	// TODO: 期待通り削除はできるけどエラーでる remove /app/images/image_01.png: no such file or directory
+	// TODO: 期待通り削除はできるが、コンソールエラーになる remove /app/images/image_01.png: no such file or directory
 	if err := os.Remove(saveFileFullPath); err != nil {
 		fmt.Println(err)
 	}
@@ -155,7 +155,7 @@ func UploadToS3(localFileFullPath string, userId string) (string, string, error)
 		Profile:           "default",
 		SharedConfigState: session.SharedConfigEnable,
 	}))
-	// TODO: どちらを採用するか決める
+	// TODO: 本番環境へデプロイしやすい処理にする（コンフィグ設定の方が煩雑ではなさそう）
 	//sess := session.Must(session.NewSession(&aws.Config{
 	//	Region:      aws.String("us-east-2"),
 	//	Credentials: credentials.NewSharedCredentials("/root/.aws/credentials", "default"),
@@ -192,7 +192,7 @@ func UploadToS3(localFileFullPath string, userId string) (string, string, error)
 	uu := u.String()
 
 	bucketName := "bbsapp-img"
-	// ex: awsS3の {バケット}/images/123_2c2ddd5f-6571-4c8c-8f5e-b04a11250092.png
+	// ex: "/images/123_2c2ddd5f-6571-4c8c-8f5e-b04a11250092.png"
 	objectKey := "images/" + userId + "_" + uu + extension
 
 	// Uploaderを作成し、ローカルファイルをS3へアップロードする

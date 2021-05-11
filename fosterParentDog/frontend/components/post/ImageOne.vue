@@ -12,7 +12,6 @@
 export default {
   props: {
     imagePath: {
-      // type: String, //画像URL
       required: true
     },
   },
