@@ -55,6 +55,8 @@ export default {
 
   data() {
     return {
+      objectUrlBase: "https://bbsapp-img.s3.us-east-2.amazonaws.com/",
+
       // TODO: 初期値を書いた方が良いか確認すること
       posts: [], // 投稿記事
 
@@ -74,8 +76,8 @@ export default {
      */
     getIndexImagePath(post) {
       let min = Math.min(...post.post_images.map(x => x.position));
-      let ImagePathByMinPosition = post.post_images.filter(e => (e.position === min))[0].image_path;
-      return ImagePathByMinPosition
+      let objectKeyByMinPosition = post.post_images.filter(e => (e.position === min))[0].image_path;
+      return this.objectUrlBase + objectKeyByMinPosition
     },
     /**
      * 指定したページの投稿一覧を取得する
