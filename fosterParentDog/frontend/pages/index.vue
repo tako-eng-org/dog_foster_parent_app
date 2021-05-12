@@ -75,8 +75,8 @@ export default {
      */
     // FIXME: 動作するが改修予定。imagesテーブル定義をしてから処理変更
     getIndexImagePath(post) {
-      let min = Math.min(...post.post_images.map(x => x.position));
-      let objectKeyByMinPosition = post.post_images.filter(e => (e.position === min))[0].objectKey;
+      const min = Math.min(...post.post_images.map(x => x.position));
+      const objectKeyByMinPosition = post.post_images.filter(e => (e.position === min))[0].objectKey;
       return this.objectUrlBase + objectKeyByMinPosition
     },
     /**

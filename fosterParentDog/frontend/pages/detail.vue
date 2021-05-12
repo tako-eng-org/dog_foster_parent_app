@@ -74,8 +74,8 @@ export default {
      */
     // FIXME: この関数は動作しません。map取れない Cannot read property 'map' of undefined
     // getTopObjectUrl(postImageObj) {
-    // let min = Math.min(postImageObj.map(x => x.position));
-    // let ImagePathByMinPosition = (postObj.post_images || []).filter(e => (e.position === min))[0].objectKey
+    // const min = Math.min(postImageObj.map(x => x.position));
+    // const ImagePathByMinPosition = (postObj.post_images || []).filter(e => (e.position === min))[0].objectKey
     // return ImagePathByMinPosition
     // },
 
@@ -85,7 +85,7 @@ export default {
      */
     getDetail(currentPostId) {
       this.$axios.get('/api/post', {
-          params: {
+        params: {
             postId: currentPostId,
           }
         }

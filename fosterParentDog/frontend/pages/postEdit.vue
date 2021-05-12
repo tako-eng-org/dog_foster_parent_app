@@ -104,8 +104,8 @@ export default {
      */
     // TODO: この関数は使用していません。imagesテーブル定義後に改修予定。
     getTopObjectUrl() {
-      let min = Math.min(...this.post.postImages.map(x => x.position));
-      let objectKeyByMinPosition = this.post.postImages.filter(e => (e.position === min))[0].object_key;
+      const min = Math.min(...this.post.postImages.map(x => x.position));
+      const objectKeyByMinPosition = this.post.postImages.filter(e => (e.position === min))[0].object_key;
       return objectKeyByMinPosition
     },
 
