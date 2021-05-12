@@ -3,40 +3,28 @@
   <div class="post-edit">
     <div class="container">
       <TextBox :title="'犬の名前'" v-model="post.dogName" :readonly="false"/>
-      <p class="text-primary">debug_犬の名前:{{ post.dogName }}</p>
 
       <TextBox :title="'犬種'" v-model="post.breed" :readonly="false"/>
-      <p class="text-primary">debug_犬種:{{ post.breed }}</p>
 
       <Gender v-model="post.gender" :readonly="false"/>
-      <p class="text-primary">debug_性別:{{ post.gender }}</p>
 
       <Spay v-model="post.spay" :readonly="false"/>
-      <p class="text-primary">debug_去勢手術:{{ post.spay }}</p>
 
       <TextBox :title="'年齢'" v-model="post.old" :readonly="false"/>
-      <p class="text-primary">debug_年齢:{{ post.old }}</p>
 
       <SinglePerson v-model="post.singlePerson" :readonly="false"/>
-      <p class="text-primary">debug_単身者への譲渡:{{ post.singlePerson }}</p>
 
       <SeniorPerson v-model="post.seniorPerson" :readonly="false"/>
-      <p class="text-primary">debug_高齢者への譲渡:{{ post.seniorPerson }}</p>
 
       <TransferStatus v-model="post.transferStatus" :readonly="false"/>
-      <p class="text-primary">debug_譲渡ステータス:{{ post.transferStatus }}</p>
 
       <TextBox :title="'自己紹介'" v-model="post.introduction" :readonly="false"/>
-      <p class="text-primary">debug_自己紹介:{{ post.introduction }}</p>
 
       <TextBox :title="'アピールポイント'" v-model="post.appealPoint" :readonly="false"/>
-      <p class="text-primary">debug_アピールポイント:{{ post.appealPoint }}</p>
 
       <PostPrefecture v-model="post.postPrefectureIdList" :readonly="false"/>
-      <p class="text-primary">debug_譲渡可能都道府県:{{ post.postPrefectureIdList }}</p>
 
       <TextBox :title="'その他特記事項'" v-model="post.otherMessage" :readonly="false"/>
-      <p class="text-primary">debug_その他特記事項:{{ post.otherMessage }}</p>
 
       <hr>
       <!-- 画像アップロード -->

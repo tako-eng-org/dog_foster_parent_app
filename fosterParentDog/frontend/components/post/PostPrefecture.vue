@@ -12,8 +12,6 @@
           <input type="checkbox" id="check" :value="Number(index)" v-model="inputValue">
           <label for="check">{{ prefecture }}</label>
         </div>
-        <p>value: {{ value }}</p>
-        <p>inputValue: {{ inputValue }}</p>
       </div>
     </div>
   </div>

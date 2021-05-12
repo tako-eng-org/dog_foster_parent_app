@@ -13,8 +13,6 @@
           </select>
         </label>
       </form>
-      inputValue: {{ inputValue }}<br>
-      type: {{ typeof (inputValue) }}
     </div>
   </div>
 </template>
