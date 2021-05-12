@@ -39,7 +39,7 @@ export default {
 
   props: {
     value: { //子コンポーネントから親コンポーネントへバインディングする設定
-      default: [],
+      default: () => ([]), //default:[]にした場合、 [Vue warn]: Invalid default value for prop "value": Props with type Object/Array must use a factory function to return the default value.
       required: true
     },
 

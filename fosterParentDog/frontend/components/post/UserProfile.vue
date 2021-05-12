@@ -1,6 +1,6 @@
 <template>
   <div class="user-profile">
-    <div class="container" :key="user.id">
+    <div class="container">
       <div class="row"><p>投稿者情報</p></div>
       <div class="row"><p>ニックネーム : {{ user.nickname }}</p></div>
       <div class="row"><p>プロフィール : {{ user.profile }}</p></div>
