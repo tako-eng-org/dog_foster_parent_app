@@ -51,7 +51,6 @@ func (cont *Controller) IndexList(c *gin.Context) {
 
 	posts := cont.DbConn.FindIndex(page, publishing)
 	var response []index.Response
-	// Post構造体で取得したデータをシリアライザを通しresponseのフィールドに整形して、リスト化する
 	for _, post := range posts {
 		resp := index.Serializer{Post: post}
 		response = append(response, resp.Response())
@@ -76,7 +75,6 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 //*******************************************************************
 // TODO: Upsertに改修（優先度低）
 func (cont *Controller) Create(c *gin.Context) {
-	// 受けたjsonを構造体に置き換える（Request構造体により、不要なjsonデータはカットする）
 	var request post_edit.Request
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -129,7 +127,6 @@ func (cont *Controller) ImageUpload(c *gin.Context) {
 	}
 	registeredPostImage := cont.DbConn.InsertPostImage(&targetStruct)
 
-	// S3のオブジェクトURLとオブジェクトキーをjsonでレスポンスする
 	response := struct {
 		ObjectUrl string `json:"object_url"`
 		ObjectKey string `json:"object_key"`
@@ -196,7 +193,7 @@ func UploadToS3(localFileFullPath string, userId string) (string, string, error)
 	// ex: "/images/123_2c2ddd5f-6571-4c8c-8f5e-b04a11250092.png"
 	objectKey := "images/" + userId + "_" + uu + extension
 
-	// Uploaderを作成し、ローカルファイルをS3へアップロードする
+	// ローカルファイルをS3へアップロードする
 	uploader := s3manager.NewUploader(sess)
 	out, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket:      aws.String(bucketName),
