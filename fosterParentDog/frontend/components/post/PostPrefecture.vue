@@ -7,11 +7,9 @@
       </div>
     </div>
     <div v-else>
-      <div class="form-check">
-        <div v-for="(prefecture, index) in prefectureList()" :key="index">
-          <input type="checkbox" id="check" :value="Number(index)" v-model="inputValue">
-          <label for="check">{{ prefecture }}</label>
-        </div>
+      <div v-for="(prefecture, index) in prefectureList()" :key="index">
+        <input type="checkbox" id="check" :value="Number(index)" v-model="inputValue">
+        <label for="check">{{ prefecture }}</label>
       </div>
     </div>
   </div>
@@ -23,11 +21,6 @@ import {prefectureList, prefectureValue} from "~/consts/prefectureList";
 export default {
   data() {
     return {
-      ioMode: { // read/write時の表示切り替え
-        'form-control-plaintext': this.readonly,
-        readonly: this.readonly,
-      },
-
     }
   },
 

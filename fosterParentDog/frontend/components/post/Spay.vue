@@ -4,15 +4,13 @@
       去勢/避妊手術: {{ spayValue(value) }}
     </div>
     <div v-else>
-      <form class="form-inline">
-        <label>去勢/避妊手術
-          <select v-model="inputValue" class="form-control">
-            <option v-for="(spay, index) in spayList()" :value="index">
-              {{ spay }}
-            </option>
-          </select>
-        </label>
-      </form>
+      <label>去勢/避妊手術
+        <select v-model="inputValue" class="form-control">
+          <option v-for="(spay, index) in spayList()" :value="index">
+            {{ spay }}
+          </option>
+        </select>
+      </label>
     </div>
   </div>
 </template>
@@ -22,12 +20,7 @@ import {spayList, spayValue} from "~/consts/spayList";
 
 export default {
   data() {
-    return {
-      ioMode: { // read/write時の表示切り替え
-        'form-control-plaintext': this.readonly,
-        readonly: this.readonly,
-      }
-    }
+    return {}
   },
 
   props: {

@@ -4,15 +4,13 @@
       高齢者への譲渡: {{ seniorPersonValue(value) }}
     </div>
     <div v-else>
-      <form class="form-inline">
-        <label>高齢者への譲渡
-          <select v-model="inputValue" class="form-control">
-            <option v-for="(seniorPerson, index) in seniorPersonList()" :value="index">
-              {{ seniorPerson }}
-            </option>
-          </select>
-        </label>
-      </form>
+      <label>高齢者への譲渡
+        <select v-model="inputValue" class="form-control">
+          <option v-for="(seniorPerson, index) in seniorPersonList()" :value="index">
+            {{ seniorPerson }}
+          </option>
+        </select>
+      </label>
     </div>
   </div>
 </template>
@@ -23,10 +21,6 @@ import {seniorPersonList, seniorPersonValue} from "~/consts/seniorPersonList";
 export default {
   data() {
     return {
-      ioMode: { // read/write時の表示切り替え
-        'form-control-plaintext': this.readonly,
-        readonly: this.readonly,
-      },
     }
   },
 

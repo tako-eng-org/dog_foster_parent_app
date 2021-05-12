@@ -2,29 +2,53 @@
   <!-- TODO 新規追加,更新の順に作成する -->
   <div class="post-edit">
     <div class="container">
-      <TextBox :title="'犬の名前'" v-model="post.dogName" :readonly="false"/>
+      <form class="form-inline">
+        <TextBox :title="'犬の名前'" v-model="post.dogName" :readonly="false"/>
+      </form>
 
-      <TextBox :title="'犬種'" v-model="post.breed" :readonly="false"/>
+      <form class="form-inline">
+        <TextBox :title="'犬種'" v-model="post.breed" :readonly="false"/>
+      </form>
 
-      <Gender v-model="post.gender" :readonly="false"/>
+      <form class="form-inline">
+        <Gender v-model="post.gender" :readonly="false"/>
+      </form>
 
-      <Spay v-model="post.spay" :readonly="false"/>
+      <form class="form-inline">
+        <Spay v-model="post.spay" :readonly="false"/>
+      </form>
 
-      <TextBox :title="'年齢'" v-model="post.old" :readonly="false"/>
+      <form class="form-inline">
+        <TextBox :title="'年齢'" v-model="post.old" :readonly="false"/>
+      </form>
 
-      <SinglePerson v-model="post.singlePerson" :readonly="false"/>
+      <form class="form-inline">
+        <SinglePerson v-model="post.singlePerson" :readonly="false"/>
+      </form>
 
-      <SeniorPerson v-model="post.seniorPerson" :readonly="false"/>
+      <form class="form-inline">
+        <SeniorPerson v-model="post.seniorPerson" :readonly="false"/>
+      </form>
 
-      <TransferStatus v-model="post.transferStatus" :readonly="false"/>
+      <form class="form-inline">
+        <TransferStatus v-model="post.transferStatus" :readonly="false"/>
+      </form>
 
-      <TextBox :title="'自己紹介'" v-model="post.introduction" :readonly="false"/>
+      <form class="form-inline">
+        <TextBox :title="'自己紹介'" v-model="post.introduction" :readonly="false"/>
+      </form>
 
-      <TextBox :title="'アピールポイント'" v-model="post.appealPoint" :readonly="false"/>
+      <form class="form-inline">
+        <TextBox :title="'アピールポイント'" v-model="post.appealPoint" :readonly="false"/>
+      </form>
 
-      <PostPrefecture v-model="post.postPrefectureIdList" :readonly="false"/>
+      <div class="form-check">
+        <PostPrefecture v-model="post.postPrefectureIdList" :readonly="false"/>
+      </div>
 
-      <TextBox :title="'その他特記事項'" v-model="post.otherMessage" :readonly="false"/>
+      <form class="form-inline">
+        <TextBox :title="'その他特記事項'" v-model="post.otherMessage" :readonly="false"/>
+      </form>
 
       <hr>
       <!-- 画像アップロード -->
