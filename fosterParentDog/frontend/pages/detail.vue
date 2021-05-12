@@ -27,7 +27,7 @@
 
     <hr>
     <!--  ユーザープロフィール表示  -->
-    <UserProfile :user="post.user"/>
+    <UserProfile :value="post.user"/>
   </div>
 </template>
 
