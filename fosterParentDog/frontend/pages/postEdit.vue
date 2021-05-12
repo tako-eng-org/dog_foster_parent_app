@@ -2,68 +2,36 @@
   <!-- TODO 新規追加,更新の順に作成する -->
   <div class="post-edit">
     <div class="container">
-      <form class="form-inline">
+      <form>
         <TextBox :title="'犬の名前'" v-model="post.dogName" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <TextBox :title="'犬種'" v-model="post.breed" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <Gender v-model="post.gender" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <Spay v-model="post.spay" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <TextBox :title="'年齢'" v-model="post.old" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <SinglePerson v-model="post.singlePerson" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <SeniorPerson v-model="post.seniorPerson" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <TransferStatus v-model="post.transferStatus" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <TextBox :title="'自己紹介'" v-model="post.introduction" :readonly="false"/>
-      </form>
-
-      <form class="form-inline">
         <TextBox :title="'アピールポイント'" v-model="post.appealPoint" :readonly="false"/>
-      </form>
-
-      <div class="form-check">
-        <PostPrefecture v-model="post.postPrefectureIdList" :readonly="false"/>
-      </div>
-
-      <form class="form-inline">
+        <div class="form-check">
+          <PostPrefecture v-model="post.postPrefectureIdList" :readonly="false"/>
+        </div>
         <TextBox :title="'その他特記事項'" v-model="post.otherMessage" :readonly="false"/>
+        <hr>
+        <!-- 画像アップロード -->
+        <!--   TODO: 画像の投稿機能は後日再度実装予定。ファイルをアップロードし、ファイル名で表示する。post_idを直指定。プレビュー機能はなし-->
+
+        <!--      <div class="upload-top-image">-->
+        <!--        <input type="file" id="top-image" ref="input">-->
+        <!--        <button type="submit" @click="ImageUpload(0)">トップ画像をアップロードする</button>-->
+        <!--        <ImageOne :objectUrl="getTopObjectUrl()"/>-->
+        <!--      </div>-->
+
+        <!--  投稿ボタン  -->
+        <button type="submit" class="btn btn-primary" @click="postCreate(1)">投稿する</button>
+        <!--  下書きに保存ボタン  -->
+        <button type="submit" class="btn btn-primary" @click="postCreate(0)">下書きに保存する</button>
       </form>
-
-      <hr>
-      <!-- 画像アップロード -->
-      <!--   TODO: 画像の投稿機能は後日再度実装予定。ファイルをアップロードし、ファイル名で表示する。post_idを直指定。プレビュー機能はなし-->
-
-      <!--      <div class="upload-top-image">-->
-      <!--        <input type="file" id="top-image" ref="input">-->
-      <!--        <button type="submit" @click="ImageUpload(0)">トップ画像をアップロードする</button>-->
-      <!--        <ImageOne :objectUrl="getTopObjectUrl()"/>-->
-      <!--      </div>-->
-
-      <!--  投稿ボタン  -->
-      <button type="submit" class="btn btn-primary" @click="postCreate(1)">投稿する</button>
-      <!--  下書きに保存ボタン  -->
-      <button type="submit" class="btn btn-primary" @click="postCreate(0)">下書きに保存する</button>
     </div>
 
   </div>

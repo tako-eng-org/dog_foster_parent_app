@@ -4,13 +4,15 @@
       高齢者への譲渡: {{ seniorPersonValue(value) }}
     </div>
     <div v-else>
-      <label>高齢者への譲渡
-        <select v-model="inputValue" class="form-control">
-          <option v-for="(seniorPerson, index) in seniorPersonList()" :value="index">
-            {{ seniorPerson }}
-          </option>
-        </select>
-      </label>
+      <div class="form-group row">
+        <label>高齢者への譲渡
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(seniorPerson, index) in seniorPersonList()" :value="index">
+              {{ seniorPerson }}
+            </option>
+          </select>
+        </label>
+      </div>
     </div>
   </div>
 </template>
@@ -20,8 +22,7 @@ import {seniorPersonList, seniorPersonValue} from "~/consts/seniorPersonList";
 
 export default {
   data() {
-    return {
-    }
+    return {}
   },
 
   props: {

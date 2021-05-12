@@ -1,5 +1,5 @@
 <template>
-  <div class="form-inline">
+  <div class="form-group row">
     <label>{{ title }}:
       <input type="text"
              v-model="inputValue"

@@ -7,9 +7,11 @@
       </div>
     </div>
     <div v-else>
-      <div v-for="(prefecture, index) in prefectureList()" :key="index">
-        <input type="checkbox" id="check" :value="Number(index)" v-model="inputValue">
-        <label for="check">{{ prefecture }}</label>
+      <div class="form-group row">
+        <div v-for="(prefecture, index) in prefectureList()" :key="index">
+          <input type="checkbox" id="check" :value="Number(index)" v-model="inputValue">
+          <label for="check">{{ prefecture }}</label>
+        </div>
       </div>
     </div>
   </div>
@@ -20,8 +22,7 @@ import {prefectureList, prefectureValue} from "~/consts/prefectureList";
 
 export default {
   data() {
-    return {
-    }
+    return {}
   },
 
   model: {

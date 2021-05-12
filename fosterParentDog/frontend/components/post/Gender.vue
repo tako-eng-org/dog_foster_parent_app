@@ -5,13 +5,15 @@
       性別: {{ genderValue(value) }}
     </div>
     <div v-else>
-      <label>性別
-        <select v-model="inputValue" class="form-control">
-          <option v-for="(gender, index) in genderList()" :value="index">
-            {{ gender }}
-          </option>
-        </select>
-      </label>
+      <div class="form-group row">
+        <label>性別
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(gender, index) in genderList()" :value="index">
+              {{ gender }}
+            </option>
+          </select>
+        </label>
+      </div>
     </div>
   </div>
 </template>
@@ -21,8 +23,7 @@ import {genderList, genderValue} from "~/consts/genderList";
 
 export default {
   data() {
-    return {
-    }
+    return {}
   },
 
   props: {

@@ -1,9 +1,9 @@
 <template>
   <div class="user-profile">
     <div class="container">
-      <div class="row"><p>投稿者情報</p></div>
-      <div class="row"><p>ニックネーム : {{ value.nickname }}</p></div>
-      <div class="row"><p>プロフィール : {{ value.profile }}</p></div>
+      <p>投稿者情報</p>
+      <p>ニックネーム : {{ value.nickname }}</p>
+      <p>プロフィール : {{ value.profile }}</p>
     </div>
   </div>
 </template>

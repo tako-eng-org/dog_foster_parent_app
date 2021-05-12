@@ -4,13 +4,15 @@
       単身者への譲渡: {{ singlePersonValue(value) }}
     </div>
     <div v-else>
-      <label>単身者への譲渡
-        <select v-model="inputValue" class="form-control">
-          <option v-for="(singlePerson, index) in singlePersonList()" :value="index">
-            {{ singlePerson }}
-          </option>
-        </select>
-      </label>
+      <div class="form-group row">
+        <label>単身者への譲渡
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(singlePerson, index) in singlePersonList()" :value="index">
+              {{ singlePerson }}
+            </option>
+          </select>
+        </label>
+      </div>
     </div>
   </div>
 </template>
@@ -20,8 +22,7 @@ import {singlePersonList, singlePersonValue} from "~/consts/singlePersonList";
 
 export default {
   data() {
-    return {
-    }
+    return {}
   },
 
   props: {

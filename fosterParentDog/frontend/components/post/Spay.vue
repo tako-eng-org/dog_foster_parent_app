@@ -4,13 +4,15 @@
       去勢/避妊手術: {{ spayValue(value) }}
     </div>
     <div v-else>
-      <label>去勢/避妊手術
-        <select v-model="inputValue" class="form-control">
-          <option v-for="(spay, index) in spayList()" :value="index">
-            {{ spay }}
-          </option>
-        </select>
-      </label>
+      <div class="form-group row">
+        <label>去勢/避妊手術
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(spay, index) in spayList()" :value="index">
+              {{ spay }}
+            </option>
+          </select>
+        </label>
+      </div>
     </div>
   </div>
 </template>

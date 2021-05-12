@@ -4,13 +4,15 @@
       譲渡ステータス: {{ transferStatusValue(value) }}
     </div>
     <div v-else>
-      <label>譲渡ステータス
-        <select v-model="inputValue" class="form-control">
-          <option v-for="(transferStatus, index) in transferStatusList()" :value="index">
-            {{ transferStatus }}
-          </option>
-        </select>
-      </label>
+      <div class="form-group row">
+        <label>譲渡ステータス
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(transferStatus, index) in transferStatusList()" :value="index">
+              {{ transferStatus }}
+            </option>
+          </select>
+        </label>
+      </div>
     </div>
   </div>
 </template>
@@ -20,8 +22,7 @@ import {transferStatusList, transferStatusValue} from "~/consts/transferStatusLi
 
 export default {
   data() {
-    return {
-    }
+    return {}
   },
 
   props: {
