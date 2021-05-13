@@ -1,52 +1,33 @@
 <template>
   <div class="detail">
-    <div class="container" v-bind:key="post.postBase.id">
-      <ImageOne :imagePath="post.postBase.top_image_path"/>
-      <div class="post_id">
-        <div class="row">
-          <p>投稿No : {{ post.postBase.id }}</p>
-        </div>
+    <div class="container">
+      <!--   FIXME: 画像表示について動作しません。後日改修予定   -->
+      <!--   トップ画像表示   -->
+      <!--            <ImageOne :objectUrl="getTopObjectUrl(post.post_images)"/>-->
+      <div class="post_id row">
+        <p>投稿No : {{ post.id }}</p>
       </div>
-      <TextBox :title="'犬の名前'"
-               :detail="post.postBase.breed"
-               :readonly="true"/>
-      <TextBox :title="'犬種'"
-               :detail="post.postBase.breed"
-               :readonly="true"/>
-      <Gender :itemValue="post.postBase.gender"
-              :readonly="true"/>
-      <Spay :itemValue="post.postBase.spay"
-            :readonly="true"/>
-      <TextBox :title="'年齢'"
-               :detail="post.postBase.old"
-               :readonly="true"/>
-      <SinglePerson :itemValue="post.postBase.single_person"
-                    :readonly="true"/>
-      <SeniorPerson :itemValue="post.postBase.senior_person"
-                    :readonly="true"/>
-      <TransferStatus :itemValue="post.postBase.transfer_status"
-                      :readonly="true"/>
-      <TextBox :title="'自己紹介'"
-               :detail="post.postBase.introduction"
-               :readonly="true"/>
-      <TextBox :title="'投稿日時'"
-               :detail="post.postBase.created_at"
-               :readonly="true"/>
-      <TextBox :title="'アピールポイント'"
-               :detail="post.postBase.appeal_point"
-               :readonly="true"/>
-      <PostPrefecture :postPrefectureList="post.postPrefectureList"
-                      :readonly="true"/>
-      <TextBox :title="'その他特記事項'"
-               :detail="post.postBase.other_message"
-               :readonly="true"/>
+      <TextBox :title="'犬の名前'" :value="post.dog_name"/>
+      <TextBox :title="'犬種'" :value="post.breed"/>
+      <Gender :value="post.gender"/>
+      <Spay :value="post.spay"/>
+      <TextBox :title="'年齢'" :value="post.old"/>
+      <SinglePerson :value="post.single_person"/>
+      <SeniorPerson :value="post.senior_person"/>
+      <TransferStatus :value="post.transfer_status"/>
+      <TextBox :title="'自己紹介'" :value="post.introduction"/>
+      <TextBox :title="'投稿日時'" :value="post.created_at"/>
+      <TextBox :title="'アピールポイント'" :value="post.appeal_point"/>
+      <PostPrefecture :value="post.post_prefectures"/>
+      <TextBox :title="'その他特記事項'" :value="post.other_message"/>
     </div>
 
-    <!--  画像リスト表示  -->
-    <ImageList :imagePathList="post.imagePathList"/>
+    <!--  トップ画像以外の画像を複数表示  -->
+    <!--    <ImageList :objectUrlList="post.postimages"/>-->
 
+    <hr>
     <!--  ユーザープロフィール表示  -->
-    <UserProfile :user="post.user"/>
+    <UserProfile :value="post.user"/>
   </div>
 </template>
 
@@ -80,25 +61,31 @@ export default {
     this.getDetail(this.$route.query.postId);
   },
 
-  data: function () {
+  data() {
     return {
-      post: {
-        postBase: {}, //基礎投稿
-        imagePathList: {}, //画像パスリスト
-        postPrefectureList: {}, //譲渡可能都道府県リスト
-        user: {}, //ユーザー情報
-      },
+      post: {},
     }
   },
   computed: {},
   methods: {
+    /**
+     * トップ画像（1投稿のpositionが最小値(原則0)のobjectUrl）を取得する
+     * @param {object} post
+     */
+    // FIXME: この関数は動作しません。map取れない Cannot read property 'map' of undefined
+    // getTopObjectUrl(postImageObj) {
+    // const min = Math.min(postImageObj.map(x => x.position));
+    // const ImagePathByMinPosition = (postObj.post_images || []).filter(e => (e.position === min))[0].objectKey
+    // return ImagePathByMinPosition
+    // },
+
     /**
      * 投稿IDに紐づいた投稿記事を取得する
      * @param {int} postID
      */
     getDetail(currentPostId) {
       this.$axios.get('/api/post', {
-          params: {
+        params: {
             postId: currentPostId,
           }
         }
@@ -107,14 +94,9 @@ export default {
           if ((response.status !== 200)) {
             console.error(`Error:${response.statusText}, ${this.getDetail.name}`)
           } else {
-            this.post = {
-              postBase: response.data.post,
-              imagePathList: response.data.post_images,
-              postPrefectureList: response.data.post_prefectures,
-              user: response.data.user,
-            }
+            this.post = response.data;
           }
-        }).catch(err => console.error(err));
+        }).catch(err => console.error(err.response));
     },
   },
 }

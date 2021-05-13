@@ -44,7 +44,10 @@ func serve() {
 	// 投稿編集画面
 	// ************************************************
 	// 投稿レコード情報をDBへ登録する
-	router.POST("/add_record", controller.Create)
+	router.POST("/post_create", controller.Create)
+
+	// 画像ファイルをS3へアップロードする
+	router.POST("/image_upload", controller.ImageUpload)
 
 	// ************************************************
 	// 異常系

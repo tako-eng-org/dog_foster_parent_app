@@ -24,21 +24,32 @@ docker-compose up -d pgadmin
 
 ```
 models
-|- db.go
-|   
-|_ entities
+|- db（DB操作にまつわる処理）
+|   |- user_db.go
+|   |- post_db.go
+|   |- post_image_db.go
+|   |_ 省略
+|_ entity（テーブル定義/マイグレーション用）
     |- user.go
     |- post.go
-    |_ post_image.go
-    |_省略
+    |- post_image.go
+    |_ 省略
 controllers
 |- post_controller.go
 |- user_controller.go
-|_省略
-serializers (controllerと対)
-|- post_serializer.go
-|- user_serializer.go
-|_省略
+|_ 省略
+serializers (エンドポイントごとに存在する。DB取得データをレスポンスに整形する)
+|- index
+|   |_ index_seliarizer.go
+|- detail
+|   |_ detail_serializer.go
+|_ 省略
+validators (エンドポイントごとに存在する。リクエストをDBデータ型に整形する)
+|- post_edit
+|   |_ post_edit_validator.go
+|_ 省略
+frontend（UIに関する資材）
+|_ 省略
 ```
 
 ### GoLand(IDE)でDockerコンテナへリモートデバッグする方法

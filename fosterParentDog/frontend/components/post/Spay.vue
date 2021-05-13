@@ -1,15 +1,17 @@
 <template>
   <div class="spay">
-    <div class="row">
-      <div v-if="readonly">
-        <p>去勢/避妊手術: {{ spayValue(itemValue) }}</p>
-      </div>
-      <div v-else>
-        <select v-model="selected">
-          <option v-for="spay in spayList" v-bind:value="spay.value">
-            去勢/避妊手術 {{ spay.label }}
-          </option>
-        </select>
+    <div v-if="readonly">
+      去勢/避妊手術: {{ spayValue(value) }}
+    </div>
+    <div v-else>
+      <div class="form-group row">
+        <label>去勢/避妊手術
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(spay, index) in spayList()" :value="index">
+              {{ spay }}
+            </option>
+          </select>
+        </label>
       </div>
     </div>
   </div>
@@ -20,17 +22,36 @@ import {spayList, spayValue} from "~/consts/spayList";
 
 export default {
   data() {
-    return {
-      spayList,
-    }
+    return {}
   },
+
   props: {
-    itemValue: Number,
-    selected: "",
-    readonly: true,
+    value: { //子コンポーネントから親コンポーネントへバインディングする設定
+      required: true
+    },
+
+    readonly: {
+      type: Boolean,
+      default: true,
+      required: false,
+    },
   },
+
   methods: {
+    spayList,
     spayValue,
-  }
+  },
+
+  computed: {
+    inputValue: { //子コンポーネントから親コンポーネントへバインディングする設定
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit('input', Number(value));
+      }
+    },
+  },
+
 }
 </script>

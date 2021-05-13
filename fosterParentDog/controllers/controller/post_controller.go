@@ -1,11 +1,22 @@
 package controller
 
 import (
+	"errors"
+	"fmt"
 	"fpdapp/models/entity"
-	"fpdapp/serializers"
+	"fpdapp/serializers/detail"
+	"fpdapp/serializers/index"
+	"fpdapp/validators/post_edit"
+	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 //*******************************************************************
@@ -28,7 +39,6 @@ func (cont *Controller) CountPost(c *gin.Context) {
 	}{
 		count,
 	}
-
 	c.JSON(http.StatusOK, response)
 }
 
@@ -38,9 +48,14 @@ func (cont *Controller) CountPost(c *gin.Context) {
 func (cont *Controller) IndexList(c *gin.Context) {
 	page := c.DefaultQuery("page", "1")
 	publishing := c.DefaultQuery("publishing", public)
-	model := cont.DbConn.FindIndex(page, publishing)
-	serializer := serializers.PostsSerializer{C: c, Posts: model}
-	c.JSON(http.StatusOK, serializer.Response())
+
+	posts := cont.DbConn.FindIndex(page, publishing)
+	var response []index.Response
+	for _, post := range posts {
+		resp := index.Serializer{Post: post}
+		response = append(response, resp.Response())
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 //*******************************************************************
@@ -50,53 +65,146 @@ func (cont *Controller) FetchPost(c *gin.Context) {
 	postId := c.Query("postId")
 
 	postModel := cont.DbConn.FindPost(postId)
-	postSerializer := serializers.PostSerializer{C: c, Post: postModel}
+	detailSerializer := detail.Serializer{Post: postModel}
 
-	postImageModel := cont.DbConn.FindPostImages(postId)
-	postImageSerializer := serializers.PostImagesSerializer{C: c, PostImages: postImageModel}
-
-	postPrefectureListModel := cont.DbConn.FindPostPrefectures(postId)
-	postPrefectureListSerializer := serializers.PostPrefecturesSerializer{C: c, PostPrefectures: postPrefectureListModel}
-
-	postUserModel := cont.DbConn.FindUser(postModel.UserId)
-	postUserSerializer := serializers.UserSerializer{C: c, User: postUserModel}
-
-	response := struct {
-		Post            serializers.PostResponse             `json:"post"`
-		PostImages      []serializers.PostImageResponse      `json:"post_images"`
-		PostPrefectures []serializers.PostPrefectureResponse `json:"post_prefectures"`
-		User            serializers.UserResponse             `json:"user"`
-	}{
-		postSerializer.Response(),
-		postImageSerializer.Response(),
-		postPrefectureListSerializer.Response(),
-		postUserSerializer.Response(),
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, detailSerializer.Response())
 }
 
 //*******************************************************************
 // 投稿記事テーブルへ記事を1件登録する
 //*******************************************************************
+// TODO: Upsertに改修（優先度低）
 func (cont *Controller) Create(c *gin.Context) {
-	// TODO バリデーション（投稿編集画面作成時に実装予定）
-	var post = entity.Post{
-		Publishing:     strToInt(c.PostForm("publishing")),
-		DogName:        c.PostForm("dog_name"),
-		Breed:          c.PostForm("breed"),
-		Gender:         strToInt(c.PostForm("gender")),
-		Spay:           strToInt(c.PostForm("spay")),
-		Old:            c.PostForm("old"),
-		SinglePerson:   strToInt(c.PostForm("single_person")),
-		SeniorPerson:   strToInt(c.PostForm("senior_person")),
-		TransferStatus: strToInt(c.PostForm("transfer_status")),
-		Introduction:   c.PostForm("introduction"),
-		AppealPoint:    c.PostForm("appeal_point"),
-		OtherMessage:   c.PostForm("other_message"),
-		UserId:         strToUint64(c.PostForm("user_id")),
-		TopImagePath:   c.PostForm("top_image_path"),
+	var request post_edit.Request
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	cont.DbConn.InsertPost(&post)
-	c.JSON(http.StatusCreated, post.ID)
+
+	req := post_edit.Validator{Post: request}
+	// requestをバリデータを通しPost型構造体にして、テーブルへ登録する
+	createdPostId := cont.DbConn.InsertPost(req.Request())
+	c.JSON(http.StatusCreated, createdPostId)
+}
+
+//*******************************************************************
+// クライアントから送信されたファイルをローカルに仮保存し、awsS3にアップロードし、
+// S3の{オブジェクトURL}と{オブジェクトキー}をレスポンスとして返す。
+//*******************************************************************
+func (cont *Controller) ImageUpload(c *gin.Context) {
+	userId := c.PostForm("user_id")              //投稿者のuserID
+	file, err := c.FormFile("image")             //アップロード対象ファイル
+	position := strToInt(c.PostForm("position")) //画像の順番
+	if err != nil {
+		c.String(http.StatusBadRequest, "Bad request")
+		return
+	}
+	tmpDirName := "/app/images/"                   //S3にアップロードするファイルを仮置きするディレクトリ
+	saveFileFullPath := tmpDirName + file.Filename // ex: /app/images/wan-chan.png
+
+	// 仮置き用ディレクトリがなければ作成する
+	if _, err := os.Stat(tmpDirName); os.IsNotExist(err) {
+		os.Mkdir(tmpDirName, 0777)
+	}
+
+	// 受信したファイルを仮置き用ディレクトリへ保存する
+	if err := c.SaveUploadedFile(file, saveFileFullPath); err != nil {
+		fmt.Println(err.Error())
+	}
+
+	// 仮置きしたファイルをS3へアップロードする
+	objectUrl, objectKey, err := UploadToS3(saveFileFullPath, userId)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	// postImagesテーブルへオブジェクトキーを登録する（idは空）
+	// TODO: post-postimage-imagesテーブル定義を確定後、処理を変更する
+	targetStruct := entity.PostImage{
+		// FIXME: positionが0にならず、1になる
+		Position: position,
+		//ObjectKey: objectKey, 以前の処理.改修時に削除すること
+	}
+	registeredPostImage := cont.DbConn.InsertPostImage(&targetStruct)
+
+	response := struct {
+		ObjectUrl string `json:"object_url"`
+		ObjectKey string `json:"object_key"`
+		Position  int    `json:"position"`
+	}{
+		objectUrl,
+		objectKey,
+		registeredPostImage.Position,
+	}
+
+	// ex: {ObjectUrl:https://bbsapp-img.s3.us-east-2.amazonaws.com/images/1_b3dbd289-25c7-4f15-ad9d-46fd1f16f2ff.png ObjectKey:images/1_b3dbd289-25c7-4f15-ad9d-46fd1f16f2ff.png Position:1}
+	c.JSON(http.StatusCreated, response)
+
+	// 仮置きディレクトリに入っているファイルを削除する
+	// TODO: 期待通り削除はできるが、コンソールエラーになる remove /app/images/image_01.png: no such file or directory
+	if err := os.Remove(saveFileFullPath); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func UploadToS3(localFileFullPath string, userId string) (string, string, error) {
+	// sessionの作成
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		Profile:           "default",
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+	// TODO: 本番環境へデプロイしやすい処理にする（コンフィグ設定の方が煩雑ではなさそう）
+	//sess := session.Must(session.NewSession(&aws.Config{
+	//	Region:      aws.String("us-east-2"),
+	//	Credentials: credentials.NewSharedCredentials("/root/.aws/credentials", "default"),
+	//}))
+
+	// ローカルに保存したファイルの存在確認とポインタ取得
+	file, err := os.Open(localFileFullPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	// 仮置きファイルの拡張子から、指定するcontent-Typeを判定する
+	extension := filepath.Ext(localFileFullPath)
+	var contentType string
+	switch extension {
+	case ".jpg":
+		contentType = "image/jpeg"
+	case ".jpeg":
+		contentType = "image/jpeg"
+	case ".gif":
+		contentType = "image/gif"
+	case ".png":
+		contentType = "image/png"
+	default:
+		return "", "", errors.New("this extension is invalid")
+	}
+
+	// オブジェクトキーの元になるuuidを作成する
+	u, err := uuid.NewRandom()
+	if err != nil {
+		log.Fatal(err)
+	}
+	uu := u.String()
+
+	bucketName := "bbsapp-img"
+	// ex: "/images/123_2c2ddd5f-6571-4c8c-8f5e-b04a11250092.png"
+	objectKey := "images/" + userId + "_" + uu + extension
+
+	// ローカルファイルをS3へアップロードする
+	uploader := s3manager.NewUploader(sess)
+	out, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket:      aws.String(bucketName),
+		Key:         aws.String(objectKey),
+		ContentType: aws.String(contentType),
+		Body:        file,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	objectUrl := out.Location
+
+	return objectUrl, objectKey, err
 }

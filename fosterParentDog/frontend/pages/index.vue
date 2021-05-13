@@ -2,27 +2,18 @@
   <div class="top">
     <h1>里親募集 掲示板</h1>
     <!--  投稿記事 一覧表示  -->
-    <div class="container" v-for="post in posts" v-bind:key="post.id">
-      <ImageOne :imagePath="post.top_image_path"/>
-      <div class="goDetail">
-        <div class="row">
-          <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
-          <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
-            #{{ post.id }} {{ post.dog_name }}
-          </NuxtLink>
-        </div>
+    <div class="container" v-for="post in posts" :key="post.id">
+      <ImageOne :objectUrl="getIndexImagePath(post)"/>
+      <div class="goDetail row">
+        <!--   クエリに投稿IDをセットし/detail?postId=XXXへルーティング     -->
+        <NuxtLink :to="{path: '/detail', query: {postId: `${post.id}`}}">
+          #{{ post.id }} {{ post.dog_name }}
+        </NuxtLink>
       </div>
-      <TextBox :title="'犬種'"
-               :detail="post.breed"
-               :readonly="true"/>
-      <Gender :itemValue="post.gender"
-              :readonly="true"/>
-      <TextBox :title="'自己紹介'"
-               :detail="post.introduction"
-               :readonly="true"/>
-      <TextBox :title="'投稿日時'"
-               :detail="post.created_at"
-               :readonly="true"/>
+      <TextBox :title="'犬種'" v-model="post.breed"/>
+      <Gender v-model="post.gender"/>
+      <TextBox :title="'自己紹介'" v-model="post.introduction"/>
+      <TextBox :title="'投稿日時'" v-model="post.created_at"/>
       <br>
     </div>
 
@@ -63,18 +54,31 @@ export default {
 
   data() {
     return {
+      objectUrlBase: "https://bbsapp-img.s3.us-east-2.amazonaws.com/",
+
+      // TODO: 初期値を書いた方が良いか確認すること
       posts: [], // 投稿記事
 
       //ページネーション設定
       currentPage: 1, //現在のページ（初期は1）
       showPages: 5, //ページネーションを何ページ表示するか（奇数でないとずれる）
       perPage: 20, //1ページの表示件数
-      totalCount: Number, //取得したレコードの総件数
-      totalPages: Number, //算出後の総ページ数
+      totalCount: 0, //取得したレコードの総件数
+      totalPages: 0, //算出後の総ページ数
     }
   },
   computed: {},
   methods: {
+    /**
+     * 1投稿のpositionが最小値(原則0)のobjectUrlを取得する
+     * @param {object} post
+     */
+    // FIXME: 動作するが改修予定。imagesテーブル定義をしてから処理変更
+    getIndexImagePath(post) {
+      const min = Math.min(...post.post_images.map(x => x.position));
+      const objectKeyByMinPosition = post.post_images.filter(e => (e.position === min))[0].objectKey;
+      return this.objectUrlBase + objectKeyByMinPosition
+    },
     /**
      * 指定したページの投稿一覧を取得する
      * @param {int} pageNum
@@ -95,7 +99,7 @@ export default {
             } else {
               this.posts = response.data;
             }
-          }).catch(err => console.error(err));
+          }).catch(err => console.error(err.response));
       })
     },
 
@@ -121,14 +125,14 @@ export default {
               this.totalCount = response.data.count; // 公開/非公開記事数 ex: 41
               this.totalPages = Math.ceil(this.totalCount / this.perPage); // 総ページ数 ex: 3
             }
-          }).catch(err => console.error(err));
+          }).catch(err => console.error(err.response));
       })
     },
   },
 }
 </script>
 
-<!-- cssはassetsから自動で読み込む-->
+<!-- cssは原則、assetsから自動で読み込む-->
 <style scoped>
 .top {
   overflow: hidden;

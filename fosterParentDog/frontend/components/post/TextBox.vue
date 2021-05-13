@@ -1,19 +1,54 @@
 <template>
-  <div class="component">
-    <div class="row">
-      <!--   TODO readonly=falseで入力モード   -->
-      {{ title }}:<input type="text" readonly class="form-control-plaintext" readonly="true" :value="detail">
-    </div>
+  <div class="form-group row">
+    <label>{{ title }}:
+      <input type="text"
+             v-model="inputValue"
+             :class="className"
+             :readonly="readonly"
+      >
+    </label>
   </div>
 </template>
 
 <script>
 export default {
-  props: {
-    title: String,
-    detail: String,
-    readonly: true,
+  data() {
+    return {
+      className: this.readonly ? 'form-control-plaintext' : 'form-control'
+    }
   },
+
+  props: {
+    value: { //子コンポーネントから親コンポーネントへバインディングする設定
+      type: String,
+      default: "debug_TextBoxのvalue初期値",
+      required: true
+    },
+
+    readonly: {
+      type: Boolean,
+      default: true,
+      required: false,
+    },
+
+    title: {
+      type: String,
+      default: "debug_TextBoxのtitle初期値",
+      required: true,
+    },
+
+  },
+
+  computed: {
+    inputValue: { //子コンポーネントから親コンポーネントへバインディングする設定
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit('input', value);
+      }
+    },
+  },
+
 }
-// TODO if readonlyの時は、inputの内容を入力する
 </script>

@@ -1,15 +1,17 @@
 <template>
   <div class="senior-person">
-    <div class="row">
-      <div v-if="readonly">
-        <p>高齢者への譲渡: {{ seniorPersonValue(itemValue) }}</p>
-      </div>
-      <div v-else>
-        <select v-model="selected">
-          <option v-for="seniorPerson in seniorPersonList" v-bind:value="seniorPerson.value">
-            高齢者への譲渡 {{ seniorPerson.label }}
-          </option>
-        </select>
+    <div v-if="readonly">
+      高齢者への譲渡: {{ seniorPersonValue(value) }}
+    </div>
+    <div v-else>
+      <div class="form-group row">
+        <label>高齢者への譲渡
+          <select v-model="inputValue" class="form-control">
+            <option v-for="(seniorPerson, index) in seniorPersonList()" :value="index">
+              {{ seniorPerson }}
+            </option>
+          </select>
+        </label>
       </div>
     </div>
   </div>
@@ -20,17 +22,34 @@ import {seniorPersonList, seniorPersonValue} from "~/consts/seniorPersonList";
 
 export default {
   data() {
-    return {
-      seniorPersonList,
-    }
+    return {}
   },
+
   props: {
-    itemValue: Number,
-    selected: "",
-    readonly: true,
+    value: { //子コンポーネントから親コンポーネントへバインディングする設定
+      required: true
+    },
+
+    readonly: {
+      type: Boolean,
+      default: true,
+      required: false,
+    },
   },
   methods: {
+    seniorPersonList,
     seniorPersonValue,
-  }
+  },
+
+  computed: {
+    inputValue: { //子コンポーネントから親コンポーネントへバインディングする設定
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit('input', Number(value));
+      }
+    },
+  },
 }
 </script>

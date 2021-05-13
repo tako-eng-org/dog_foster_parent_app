@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "NODE_ENV=development PORT=3000 nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "NODE_ENV=staging nuxt generate",
