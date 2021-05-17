@@ -34,6 +34,7 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     'bootstrap-vue/nuxt',
+    'cookie-universal-nuxt',
   ],
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
