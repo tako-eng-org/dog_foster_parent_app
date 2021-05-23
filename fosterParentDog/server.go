@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
-
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -38,19 +37,18 @@ func serve() {
 	router.GET("/post", cont.FetchPost)
 
 	// 投稿レコード情報をDBへ登録する
-	router.POST("/post_create", cont.Create)
+	router.POST("/post_create", cont.SessionCheck(), cont.Create)
 
 	// 画像ファイルをS3へアップロードする
-	router.POST("/image_upload", cont.ImageUpload)
+	router.POST("/image_upload", cont.SessionCheck(), cont.ImageUpload)
 
 	// セッションの設定
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("session-id", store))
-	//router.Use(cont.BeforeAfter())
 
 	// 第2引数をミドルウェアとして関数の処理前後に実行する
-	router.POST("/login", cont.BeforeAfter(), cont.PostLogin)
-	router.POST("/logout", cont.BeforeAfter(), cont.PostLogout)
+	router.POST("/login", cont.PostLogin)
+	router.POST("/logout", cont.SessionCheck(), cont.PostLogout)
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "ルートがない場合に表示するメッセージです"})
