@@ -23,20 +23,24 @@ func (db *Database) UserCount(userName string) (int, entity.User) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	log.Println("--------------------****")
+	log.Printf("%+v", user)
 	return cnt, user
 }
 
-func (db *Database) UpdateSessionID(registerStruct *entity.User) entity.User {
-	var user entity.User
-	err := db.connection.Model(&user).
-		Where("name = ?", registerStruct.Name).
-		Updates(entity.User{SessionId: registerStruct.SessionId}).
-		Error
-	if err != nil {
-		log.Fatal(err)
-	}
-	return user
-}
+//func (db *Database) UpdateSessionID(registerStruct *entity.User) entity.User {
+//	var user entity.User
+//	err := db.connection.Model(&user).
+//		Where("name = ?", registerStruct.Name).
+//		Updates(entity.User{SessionId: registerStruct.SessionId}).
+//		Error
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//	// TODO: これを入れずにユーザ情報を返すとカラムが空になる
+//	user = db.GetUser(registerStruct.Name)
+//	return user
+//}
 
 func (db *Database) UpdateLastLoginAt(registerStruct *entity.User) entity.User {
 	var user entity.User

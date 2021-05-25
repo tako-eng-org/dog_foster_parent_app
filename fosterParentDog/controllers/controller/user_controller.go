@@ -16,9 +16,10 @@ func (cont *Controller) GetUserMenu(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"テスト": "ユーザーログイン後の画面"})
 }
 
+// TODO: session-idがない前提のログイン処理
 func (cont *Controller) PostLogin(c *gin.Context) {
-	cookieSessionId, _ := c.Cookie("session-id")
-	formUserName := c.PostForm("user_name")
+	//cookieSessionId, _ := c.Cookie("session-id")
+	formUserName := c.PostForm("user-name")
 	formPassword := c.PostForm("password")
 	var dbUser entity.User
 	userCount, dbUser := cont.DbConn.UserCount(formUserName)
@@ -39,42 +40,54 @@ func (cont *Controller) PostLogin(c *gin.Context) {
 
 	// ログイン成功した場合は、セッションIDとセッションユーザ名を発行
 	session := sessions.Default(c)
+	//dbUser.SessionId = cookieSessionId
+	//dbUser.SessionId = session.Get("session-id")
+	//log.Println("--------------------")
+	//log.Println(session.Get("session-id"))
+	//log.Println("--------------------")
+	//dbUser = cont.DbConn.UpdateSessionID(&dbUser)
+	c.SetCookie("user-name", dbUser.Name, 3600, "/", "localhost", false, true) //これがないとcookieにuser-nameがセットされない。
+	session.Set("user-name", dbUser.Name)                                      //これがないとsession-idがセットされない。
+	err := session.Save()
+	if err != nil {
+		log.Println("セッションの保存に失敗しました：", err)
+		c.JSON(http.StatusBadRequest, gin.H{"err": "予期せぬエラー。セッションの保存に失敗しました"})
+		c.Abort()
+	}
 
-	dbUser.SessionId = cookieSessionId
-	dbUser = cont.DbConn.UpdateSessionID(&dbUser)
-
-	log.Println("user_name is ", dbUser.Name)
-	session.Set("user_name", dbUser.Name)
-	session.Save()
-
-	c.JSON(http.StatusOK, gin.H{"user name is*": session.Get("user_name")})
+	c.JSON(http.StatusOK, gin.H{"user name is:": session.Get("user-name")})
 }
 
 func (cont *Controller) SessionCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		log.Println("---session:", session)
-		cookieUserName, _ := c.Cookie("user_name")
+		log.Println("---session is :", session)
+		cookieUserName, _ := c.Cookie("user-name")
 		cookieSessionId, _ := c.Cookie("session-id")
+		log.Println("-----------------")
+		log.Println("Cookieのuser-nameは:", cookieUserName)
+		log.Println("Cookieのsession-idは:", cookieSessionId)
+		log.Println("sessionのユーザ名は:", session.Get("user-name"))
+		log.Println("-----------------")
 		var dbUser entity.User
 		_, dbUser = cont.DbConn.UserCount(cookieUserName)
 
-		if dbUser.SessionId == cookieSessionId &&
-			dbUser.Name == cookieUserName {
+		//if dbUser.SessionId == cookieSessionId &&
+		//	dbUser.Name == cookieUserName {
+		if dbUser.Name == session.Get("user-name") {
 			// セッション一致。ログイン不要
 			log.Println("DBのセッションID&ユーザ名と、cookieの情報が一致しました。すでにログイン済です。")
-			c.Set("session-id", cookieSessionId)
-			c.Set("user-name", cookieUserName)
+			//c.Set("session-id", cookieSessionId)
+			//c.Set("user-name", cookieUserName)
 			// ユーザーの最終ログイン日時を更新する
 			dbUser = entity.User{Name: cookieUserName, LastLoginAt: time.Now()}
 			cont.DbConn.UpdateLastLoginAt(&dbUser)
 		} else {
 			// セッションなし。ログインが必要
-			log.Println("DBのセッションID&ユーザ名と、cookieの情報が一致しません。ログインしてください。")
-			c.JSON(http.StatusBadRequest, gin.H{"error": "ログインしてください。"})
+			log.Println("DBのセッションID&ユーザ名と、cookieの情報が一致しません。")
+			c.JSON(http.StatusBadRequest, gin.H{"error": "ログインしていません。"})
 			c.Abort()
 		}
-		log.Println("ログインチェック終わり")
 	}
 }
 
@@ -83,7 +96,12 @@ func (cont *Controller) PostLogout(c *gin.Context) {
 	//セッションからデータを破棄する
 	session := sessions.Default(c)
 	session.Clear()
-	session.Save()
+	err := session.Save()
+	if err != nil {
+		log.Println("セッションの破棄に失敗しました：", err)
+		c.JSON(http.StatusBadRequest, gin.H{"err": "予期せぬエラー。セッションの破棄に失敗しました"})
+		c.Abort()
+	}
 
 	c.JSON(http.StatusOK, gin.H{"": "ログアウトしました"})
 }
