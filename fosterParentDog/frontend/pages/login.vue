@@ -1,65 +1,59 @@
 <template>
   <div class="login">
-    <!--    <button @click="setCookie">Cookieセット</button>-->
-    <!--    <button @click="getCookie">Cookie表示</button>-->
-    {{ getCookie("mysession") }}
-    <form>
-      <p>ユーザー名 :<input type="text" name="user_name" placeholder="" v-model="userName"/></p>
-      <p>パスワード :<input type="text" name="password" placeholder="" v-model="password"/></p>
-      <p><input type="submit" @click="login" value="ログイン"/></p>
-    </form>
+    <p>
+      ユーザー名 :<input
+      type="text"
+      name="user-name"
+      placeholder=""
+      v-model="userName"
+    />
+    </p>
+    <p>
+      パスワード :<input
+      type="text"
+      name="password"
+      placeholder=""
+      v-model="password"
+    />
+    </p>
+    <p>
+      <button type="button" @click="login">ログイン</button>
+    </p>
   </div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
-      userName: "",
-      password: "",
-
-      cookieValue: "",
+      userName: '',
+      password: '',
     }
   },
   methods: {
     login() {
-      // TODO: デバッグ用。後で削除する
-      // let formData = new FormData();
-      // formData.append('user_name', this.userName);
-      // formData.append('password', this.password);
-      // console.log(...formData.entries()); //debug用
-      // this.$axios.post('/api/login', formData)
-      this.$cookies.set("user_name", this.userName)
-      this.$cookies.set("password", this.password)
-      // FIXME: どのルートにも入ってない
-      this.$axios.post('/api/login')
+      const formData = new FormData()
+      formData.append('user-name', this.userName)
+      formData.append('password', this.password)
+      console.log(...formData.entries()) //debug用/
+      this.$axios.post('/api/login', formData)
         .then((response) => {
-          if ((response.status !== 200)) {
-            console.error("error-200以外");
-            console.error(`ログインエラー:${response.status}:${response.statusText}, ${this.postCreate.name}`)
-            this.sleep(10000);
+          if (response.status === 200) {
+            console.log(`ログイン完了:${response.status}:${response.statusText}`)
+            this.$router.push('/user-menu')
+          } else if (response.status === 400) {
+            console.error(`ログインエラー:${response.status}:${response.statusText}`)
+            this.$router.push('/login')
           } else {
-            console.log(`ログイン完了:${response.status}:${response.statusText}, ${this.postCreate.name}`);
-            this.sleep(10000);
-            this.$router.push('/index')
+            console.error(`予期しないログインエラー:${response.status}:${response.statusText}`)
           }
         })
         .catch((err) => {
           console.error(err.response)
-          this.sleep(10000);
-        });
+        })
+        .finally(() => {
+        })
     },
-    getCookie(cookieName) {
-      this.cookieValue = this.$cookies.get(cookieName); // Cookieから値を取得
-    },
-    // setCookie(){
-    //   this.$cookies.set("test", "cookie-test"); // Cookieに値をセット
-    // },
-    sleep(msec) {
-      let startMsec = new Date();
-      while (new Date() - startMsec < msec) ;// 10秒=10000 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
-    }
   },
 }
 </script>
