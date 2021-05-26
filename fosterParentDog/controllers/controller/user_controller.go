@@ -16,7 +16,6 @@ func (cont *Controller) GetUserMenu(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"テスト": "ユーザーログイン後の画面"})
 }
 
-// TODO: session-idがない前提のログイン処理
 func (cont *Controller) PostLogin(c *gin.Context) {
 	formUserName := c.PostForm("user-name")
 	formPassword := c.PostForm("password")
