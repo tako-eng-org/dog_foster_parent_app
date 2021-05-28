@@ -1,23 +1,12 @@
 <template>
   <div class="login">
-    <p>
-      ユーザー名 :<input
-      type="text"
-      name="user-name"
-      placeholder=""
-      v-model="userName"
-    />
-    </p>
-    <p>
-      パスワード :<input
-      type="text"
-      name="password"
-      placeholder=""
-      v-model="password"
-    />
-    </p>
+    <p>ユーザー名 :<input type="text" name="user-name" placeholder="" v-model="userName"/></p>
+    <p>パスワード :<input type="text" name="password" placeholder="" v-model="password"/></p>
     <p>
       <button type="button" @click="login">ログイン</button>
+    </p>
+    <p>
+      <nuxt-link to="./re-password">パスワードを忘れた方はこちら</nuxt-link>
     </p>
   </div>
 </template>
@@ -40,7 +29,7 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             console.log(`ログイン完了:${response.status}:${response.statusText}`)
-            this.$router.push('/user-menu')
+            this.$router.push('/userMenu')
           } else if (response.status === 400) {
             console.error(`ログインエラー:${response.status}:${response.statusText}`)
             this.$router.push('/login')
